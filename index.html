@@ -1,0 +1,2112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Conscia Landing Zone — Overview</title>
+<link rel="stylesheet" href="styles.css?v=25" />
+</head>
+<body>
+
+<!-- ============ ICON SPRITE ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-home" viewBox="0 0 24 24" fill="none"><path d="M15 21V13C15 12.7348 14.8946 12.4804 14.7071 12.2929C14.5196 12.1054 14.2652 12 14 12H10C9.73478 12 9.48043 12.1054 9.29289 12.2929C9.10536 12.4804 9 12.7348 9 13V21M3 9.99997C2.99993 9.70904 3.06333 9.42159 3.18579 9.15768C3.30824 8.89378 3.4868 8.65976 3.709 8.47197L10.709 2.47297C11.07 2.16788 11.5274 2.00049 12 2.00049C12.4726 2.00049 12.93 2.16788 13.291 2.47297L20.291 8.47197C20.5132 8.65976 20.6918 8.89378 20.8142 9.15768C20.9367 9.42159 21.0001 9.70904 21 9.99997V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V9.99997Z" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-lifecycle" viewBox="0 0 24 24" fill="none"><path d="M21 12H13M21 6H8M21 18H13M3 6V10M3 10C3 11.1 3.9 12 5 12H8M3 10V16C3 17.1 3.9 18 5 18H8" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24" fill="none"><path d="M2.062 12.3481C1.97866 12.1236 1.97866 11.8766 2.062 11.6521C2.8737 9.68397 4.25152 8.00116 6.02077 6.81701C7.79003 5.63287 9.87105 5.00073 12 5.00073C14.129 5.00073 16.21 5.63287 17.9792 6.81701C19.7485 8.00116 21.1263 9.68397 21.938 11.6521C22.0213 11.8766 22.0213 12.1236 21.938 12.3481C21.1263 14.3163 19.7485 15.9991 17.9792 17.1832C16.21 18.3674 14.129 18.9995 12 18.9995C9.87105 18.9995 7.79003 18.3674 6.02077 17.1832C4.25152 15.9991 2.8737 14.3163 2.062 12.3481Z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-table" viewBox="0 0 24 24" fill="none"><path d="M3 9H21M3 15H21M9 3V21M15 3V21M5 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3Z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-checks" viewBox="0 0 24 24" fill="none"><path d="M18 6L7 17L2 12M22 10L14.5 17.5L13 16" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-admin" viewBox="0 0 24 24" fill="none"><path d="M8 15H7C5.93913 15 4.92172 15.4214 4.17157 16.1716C3.42143 16.9217 3 17.9391 3 19V21M16.051 12.6161C16.1171 12.4134 16.2462 12.2372 16.4195 12.113C16.5928 11.9889 16.8012 11.9234 17.0143 11.9261C17.2275 11.9288 17.4342 11.9995 17.6043 12.1279C17.7744 12.2564 17.899 12.4358 17.96 12.6401L18.697 14.0921C18.7687 14.2332 18.8729 14.3553 19.0011 14.4483C19.1292 14.5414 19.2776 14.6026 19.434 14.6271L21.068 14.8831C21.2784 14.8839 21.4832 14.9511 21.6532 15.075C21.8232 15.199 21.9498 15.3734 22.015 15.5735C22.0801 15.7736 22.0805 15.9891 22.016 16.1894C21.9516 16.3897 21.8256 16.5645 21.656 16.6891L20.484 17.8571C20.3718 17.9688 20.2877 18.1056 20.2387 18.2561C20.1897 18.4067 20.1771 18.5667 20.202 18.7231L20.461 20.3361C20.5323 20.5383 20.5367 20.758 20.4736 20.9628C20.4105 21.1677 20.2832 21.3469 20.1106 21.4739C19.9379 21.601 19.729 21.6692 19.5147 21.6685C19.3003 21.6678 19.0918 21.5982 18.92 21.4701L17.455 20.7201C17.3139 20.6478 17.1576 20.6101 16.999 20.6101C16.8404 20.6101 16.6841 20.6478 16.543 20.7201L15.078 21.4701C14.9062 21.5972 14.6982 21.6659 14.4844 21.6661C14.2707 21.6664 14.0626 21.5981 13.8905 21.4714C13.7183 21.3447 13.5914 21.1662 13.5281 20.9621C13.4649 20.7579 13.4687 20.5389 13.539 20.3371L13.797 18.7241C13.8219 18.5677 13.8093 18.4077 13.7603 18.2571C13.7113 18.1066 13.6272 17.9698 13.515 17.8581L12.359 16.7051C12.1837 16.5836 12.0518 16.4092 11.9826 16.2075C11.9134 16.0057 11.9105 15.7871 11.9744 15.5835C12.0383 15.38 12.1656 15.2023 12.3377 15.0763C12.5098 14.9502 12.7177 14.8825 12.931 14.8831L14.564 14.6271C14.7204 14.6026 14.8688 14.5414 14.9969 14.4483C15.1251 14.3553 15.2293 14.2332 15.301 14.0921L16.051 12.6161ZM14 7C14 9.20914 12.2091 11 10 11C7.79086 11 6 9.20914 6 7C6 4.79086 7.79086 3 10 3C12.2091 3 14 4.79086 14 7Z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24" fill="none"><path d="M9.09003 9.00008C9.32513 8.33175 9.78918 7.76819 10.4 7.40921C11.0108 7.05024 11.7289 6.91902 12.4272 7.03879C13.1255 7.15857 13.7588 7.52161 14.2151 8.06361C14.6714 8.60561 14.9211 9.2916 14.92 10.0001C14.92 12.0001 11.92 13.0001 11.92 13.0001M12 17H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-bell" viewBox="0 0 20 20" fill="none"><path d="M8.55666 17.5C8.70295 17.7533 8.91334 17.9637 9.1667 18.11C9.42006 18.2563 9.70745 18.3333 10 18.3333C10.2925 18.3333 10.5799 18.2563 10.8333 18.11C11.0867 17.9637 11.297 17.7533 11.4433 17.5M2.71833 12.7717C2.60947 12.891 2.53763 13.0394 2.51155 13.1988C2.48547 13.3582 2.50627 13.5217 2.57142 13.6695C2.63658 13.8173 2.74328 13.943 2.87855 14.0312C3.01381 14.1195 3.17182 14.1665 3.33333 14.1667H16.6667C16.8282 14.1667 16.9862 14.1199 17.1216 14.0318C17.2569 13.9437 17.3637 13.8181 17.4291 13.6704C17.4944 13.5227 17.5154 13.3592 17.4895 13.1998C17.4637 13.0404 17.392 12.892 17.2833 12.7725C16.175 11.63 15 10.4158 15 6.66667C15 5.34058 14.4732 4.06881 13.5355 3.13113C12.5979 2.19345 11.3261 1.66667 10 1.66667C8.67392 1.66667 7.40215 2.19345 6.46447 3.13113C5.52679 4.06881 5 5.34058 5 6.66667C5 10.4158 3.82417 11.63 2.71833 12.7717Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-menu" viewBox="0 0 20 20" fill="none"><path d="M3.33333 10H16.6667M3.33333 15H16.6667M3.33333 5H16.6667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-report" viewBox="0 0 18 18" fill="none"><path d="M9 6V9M9 12H9.0075M2.244 12.2565C2.35428 12.5346 2.37883 12.8395 2.3145 13.1317L1.51575 15.5992C1.49001 15.7243 1.49666 15.854 1.53508 15.9758C1.57349 16.0977 1.64239 16.2077 1.73525 16.2954C1.8281 16.3832 1.94183 16.4457 2.06565 16.4772C2.18946 16.5087 2.31927 16.508 2.44275 16.4752L5.0025 15.7267C5.27828 15.672 5.56389 15.6959 5.82675 15.7957C7.42829 16.5436 9.24252 16.7019 10.9494 16.2425C12.6562 15.7831 14.1459 14.7357 15.1558 13.285C16.1656 11.8343 16.6306 10.0735 16.4687 8.31337C16.3069 6.55322 15.5285 4.9068 14.271 3.6646C13.0136 2.4224 11.3578 1.66423 9.59578 1.52388C7.83379 1.38352 6.07885 1.86999 4.64058 2.89746C3.20231 3.92492 2.17315 5.42736 1.73467 7.13968C1.29619 8.852 1.47657 10.6642 2.244 12.2565Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-request" viewBox="0 0 18 18" fill="none"><path d="M3.69749 3.69745L6.87749 6.87745M11.1225 6.87745L14.3025 3.69745M11.1225 11.1226L14.3025 14.3026M6.87749 11.1226L3.69749 14.3026M16.5 9C16.5 13.1421 13.1421 16.5 9 16.5C4.85786 16.5 1.5 13.1421 1.5 9C1.5 4.85786 4.85786 1.5 9 1.5C13.1421 1.5 16.5 4.85786 16.5 9ZM12 9C12 10.6569 10.6569 12 9 12C7.34315 12 6 10.6569 6 9C6 7.34315 7.34315 6 9 6C10.6569 6 12 7.34315 12 9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-info" viewBox="0 0 16 16" fill="none"><path d="M8 10.6667V8M8 5.33333H8.00667M14.6667 8C14.6667 11.6819 11.6819 14.6667 8 14.6667C4.3181 14.6667 1.33333 11.6819 1.33333 8C1.33333 4.3181 4.3181 1.33333 8 1.33333C11.6819 1.33333 14.6667 4.3181 14.6667 8Z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-arrow-up-right" viewBox="0 0 16 16" fill="none"><path d="M11.3333 11.3333V4.66667H4.66667M11.3333 4.66667L4.66667 11.3333" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-trend-up" viewBox="0 0 14 14" fill="none"><path d="M12.8333 7.58333V4.08333H9.33333M12.8333 4.08333L7.875 9.04167L4.95833 6.125L1.16667 9.91667" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-trend-down" viewBox="0 0 14 14" fill="none"><path d="M12.8333 6.41667V9.91667H9.33333M12.8333 9.91667L7.875 4.95833L4.95833 7.875L1.16667 4.08333" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-trend-flat" viewBox="0 0 14 14" fill="none"><path d="M10.5 9.33333L12.8333 7L10.5 4.66667M12.8333 7H1.16667" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-chip" viewBox="0 0 14 14" fill="none"><path d="M9.625 3.5H4.375C3.89175 3.5 3.5 3.89175 3.5 4.375V9.625C3.5 10.1082 3.89175 10.5 4.375 10.5H9.625C10.1082 10.5 10.5 10.1082 10.5 9.625V4.375C10.5 3.89175 10.1082 3.5 9.625 3.5Z" stroke="currentColor" stroke-width="0.933333" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.45833 5.25H5.54167C5.38058 5.25 5.25 5.38058 5.25 5.54167V8.45833C5.25 8.61942 5.38058 8.75 5.54167 8.75H8.45833C8.61942 8.75 8.75 8.61942 8.75 8.45833V5.54167C8.75 5.38058 8.61942 5.25 8.45833 5.25Z" stroke="currentColor" stroke-width="0.933333" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.25 1.75V3.5M8.75 1.75V3.5M5.25 10.5V12.25M8.75 10.5V12.25M1.75 5.25H3.5M1.75 8.75H3.5M10.5 5.25H12.25M10.5 8.75H12.25" stroke="currentColor" stroke-width="0.933333" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-bug" viewBox="0 0 14 14" fill="none"><path d="M9.91667 7.58333C9.91667 5.9725 8.61083 4.66667 7 4.66667C5.38917 4.66667 4.08333 5.9725 4.08333 7.58333V8.16667C4.08333 9.7775 5.38917 11.0833 7 11.0833C8.61083 11.0833 9.91667 9.7775 9.91667 8.16667V7.58333Z" stroke="currentColor" stroke-width="0.933333" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.25 2.33333L6.41667 4.08333M8.75 2.33333L7.58333 4.08333M1.75 7H4.08333M9.91667 7H12.25M1.75 9.33333L4.08333 8.75M12.25 9.33333L9.91667 8.75M1.75 4.66667L4.08333 5.25M12.25 4.66667L9.91667 5.25" stroke="currentColor" stroke-width="0.933333" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-email" viewBox="0 0 20 20" fill="none"><path d="M5.83333 9.16667H14.1667M5.83333 12.5H10.8333M5.83333 5.83333H12.5M18.3333 14.1667C18.3333 14.6087 18.1577 15.0326 17.8452 15.3452C17.5326 15.6577 17.1087 15.8333 16.6667 15.8333H5.69C5.24801 15.8334 4.82415 16.0091 4.51167 16.3217L2.67667 18.1567C2.59392 18.2394 2.4885 18.2957 2.37374 18.3186C2.25898 18.3414 2.14003 18.3297 2.03192 18.2849C1.92382 18.2401 1.83142 18.1643 1.7664 18.067C1.70139 17.9697 1.66668 17.8553 1.66667 17.7383V4.16667C1.66667 3.72464 1.84226 3.30072 2.15482 2.98816C2.46738 2.67559 2.89131 2.5 3.33333 2.5H16.6667C17.1087 2.5 17.5326 2.67559 17.8452 2.98816C18.1577 3.30072 18.3333 3.72464 18.3333 4.16667V14.1667Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-call" viewBox="0 0 20 20" fill="none"><path d="M11.5267 13.8067C11.6988 13.8857 11.8927 13.9038 12.0764 13.8579C12.2602 13.812 12.4228 13.7049 12.5375 13.5542L12.8333 13.1667C12.9886 12.9597 13.1899 12.7917 13.4213 12.676C13.6527 12.5602 13.9079 12.5 14.1667 12.5H16.6667C17.1087 12.5 17.5326 12.6756 17.8452 12.9882C18.1577 13.3007 18.3333 13.7246 18.3333 14.1667V16.6667C18.3333 17.1087 18.1577 17.5326 17.8452 17.8452C17.5326 18.1577 17.1087 18.3333 16.6667 18.3333C12.6884 18.3333 8.87311 16.753 6.06006 13.9399C3.24702 11.1269 1.66667 7.31158 1.66667 3.33333C1.66667 2.89131 1.84226 2.46738 2.15482 2.15482C2.46738 1.84226 2.89131 1.66667 3.33333 1.66667H5.83333C6.27536 1.66667 6.69928 1.84226 7.01184 2.15482C7.3244 2.46738 7.5 2.89131 7.5 3.33333V5.83333C7.5 6.09208 7.43976 6.34726 7.32405 6.57869C7.20833 6.81011 7.04033 7.01142 6.83333 7.16667L6.44333 7.45917C6.29035 7.57598 6.18252 7.74215 6.13816 7.92946C6.0938 8.11676 6.11565 8.31365 6.2 8.48667C7.3389 10.7999 9.21202 12.6707 11.5267 13.8067Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-euro" viewBox="0 0 18 18" fill="none"><path d="M3 7.5H12M3 10.5H9.75M14.25 4.50003C13.1828 3.53076 11.7917 2.9957 10.35 3.00003C9.5719 3.00981 8.80335 3.17278 8.08823 3.47961C7.37312 3.78645 6.72545 4.23115 6.18222 4.78831C5.63898 5.34548 5.21082 6.00419 4.92218 6.72685C4.63355 7.4495 4.49009 8.22193 4.5 9.00003C4.5 12.3 7.125 15 10.35 15C11.85 15 13.2 14.4 14.25 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-upgrade" viewBox="0 0 18 18" fill="none"><path d="M9 16.5V9M9 9L2.4675 5.25M9 9L15.5325 5.25M5.625 3.20251L12.375 7.06501M8.25 16.2974C8.47803 16.4291 8.7367 16.4984 9 16.4984C9.2633 16.4984 9.52197 16.4291 9.75 16.2974L15 13.2974C15.2278 13.1659 15.417 12.9768 15.5487 12.7491C15.6803 12.5213 15.7497 12.263 15.75 11.9999V5.99993C15.7497 5.73688 15.6803 5.47853 15.5487 5.2508C15.417 5.02306 15.2278 4.83395 15 4.70243L9.75 1.70243C9.52197 1.57077 9.2633 1.50146 9 1.50146C8.7367 1.50146 8.47803 1.57077 8.25 1.70243L3 4.70243C2.7722 4.83395 2.58299 5.02306 2.45135 5.2508C2.31971 5.47853 2.25027 5.73688 2.25 5.99993V11.9999C2.25027 12.263 2.31971 12.5213 2.45135 12.7491C2.58299 12.9768 2.7722 13.1659 3 13.2974L8.25 16.2974Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-sparkle" viewBox="0 0 18 18" fill="none"><path d="M15 1.5V4.5M16.5 3H13.5M8.26276 2.11046C8.2949 1.93842 8.38619 1.78303 8.52083 1.6712C8.65548 1.55938 8.82499 1.49817 9.00001 1.49817C9.17503 1.49817 9.34454 1.55938 9.47919 1.6712C9.61383 1.78303 9.70513 1.93842 9.73726 2.11046L10.5255 6.27896C10.5815 6.57533 10.7255 6.84793 10.9388 7.06119C11.152 7.27446 11.4246 7.41848 11.721 7.47446L15.8895 8.26272C16.0616 8.29485 16.2169 8.38615 16.3288 8.52079C16.4406 8.65543 16.5018 8.82494 16.5018 8.99996C16.5018 9.17499 16.4406 9.3445 16.3288 9.47914C16.2169 9.61378 16.0616 9.70508 15.8895 9.73721L11.721 10.5255C11.4246 10.5814 11.152 10.7255 10.9388 10.9387C10.7255 11.152 10.5815 11.4246 10.5255 11.721L9.73726 15.8895C9.70513 16.0615 9.61383 16.2169 9.47919 16.3287C9.34454 16.4405 9.17503 16.5018 9.00001 16.5018C8.82499 16.5018 8.65548 16.4405 8.52083 16.3287C8.38619 16.2169 8.2949 16.0615 8.26276 15.8895L7.47451 11.721C7.41853 11.4246 7.2745 11.152 7.06124 10.9387C6.84797 10.7255 6.57537 10.5814 6.27901 10.5255L2.11051 9.73721C1.93846 9.70508 1.78307 9.61378 1.67125 9.47914C1.55943 9.3445 1.49821 9.17499 1.49821 8.99996C1.49821 8.82494 1.55943 8.65543 1.67125 8.52079C1.78307 8.38615 1.93846 8.29485 2.11051 8.26272L6.27901 7.47446C6.57537 7.41848 6.84797 7.27446 7.06124 7.06119C7.2745 6.84793 7.41853 6.57533 7.47451 6.27896L8.26276 2.11046ZM4.5 15C4.5 15.8284 3.82843 16.5 3 16.5C2.17157 16.5 1.5 15.8284 1.5 15C1.5 14.1716 2.17157 13.5 3 13.5C3.82843 13.5 4.5 14.1716 4.5 15Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-chevron-down" viewBox="0 0 14 14" fill="none"><path d="M3.5 5.25L7 8.75L10.5 5.25" stroke="currentColor" stroke-width="0.933333" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 13l9 5 9-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+<symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l2-8 4 16 3-8h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 0 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 0 1 0-4h.09a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.55V3a2 2 0 0 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 0 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+<symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-alert-triangle" viewBox="0 0 24 24"><path d="M12 3l10 18H2L12 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1" fill="currentColor"/></symbol>
+<symbol id="i-alert-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7.5v5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.3" r="1" fill="currentColor"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l5 5L20 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 12.5l2.6 2.6L16 9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="i-log-out" viewBox="0 0 24 24"><path d="M15 17l5-5-5-5M20 12H9M13 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-box-check" viewBox="0 0 20 20"><rect x="1" y="1" width="18" height="18" rx="4.5" style="fill:var(--success)"/><path d="M5.5 10.3l3 3 6-6.6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-box-empty" viewBox="0 0 20 20"><rect x="1.5" y="1.5" width="17" height="17" rx="4.5" fill="none" style="stroke:var(--stroke)" stroke-width="1.6"/></symbol>
+<symbol id="i-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9.2 9.2l5.6 5.6M14.8 9.2l-5.6 5.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12l16-8-5.5 16-3-6.5L4 12Z" fill="currentColor"/></symbol>
+<symbol id="i-quote" viewBox="0 0 24 24"><path d="M7 8a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3h1v-5H6a2 2 0 0 1 2-2V8Z" fill="currentColor"/><path d="M16 8a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3h1v-5h-2a2 2 0 0 1 2-2V8Z" fill="currentColor"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2" fill="currentColor"/><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="19" cy="12" r="2" fill="currentColor"/></symbol>
+<symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 7v10" stroke="currentColor" stroke-width="2" stroke-dasharray="2 2" stroke-linecap="round"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+</defs>
+</svg>
+
+<div class="app">
+
+  <!-- ============ TOPBAR ============ -->
+  <header class="topbar">
+    <div class="topbar__left">
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open navigation">
+        <svg width="20" height="20"><use href="#i-menu"/></svg>
+      </button>
+      <div class="branding" id="brandBtn" title="Landing Zone home">
+        <img class="branding__logo" src="assets/logo.svg" width="124" height="28" alt="Conscia" />
+        <span class="branding__name">Landing Zone</span>
+      </div>
+      <div class="topbar__client" id="clientSwitch" title="Switch client">
+        <span>Client</span><b>Bernhoven</b>
+        <svg width="14" height="14"><use href="#i-chevron-down"/></svg>
+      </div>
+    </div>
+    <div class="topbar__right">
+      <div class="topbar__actions">
+        <button class="btn btn-danger" id="btnIncident" aria-label="Report incident"><svg width="18" height="18"><use href="#i-report"/></svg><span>Report incident</span></button>
+        <button class="btn btn-primary" id="btnRequest" aria-label="Request service"><svg width="18" height="18"><use href="#i-request"/></svg><span>Request service</span></button>
+      </div>
+
+      <div class="rel">
+        <button class="icon-btn" id="notifBtn" title="Notifications" aria-label="Notifications">
+          <svg width="20" height="20"><use href="#i-bell"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="dropdown" id="notifDropdown">
+          <div class="dropdown-head">Notifications</div>
+          <div class="notif-item" data-toast="Opening alarm — Core router down">
+            <div class="d"></div>
+            <div><b>Core router down</b><span>RPP1L2C001H1 · 14 min ago</span></div>
+          </div>
+          <div class="notif-item" data-toast="Opening case REQ0089301 — awaiting your approval">
+            <div class="d"></div>
+            <div><b>2 cases are awaiting you</b><span>REQ0089301, REQ0089180 · 1 h ago</span></div>
+          </div>
+          <div class="notif-item" data-toast="Opening summary">
+            <div class="d read"></div>
+            <div><b>Weekly summary ready</b><span>Yesterday, 09:00</span></div>
+          </div>
+          <div class="dropdown-sep"></div>
+          <div class="dropdown-item" data-toast="Showing all notifications">
+            <svg width="15" height="15"><use href="#i-bell"/></svg> View all notifications
+          </div>
+        </div>
+      </div>
+
+      <div class="rel">
+        <button class="icon-btn" id="userBtn" title="Account" aria-label="Account menu">
+          <svg width="20" height="20"><use href="#i-menu"/></svg>
+        </button>
+        <div class="dropdown" id="userDropdown">
+          <div class="dropdown-user">
+            <div class="avatar">SD</div>
+            <div><b>S. van Dijk</b><span>IT manager · Bernhoven</span></div>
+          </div>
+          <div class="dropdown-sep"></div>
+          <div class="dropdown-item" data-toast="Opening your profile"><svg width="15" height="15"><use href="#i-user"/></svg> Profile</div>
+          <div class="dropdown-item" data-page="admin"><svg width="15" height="15"><use href="#i-settings"/></svg> Admin settings</div>
+          <div class="dropdown-sep"></div>
+          <div class="dropdown-item" data-toast="Signed out (prototype only)"><svg width="15" height="15"><use href="#i-log-out"/></svg> Log out</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="body">
+    <!-- ============ SIDEBAR ============ -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar__top">
+        <button class="sidebar__item active" data-page="overview"><svg width="24" height="24"><use href="#i-home"/></svg><span>Overview</span></button>
+        <button class="sidebar__item" data-page="lifecycle"><svg width="24" height="24"><use href="#i-lifecycle"/></svg><span>Lifecycle</span></button>
+        <button class="sidebar__item" data-page="cves"><svg width="24" height="24"><use href="#i-eye"/></svg><span>Advisories</span></button>
+        <button class="sidebar__item" data-page="cases"><svg width="24" height="24"><use href="#i-table"/></svg><span>Cases</span></button>
+        <button class="sidebar__item" data-page="recommendations" title="Recommendations"><svg width="24" height="24"><use href="#i-checks"/></svg><span>Recommendations</span></button>
+        <button class="sidebar__item" data-page="admin"><svg width="24" height="24"><use href="#i-admin"/></svg><span>Admin</span></button>
+      </div>
+      <div class="sidebar__bottom">
+        <button class="sidebar__item" id="helpBtn"><svg width="24" height="24"><use href="#i-help"/></svg><span>Help</span></button>
+      </div>
+    </nav>
+
+    <!-- ============ MAIN ============ -->
+    <main class="main" id="main">
+
+      <!-- ---------- OVERVIEW PAGE ---------- -->
+      <section id="page-overview">
+        <div class="page-head page-head--hero">
+          <h1>Overview</h1>
+          <div class="page-head__actions">
+            <button class="btn btn-secondary" id="btnGenerate"><svg width="18" height="18"><use href="#i-sparkle"/></svg>Generate summary</button>
+          </div>
+        </div>
+
+        <!-- SOC -->
+        <div class="section-card">
+          <h2 class="section-card__title">SOC</h2>
+          <div class="kpi-grid kpi-grid--5">
+            <div class="kpi-tile kpi-tile--graph" data-page="cases">
+              <div class="kpi-tile__head">
+                <span class="kpi-tile__title">Open incidents<span class="kpi-tile__info" data-tip="Security incidents currently open in the SOC (not ITSM cases)"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+              </div>
+              <div class="kpi-tile__value"><span data-count="0">0</span></div>
+              <div class="kpi-tile__label">Incidents</div>
+              <div class="spark" data-spark="openIncidents" data-tone="brand" data-unit="open incidents"></div>
+              <div class="kpi-tile__trend">Trend is mostly <span class="trend-pill trend-pill--flat">Unchanged<svg width="14" height="14"><use href="#i-trend-flat"/></svg></span></div>
+            </div>
+            <div class="kpi-tile kpi-tile--graph" data-page="cases">
+              <div class="kpi-tile__head">
+                <span class="kpi-tile__title">Incident trend<span class="kpi-tile__info" data-tip="New security incidents in the last 7 days"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+              </div>
+              <div class="kpi-tile__value"><span data-count="12">0</span></div>
+              <div class="kpi-tile__label">New incidents</div>
+              <div class="spark" data-spark="incidentTrend" data-tone="danger" data-unit="new incidents (7d)"></div>
+              <div class="kpi-tile__trend kpi-tile__trend--danger">Trend is up <span class="trend-pill trend-pill--up">53%<svg width="14" height="14"><use href="#i-trend-up"/></svg></span></div>
+            </div>
+            <div class="kpi-tile kpi-tile--graph" data-toast="Threat intelligence feed opens in the SOC portal">
+              <div class="kpi-tile__head">
+                <span class="kpi-tile__title">Threat pressure<span class="kpi-tile__info" data-tip="Blocked attack attempts against your perimeter today"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+              </div>
+              <div class="kpi-tile__value"><span data-count="0">0</span></div>
+              <div class="kpi-tile__label">Attacks</div>
+              <div class="spark" data-spark="threatPressure" data-tone="success" data-unit="attacks"></div>
+              <div class="kpi-tile__trend kpi-tile__trend--success">Trend is down <span class="trend-pill trend-pill--down">67%<svg width="14" height="14"><use href="#i-trend-down"/></svg></span></div>
+            </div>
+            <div class="kpi-tile kpi-tile--graph" data-page="uptime">
+              <div class="kpi-tile__head">
+                <span class="kpi-tile__title">SLA adherence<span class="kpi-tile__info" data-tip="Share of security incidents handled within the SLA contract"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+              </div>
+              <div class="kpi-tile__value"><span data-count="100">0</span><span class="kpi-tile__unit">%</span></div>
+              <div class="kpi-tile__label">Within SLA contract</div>
+              <div class="spark" data-spark="slaAdherence" data-tone="brand" data-unit="% within SLA"></div>
+              <div class="kpi-tile__trend">Trend is mostly <span class="trend-pill trend-pill--flat">Unchanged<svg width="14" height="14"><use href="#i-trend-flat"/></svg></span></div>
+            </div>
+            <div class="kpi-tile kpi-tile--graph" data-page="cases">
+              <div class="kpi-tile__head">
+                <span class="kpi-tile__title">Average triage<span class="kpi-tile__info" data-tip="Average time from alert to SOC triage"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+              </div>
+              <div class="kpi-tile__value"><span data-count="9">0</span></div>
+              <div class="kpi-tile__label">Minutes</div>
+              <div class="spark" data-spark="avgTriage" data-tone="danger" data-unit="min average triage"></div>
+              <div class="kpi-tile__trend kpi-tile__trend--danger">Trend is up <span class="trend-pill trend-pill--up">18.3%<svg width="14" height="14"><use href="#i-trend-up"/></svg></span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW: Lifecycle management / Security advisories -->
+        <div class="grid grid-2">
+          <div class="section-card" data-tabs>
+            <h2 class="section-card__title">Lifecycle management</h2>
+            <div class="kpi-grid kpi-grid--3">
+              <div class="kpi-tile kpi-tile--alert" data-page="lifecycle">
+                <div class="kpi-tile__head">
+                  <span class="kpi-tile__title">Act now<span class="kpi-tile__info" data-tip="Devices reaching a lifecycle milestone within 3 months — incl. 2 already past End-of-Support"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                  <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+                </div>
+                <div class="kpi-tile__value"><span data-count="23">0</span></div>
+                <div class="kpi-tile__label">within <b>3 months</b></div>
+              </div>
+              <div class="kpi-tile kpi-tile--plan" data-page="lifecycle">
+                <div class="kpi-tile__head">
+                  <span class="kpi-tile__title">Plan now<span class="kpi-tile__info" data-tip="Devices reaching a lifecycle milestone in 3–6 months"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                  <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+                </div>
+                <div class="kpi-tile__value"><span data-count="4">0</span></div>
+                <div class="kpi-tile__label">within <b>3-6 months</b></div>
+              </div>
+              <div class="kpi-tile kpi-tile--success" data-page="lifecycle">
+                <div class="kpi-tile__head">
+                  <span class="kpi-tile__title">Budget &amp; Schedule<span class="kpi-tile__info" data-tip="Devices with a lifecycle milestone more than 6 months out — budget them now"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                  <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+                </div>
+                <div class="kpi-tile__value"><span data-count="17">0</span></div>
+                <div class="kpi-tile__label">within <b>6+ months</b></div>
+              </div>
+            </div>
+            <div class="cta-strip">
+              <span>Contact us to get estimated investment for replacement plan</span>
+              <button class="btn btn-primary" data-toast="Your Conscia account director will contact you about a replacement quote"><svg width="18" height="18"><use href="#i-euro"/></svg>Contact Sales</button>
+            </div>
+            <div class="sub-head">
+              <h3 class="sub-head__title">Most urgent devices</h3>
+              <div class="tabgroup">
+                <button class="tabgroup__tab active" data-tab="eosupport">PastEOSupport (2)</button>
+                <button class="tabgroup__tab" data-tab="eosale">PastEOSale (4)</button>
+              </div>
+            </div>
+            <div class="row-list" data-tab-panel="eosupport">
+              <button class="row" data-page="lifecycle">
+                <span class="row__icon danger"><svg width="14" height="14"><use href="#i-chip"/></svg></span>
+                <span class="row__main"><span class="row__title">ASA5506 × 2</span><span class="row__meta">Security</span></span>
+                <span class="row__right"><span class="pill pill-critical">Overdue 2y 9m</span></span>
+              </button>
+            </div>
+            <div class="row-list" data-tab-panel="eosale" hidden>
+              <button class="row" data-page="lifecycle">
+                <span class="row__icon warn"><svg width="14" height="14"><use href="#i-chip"/></svg></span>
+                <span class="row__main"><span class="row__title">ISR4331/K9 × 4</span><span class="row__meta">Core modules</span></span>
+                <span class="row__right"><span class="pill pill-orange">Overdue 2y 7m</span></span>
+              </button>
+            </div>
+            <div class="section-card__foot">
+              <button class="btn btn-link" data-page="devices">See all<svg width="18" height="18"><use href="#i-arrow-up-right"/></svg></button>
+            </div>
+          </div>
+
+          <div class="section-card">
+            <h2 class="section-card__title">Security advisories</h2>
+            <div class="kpi-grid kpi-grid--2">
+              <div class="kpi-tile kpi-tile--alert" data-page="cves">
+                <div class="kpi-tile__head">
+                  <span class="kpi-tile__title">Critical CVEs<span class="kpi-tile__info" data-tip="Devices exposed to a critical CVE (CVE-2024-20356 on both ASA5506 firewalls)"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                  <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+                </div>
+                <div class="kpi-tile__value"><span data-count="2">0</span></div>
+                <div class="kpi-tile__label">devices</div>
+              </div>
+              <div class="kpi-tile" data-page="cves">
+                <div class="kpi-tile__head">
+                  <span class="kpi-tile__title">High CVEs<span class="kpi-tile__info" data-tip="Devices exposed to a high-severity CVE (FPP1L0H0, RTP1C0M001)"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                  <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+                </div>
+                <div class="kpi-tile__value"><span data-count="2">0</span></div>
+                <div class="kpi-tile__label">devices</div>
+              </div>
+            </div>
+            <h3 class="sub-head__title sub-head__title--solo">Most urgent devices</h3>
+            <div class="row-list">
+              <button class="row" data-page="cves">
+                <span class="row__icon danger"><svg width="14" height="14"><use href="#i-bug"/></svg></span>
+                <span class="row__main"><span class="row__title">CVE-2024-20356 · ASA5506</span><span class="row__meta">No fix patch</span></span>
+                <span class="row__right"><span class="score score--critical" data-tip="CVSS 9.8 · Critical">9.8</span></span>
+              </button>
+              <button class="row" data-page="cves">
+                <span class="row__icon"><svg width="14" height="14"><use href="#i-bug"/></svg></span>
+                <span class="row__main"><span class="row__title">CVE-2024-20399 · FPR-2130</span><span class="row__meta">Patch available</span></span>
+                <span class="row__right"><span class="score" data-tip="CVSS 7.2 · High">7.2</span></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW: Cases / Alarms -->
+        <div class="grid grid-2">
+          <div class="section-card">
+            <h2 class="section-card__title">Cases</h2>
+            <div class="kpi-grid kpi-grid--3">
+              <div class="kpi-tile kpi-tile--alert" data-page="cases">
+                <div class="kpi-tile__head">
+                  <span class="kpi-tile__title">Open incidents<span class="kpi-tile__info" data-tip="Open ServiceNow incidents (INC) for Bernhoven"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                  <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+                </div>
+                <div class="kpi-tile__value"><span data-count="2">0</span></div>
+                <div class="kpi-tile__label">cases</div>
+              </div>
+              <div class="kpi-tile" data-page="cases">
+                <div class="kpi-tile__head">
+                  <span class="kpi-tile__title">Open cases<span class="kpi-tile__info" data-tip="All open incidents and requests"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                  <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+                </div>
+                <div class="kpi-tile__value"><span data-count="4">0</span></div>
+                <div class="kpi-tile__label">cases</div>
+              </div>
+              <div class="kpi-tile" data-page="cases">
+                <div class="kpi-tile__head">
+                  <span class="kpi-tile__title">Awaiting you<span class="kpi-tile__info" data-tip="Cases waiting on an approval or answer from Bernhoven"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                  <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+                </div>
+                <div class="kpi-tile__value"><span data-count="2">0</span></div>
+                <div class="kpi-tile__label">cases</div>
+              </div>
+            </div>
+            <h3 class="sub-head__title sub-head__title--solo">P1 or P2 incidents</h3>
+            <div class="row-list">
+              <button class="row" data-page="cases">
+                <span class="row__icon danger"><svg width="14" height="14"><use href="#i-chip"/></svg></span>
+                <span class="row__main"><span class="row__title">Core router down</span><span class="row__meta">P1 · Pending assignment…</span></span>
+                <span class="row__right"><span class="pill pill-critical">INC0089412</span></span>
+              </button>
+              <button class="row" data-page="cases">
+                <span class="row__icon"><svg width="14" height="14"><use href="#i-chip"/></svg></span>
+                <span class="row__main"><span class="row__title">High CPU on firewall</span><span class="row__meta">P2 · Assignee: John Doe</span></span>
+                <span class="row__right"><span class="pill pill-neutral">INC0089388</span></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="section-card" id="alarmsCard">
+            <h2 class="section-card__title">Alarms</h2>
+            <div class="lock-wrap">
+              <div class="lock-body blurred" id="alarmsCardBody" aria-hidden="true">
+                <div class="kpi-grid kpi-grid--3">
+                  <div class="kpi-tile kpi-tile--alert" data-page="alarms">
+                    <div class="kpi-tile__head">
+                      <span class="kpi-tile__title">Critical<span class="kpi-tile__info" data-tip="Disaster-level alarms active now (1 acknowledged)"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                      <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+                    </div>
+                    <div class="kpi-tile__value"><span data-count="2">0</span></div>
+                    <div class="kpi-tile__label">alarms</div>
+                  </div>
+                  <div class="kpi-tile" data-page="alarms">
+                    <div class="kpi-tile__head">
+                      <span class="kpi-tile__title">High<span class="kpi-tile__info" data-tip="High-severity alarms active now"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                      <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+                    </div>
+                    <div class="kpi-tile__value"><span data-count="4">0</span></div>
+                    <div class="kpi-tile__label">alarms</div>
+                  </div>
+                  <div class="kpi-tile" data-page="alarms">
+                    <div class="kpi-tile__head">
+                      <span class="kpi-tile__title">Avg. resolve<span class="kpi-tile__info" data-tip="Average time to resolve an alarm (30 days)"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                      <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
+                    </div>
+                    <div class="kpi-tile__value"><span data-count="2.4" data-decimals="1">0</span></div>
+                    <div class="kpi-tile__label">hours</div>
+                  </div>
+                </div>
+                <h3 class="sub-head__title sub-head__title--solo">Most recent alarms</h3>
+                <div class="row-list">
+                  <button class="row" data-page="alarms">
+                    <span class="row__icon danger"><svg width="14" height="14"><use href="#i-chip"/></svg></span>
+                    <span class="row__main"><span class="row__title">Core router down</span><span class="row__meta">RPP1L2C001H1</span></span>
+                    <span class="row__right row__right--stack"><span class="pill pill-critical">Critical</span><span class="row__time">14 min ago</span></span>
+                  </button>
+                  <button class="row" data-page="alarms">
+                    <span class="row__icon"><svg width="14" height="14"><use href="#i-chip"/></svg></span>
+                    <span class="row__main"><span class="row__title">High CPU on firewall</span><span class="row__meta">FPP1L0H0</span></span>
+                    <span class="row__right row__right--stack"><span class="pill pill-neutral">High</span><span class="row__time">2 h ago</span></span>
+                  </button>
+                </div>
+              </div>
+              <div class="locked-overlay" id="alarmsCardOverlay">
+                <p>Your current tier does not grant access to Alarms.</p>
+                <button class="btn btn-primary" data-open-modal="upgradeModal"><svg width="18" height="18"><use href="#i-upgrade"/></svg>Upgrade tier</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW: Actions required / Your Conscia Team -->
+        <div class="grid grid-2">
+          <div class="section-card">
+            <h2 class="section-card__title">Actions required</h2>
+            <div class="action-list" id="actionsList">
+              <button class="action" data-tip="Click to mark as done">
+                <span class="badge badge--first">First priority</span>
+                <span class="action__main"><span class="action__title">Replace ASA5506 × 2</span><span class="action__context">Past EoSupport · Security layer degraded</span></span>
+              </button>
+              <button class="action" data-tip="Click to mark as done">
+                <span class="badge badge--important">Important</span>
+                <span class="action__main"><span class="action__title">Acknowledge 1 critical alarm</span><span class="action__context">Including core router down (14 min)</span></span>
+              </button>
+              <button class="action" data-tip="Click to mark as done">
+                <span class="badge badge--plan">Plan</span>
+                <span class="action__main"><span class="action__title">Add €84k to capex plan</span><span class="action__context">EoX replacements not in budget</span></span>
+              </button>
+              <button class="action" data-tip="Click to mark as done">
+                <span class="badge badge--neutral">Important</span>
+                <span class="action__main"><span class="action__title">Patch CVE-2024-20399</span><span class="action__context">FPR-2130 firewall · vendor fix available</span></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="section-card" data-tabs>
+            <h2 class="section-card__title">Your Conscia Team</h2>
+            <div class="tabgroup tabgroup--team">
+              <button class="tabgroup__tab active" data-tab="primary">Primary contacts</button>
+              <button class="tabgroup__tab" data-tab="commercial">Commercial</button>
+              <button class="tabgroup__tab" data-tab="escalation">Escalation</button>
+            </div>
+            <div class="team-list" data-tab-panel="primary">
+              <div class="member">
+                <img class="member__photo" src="assets/team-daan.png" width="32" height="32" alt="" />
+                <span class="member__main"><span class="member__name">Daan Herpers</span><span class="member__role">Service delivery manager</span></span>
+                <span class="member__actions">
+                  <button class="member__btn" data-toast="New email to Daan Herpers opened"><svg width="20" height="20"><use href="#i-email"/></svg>Email</button>
+                  <button class="member__btn" data-toast="Calling Daan Herpers…"><svg width="20" height="20"><use href="#i-call"/></svg>Call</button>
+                </span>
+              </div>
+              <div class="member">
+                <img class="member__photo" src="assets/team-roel.png" width="32" height="32" alt="" />
+                <span class="member__main"><span class="member__name">Roel Ottenheijm</span><span class="member__role">Account director</span></span>
+                <span class="member__actions">
+                  <button class="member__btn" data-toast="New email to Roel Ottenheijm opened"><svg width="20" height="20"><use href="#i-email"/></svg>Email</button>
+                  <button class="member__btn" data-toast="Calling Roel Ottenheijm…"><svg width="20" height="20"><use href="#i-call"/></svg>Call</button>
+                </span>
+              </div>
+              <div class="member">
+                <img class="member__photo" src="assets/team-michel.png" width="32" height="32" alt="" />
+                <span class="member__main"><span class="member__name">Michel Koerting</span><span class="member__role">Engineering lead</span></span>
+                <span class="member__actions">
+                  <button class="member__btn" data-toast="New email to Michel Koerting opened"><svg width="20" height="20"><use href="#i-email"/></svg>Email</button>
+                  <button class="member__btn" data-toast="Calling Michel Koerting…"><svg width="20" height="20"><use href="#i-call"/></svg>Call</button>
+                </span>
+              </div>
+            </div>
+            <div class="team-list" data-tab-panel="commercial" hidden>
+              <div class="member">
+                <img class="member__photo" src="assets/team-roel.png" width="32" height="32" alt="" />
+                <span class="member__main"><span class="member__name">Roel Ottenheijm</span><span class="member__role">Account director</span></span>
+                <span class="member__actions">
+                  <button class="member__btn" data-toast="New email to Roel Ottenheijm opened"><svg width="20" height="20"><use href="#i-email"/></svg>Email</button>
+                  <button class="member__btn" data-toast="Calling Roel Ottenheijm…"><svg width="20" height="20"><use href="#i-call"/></svg>Call</button>
+                </span>
+              </div>
+              <div class="member">
+                <span class="member__photo member__photo--initials">IW</span>
+                <span class="member__main"><span class="member__name">Inge Willems</span><span class="member__role">Inside sales · quotes &amp; renewals</span></span>
+                <span class="member__actions">
+                  <button class="member__btn" data-toast="New email to Inge Willems opened"><svg width="20" height="20"><use href="#i-email"/></svg>Email</button>
+                  <button class="member__btn" data-toast="Calling Inge Willems…"><svg width="20" height="20"><use href="#i-call"/></svg>Call</button>
+                </span>
+              </div>
+            </div>
+            <div class="team-list" data-tab-panel="escalation" hidden>
+              <div class="member">
+                <span class="member__photo member__photo--initials">24/7</span>
+                <span class="member__main"><span class="member__name">Conscia Service Desk</span><span class="member__role">24/7 · first point of escalation</span></span>
+                <span class="member__actions">
+                  <button class="member__btn" data-toast="New email to the Conscia Service Desk opened"><svg width="20" height="20"><use href="#i-email"/></svg>Email</button>
+                  <button class="member__btn" data-toast="Calling the Conscia Service Desk…"><svg width="20" height="20"><use href="#i-call"/></svg>Call</button>
+                </span>
+              </div>
+              <div class="member">
+                <img class="member__photo" src="assets/team-daan.png" width="32" height="32" alt="" />
+                <span class="member__main"><span class="member__name">Daan Herpers</span><span class="member__role">Service delivery manager · second line</span></span>
+                <span class="member__actions">
+                  <button class="member__btn" data-toast="New email to Daan Herpers opened"><svg width="20" height="20"><use href="#i-email"/></svg>Email</button>
+                  <button class="member__btn" data-toast="Calling Daan Herpers…"><svg width="20" height="20"><use href="#i-call"/></svg>Call</button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- LIFECYCLE PAGE ---------- -->
+      <section id="page-lifecycle" style="display:none">
+        <div class="page-head">
+          <div>
+            <h1>Lifecycle</h1>
+            <div class="page-head__sub">
+              <span class="page-head__live"><span class="pulse"></span>Live · Updated 14:32 CET · 26 May 2026</span>
+              <span class="dot-sep"></span>
+              <span>184 managed devices</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lc-panel">
+          <div class="card lc-summary-card" style="animation-delay:.02s">
+            <div class="card__head">
+              <div class="card__title"><svg width="15" height="15"><use href="#i-layers"/></svg>Hardware lifecycle</div>
+              <button class="btn btn-secondary" data-toast="Generating hardware lifecycle report…"><svg width="16" height="16"><use href="#i-file"/></svg>Generate report</button>
+            </div>
+            <div class="card__body lc-summary">
+              <div class="lc-donut-wrap" data-tip="23 act now · 4 plan now · 17 budget &amp; schedule · 140 no milestone due">
+                <svg class="lc-donut" viewBox="0 0 120 120" width="132" height="132">
+                  <circle class="lc-donut__track" cx="60" cy="60" r="50"/>
+                  <circle class="lc-donut__seg red" cx="60" cy="60" r="50" data-dash="39.27" data-offset="0"/>
+                  <circle class="lc-donut__seg orange" cx="60" cy="60" r="50" data-dash="6.83" data-offset="-39.27"/>
+                  <circle class="lc-donut__seg green" cx="60" cy="60" r="50" data-dash="29.03" data-offset="-46.10"/>
+                </svg>
+                <div class="lc-donut__center"><b>184</b><span>devices</span></div>
+              </div>
+
+              <div class="kpi-grid kpi-grid--4 lc-tiles">
+                <div class="kpi-tile kpi-tile--alert" data-tip="21 × Meraki MR33 reach End-of-Support on 21/07/2026, plus 2 × ASA5506 already past it">
+                  <div class="kpi-tile__head"><span class="kpi-tile__title">Act now</span></div>
+                  <div class="kpi-tile__value"><span data-count="23">0</span></div>
+                  <div class="kpi-tile__label">within <b>3 months</b></div>
+                </div>
+                <div class="kpi-tile kpi-tile--plan" data-tip="4 × ISR4331/K9 — End-of-Sale passed, End-of-Software 24/05/2026">
+                  <div class="kpi-tile__head"><span class="kpi-tile__title">Plan now</span></div>
+                  <div class="kpi-tile__value"><span data-count="4">0</span></div>
+                  <div class="kpi-tile__label">within <b>3-6 months</b></div>
+                </div>
+                <div class="kpi-tile kpi-tile--success" data-tip="17 devices with a milestone more than 6 months out">
+                  <div class="kpi-tile__head"><span class="kpi-tile__title">Budget &amp; Schedule</span></div>
+                  <div class="kpi-tile__value"><span data-count="17">0</span></div>
+                  <div class="kpi-tile__label">within <b>6+ months</b></div>
+                </div>
+                <div class="kpi-tile kpi-tile--cta">
+                  <div class="kpi-tile__head"><span class="kpi-tile__title">Est. investment</span></div>
+                  <div class="kpi-tile__value">€<span data-count="84">0</span>k</div>
+                  <div class="kpi-tile__label">ASA5506 + ISR4331 quote</div>
+                  <button class="btn btn-secondary btn-sm" data-toast="Requesting a full replacement quote from your Conscia account director…"><svg width="16" height="16"><use href="#i-euro"/></svg>Get a quote</button>
+                </div>
+              </div>
+            </div>
+            <div class="lc-summary__foot"><i class="legend-dot neutral"></i>140 devices fully supported — no lifecycle milestone due.</div>
+          </div>
+
+          <div class="lc-table-card" style="animation-delay:.06s">
+            <div class="lc-table-head">
+              <div class="lc-table-title"><i class="legend-dot red"></i>End of support passed - replace immediately <span class="lc-count">(2)</span></div>
+              <span class="lc-info" data-tip="These devices no longer receive vendor security patches. No fix path exists for known CVEs — replace as soon as possible.">
+                <svg width="16" height="16"><use href="#i-info"/></svg>
+              </span>
+            </div>
+            <div class="lc-table-scroll">
+              <table class="lc-table">
+                <thead>
+                  <tr>
+                    <th class="lc-th-check"><button class="lc-checkbox" data-check-all="lcTableSupport" aria-label="Select all"></button></th>
+                    <th class="lc-th-sort" data-sort-table="lcTableSupport">ID<svg width="12" height="12"><use href="#i-chevron-down"/></svg></th>
+                    <th>Device</th>
+                    <th>Hostname</th>
+                    <th>OS</th>
+                    <th>OS version</th>
+                    <th>Serial number</th>
+                    <th>End-Of-Sale</th>
+                    <th>End-Of-Software</th>
+                    <th>End-Of-Support</th>
+                  </tr>
+                </thead>
+                <tbody id="lcTableSupport">
+                  <tr data-id="4102">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">4102</td>
+                    <td>ASA5506-X</td>
+                    <td>FWP1L0S01A1</td>
+                    <td>Cisco ASA</td>
+                    <td>9.8(4)</td>
+                    <td>FGL2114A1BC</td>
+                    <td class="lc-date lc-date--past">29/1/2021</td>
+                    <td class="lc-date lc-date--past">29/1/2022</td>
+                    <td class="lc-date lc-date--past">31/8/2023</td>
+                  </tr>
+                  <tr data-id="4103">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">4103</td>
+                    <td>ASA5506-X</td>
+                    <td>FWP1L0S01A2</td>
+                    <td>Cisco ASA</td>
+                    <td>9.8(4)</td>
+                    <td>FGL2114A2CD</td>
+                    <td class="lc-date lc-date--past">29/1/2021</td>
+                    <td class="lc-date lc-date--past">29/1/2022</td>
+                    <td class="lc-date lc-date--past">24/7/2023</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="lc-table-foot">Showing 2 of 2 devices</div>
+          </div>
+
+          <div class="lc-table-card" style="animation-delay:.08s">
+            <div class="lc-table-head">
+              <div class="lc-table-title"><i class="legend-dot red"></i>End of Support within 3 months - replace now <span class="lc-count">(21)</span></div>
+              <span class="lc-info" data-tip="Meraki MR33 access points lose vendor support on 21/07/2026. Together with the 2 ASA5506 these make up the 23 'Act now' devices.">
+                <svg width="16" height="16"><use href="#i-info"/></svg>
+              </span>
+            </div>
+            <div class="lc-table-scroll">
+              <table class="lc-table">
+                <thead>
+                  <tr>
+                    <th class="lc-th-check"><button class="lc-checkbox" data-check-all="lcTableSoon" aria-label="Select all"></button></th>
+                    <th class="lc-th-sort" data-sort-table="lcTableSoon">ID<svg width="12" height="12"><use href="#i-chevron-down"/></svg></th>
+                    <th>Device</th>
+                    <th>Hostname</th>
+                    <th>OS</th>
+                    <th>OS version</th>
+                    <th>Serial number</th>
+                    <th>End-Of-Sale</th>
+                    <th>End-Of-Software</th>
+                    <th>End-Of-Support</th>
+                  </tr>
+                </thead>
+                <tbody id="lcTableSoon">
+                  <tr data-id="6110">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6110</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W011</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9LM</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6111">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6111</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W012</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9LN</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="lc-table-foot">Showing 2 of 21 devices</div>
+          </div>
+
+          <div class="lc-table-card" style="animation-delay:.12s">
+            <div class="lc-table-head">
+              <div class="lc-table-title"><i class="legend-dot orange"></i>End of Sale passed - Plan replacement <span class="lc-count">(4)</span></div>
+              <span class="lc-info" data-tip="These devices can no longer be purchased new and are approaching End-of-Software. Budget for replacement this year.">
+                <svg width="16" height="16"><use href="#i-info"/></svg>
+              </span>
+            </div>
+            <div class="lc-table-scroll">
+              <table class="lc-table">
+                <thead>
+                  <tr>
+                    <th class="lc-th-check"><button class="lc-checkbox" data-check-all="lcTableSale" aria-label="Select all"></button></th>
+                    <th class="lc-th-sort" data-sort-table="lcTableSale">ID<svg width="12" height="12"><use href="#i-chevron-down"/></svg></th>
+                    <th>Device</th>
+                    <th>Hostname</th>
+                    <th>OS</th>
+                    <th>OS version</th>
+                    <th>Serial number</th>
+                    <th>End-Of-Sale</th>
+                    <th>End-Of-Software</th>
+                    <th>End-Of-Support</th>
+                  </tr>
+                </thead>
+                <tbody id="lcTableSale">
+                  <tr data-id="5210">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">5210</td>
+                    <td>ISR4331/K9</td>
+                    <td>RTP1C0M001</td>
+                    <td>Cisco IOS XE</td>
+                    <td>17.3.4</td>
+                    <td>FDO2345A1EF</td>
+                    <td class="lc-date lc-date--past">31/10/2023</td>
+                    <td class="lc-date lc-date--soon">24/5/2026</td>
+                    <td class="lc-date">31/10/2028</td>
+                  </tr>
+                  <tr data-id="5211">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">5211</td>
+                    <td>ISR4331/K9</td>
+                    <td>RTP1C0M002</td>
+                    <td>Cisco IOS XE</td>
+                    <td>17.3.4</td>
+                    <td>FDO2345A2GH</td>
+                    <td class="lc-date lc-date--past">31/10/2023</td>
+                    <td class="lc-date lc-date--soon">24/5/2026</td>
+                    <td class="lc-date">31/10/2028</td>
+                  </tr>
+                  <tr data-id="5212">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">5212</td>
+                    <td>ISR4331/K9</td>
+                    <td>RTP1C0M003</td>
+                    <td>Cisco IOS XE</td>
+                    <td>17.3.4</td>
+                    <td>FDO2345A3IJ</td>
+                    <td class="lc-date lc-date--past">31/10/2023</td>
+                    <td class="lc-date lc-date--soon">24/5/2026</td>
+                    <td class="lc-date">31/10/2028</td>
+                  </tr>
+                  <tr data-id="5213">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">5213</td>
+                    <td>ISR4331/K9</td>
+                    <td>RTP1C0M004</td>
+                    <td>Cisco IOS XE</td>
+                    <td>17.3.4</td>
+                    <td>FDO2345A4KL</td>
+                    <td class="lc-date lc-date--past">31/10/2023</td>
+                    <td class="lc-date lc-date--soon">24/5/2026</td>
+                    <td class="lc-date">31/10/2028</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="lc-table-foot">Showing 4 of 4 devices</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- DEVICES PAGE ---------- -->
+      <section id="page-devices" style="display:none">
+        <div class="page-head">
+          <div>
+            <h1>Devices</h1>
+            <div class="page-head__sub">
+              <span class="page-head__live"><span class="pulse"></span>Live · Updated 14:32 CET · 26 May 2026</span>
+              <span class="dot-sep"></span>
+              <span>184 managed devices</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lc-panel">
+          <div class="lc-table-card" style="animation-delay:.02s">
+            <div class="lc-table-head">
+              <div class="lc-table-title">All devices <span class="lc-count">(184)</span></div>
+            </div>
+            <div class="lc-table-scroll">
+              <table class="lc-table">
+                <thead>
+                  <tr>
+                    <th class="lc-th-check"><button class="lc-checkbox" data-check-all="lcTableAll" aria-label="Select all"></button></th>
+                    <th class="lc-th-sort" data-sort-table="lcTableAll">ID<svg width="12" height="12"><use href="#i-chevron-down"/></svg></th>
+                    <th>Device</th>
+                    <th>Hostname</th>
+                    <th>OS</th>
+                    <th>Site</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="lcTableAll">
+                  <tr data-id="4102"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">4102</td><td>ASA5506-X</td><td>FWP1L0S01A1</td><td>Cisco ASA</td><td>HQ — Uden</td><td><span class="pill pill-critical">Replace now</span></td></tr>
+                  <tr data-id="4103"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">4103</td><td>ASA5506-X</td><td>FWP1L0S01A2</td><td>Cisco ASA</td><td>HQ — Uden</td><td><span class="pill pill-critical">Replace now</span></td></tr>
+                  <tr data-id="5210"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">5210</td><td>ISR4331/K9</td><td>RTP1C0M001</td><td>Cisco IOS XE</td><td>HQ — Uden</td><td><span class="pill pill-orange">Plan replacement</span></td></tr>
+                  <tr data-id="5211"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">5211</td><td>ISR4331/K9</td><td>RTP1C0M002</td><td>Cisco IOS XE</td><td>DR site — Veghel</td><td><span class="pill pill-orange">Plan replacement</span></td></tr>
+                  <tr data-id="5212"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">5212</td><td>ISR4331/K9</td><td>RTP1C0M003</td><td>Cisco IOS XE</td><td>DR site — Veghel</td><td><span class="pill pill-orange">Plan replacement</span></td></tr>
+                  <tr data-id="5213"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">5213</td><td>ISR4331/K9</td><td>RTP1C0M004</td><td>Cisco IOS XE</td><td>Branch — Oss</td><td><span class="pill pill-orange">Plan replacement</span></td></tr>
+                  <tr data-id="6110"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">6110</td><td>Meraki MR33</td><td>APP1L1W011</td><td>Meraki</td><td>HQ — Uden</td><td><span class="pill pill-critical">Replace within 3 months</span></td></tr>
+                  <tr data-id="6111"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">6111</td><td>Meraki MR33</td><td>APP1L1W012</td><td>Meraki</td><td>HQ — Uden</td><td><span class="pill pill-critical">Replace within 3 months</span></td></tr>
+                  <tr data-id="6001"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">6001</td><td>Catalyst 9300-48P</td><td>SWP2L1C001</td><td>Cisco IOS XE</td><td>HQ — Uden</td><td><span class="pill pill-neutral">Supported</span></td></tr>
+                  <tr data-id="6002"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">6002</td><td>Catalyst 9300-48P</td><td>SWP2L1C002</td><td>Cisco IOS XE</td><td>HQ — Uden</td><td><span class="pill pill-neutral">Supported</span></td></tr>
+                  <tr data-id="6103"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">6103</td><td>Meraki MR46</td><td>APP3L2W001</td><td>Meraki</td><td>Branch — Oss</td><td><span class="pill pill-neutral">Supported</span></td></tr>
+                  <tr data-id="6104"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">6104</td><td>Meraki MR46</td><td>APP3L2W002</td><td>Meraki</td><td>Branch — Oss</td><td><span class="pill pill-neutral">Supported</span></td></tr>
+                  <tr data-id="4087"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">4087</td><td>FPR-2130</td><td>FPP1L0H0</td><td>Cisco FTD</td><td>HQ — Uden</td><td><span class="pill pill-neutral">Supported</span></td></tr>
+                  <tr data-id="7001"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">7001</td><td>Dell PowerEdge R650</td><td>SRV-DC01</td><td>Windows Server 2022</td><td>HQ — Uden</td><td><span class="pill pill-neutral">Supported</span></td></tr>
+                  <tr data-id="7002"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">7002</td><td>Dell PowerEdge R650</td><td>SRV-FILE02</td><td>Windows Server 2019</td><td>DR site — Veghel</td><td><span class="pill pill-neutral">Supported</span></td></tr>
+                  <tr data-id="8231"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">8231</td><td>Dell Latitude 5440</td><td>WKS-0231</td><td>Windows 11</td><td>HQ — Uden</td><td><span class="pill pill-neutral">Supported</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="lc-pagination">
+              <span class="lc-pagination__count">Showing 1–16 of 184 devices</span>
+              <div class="lc-pagination__pages">
+                <button class="lc-page-btn" data-lc-page="prev" aria-label="Previous page"><svg width="14" height="14" style="transform:scaleX(-1)"><use href="#i-chevron-right"/></svg></button>
+                <button class="lc-page-btn active">1</button>
+                <button class="lc-page-btn" data-lc-page="2">2</button>
+                <button class="lc-page-btn" data-lc-page="3">3</button>
+                <button class="lc-page-btn" data-lc-page="4">4</button>
+                <button class="lc-page-btn" data-lc-page="next" aria-label="Next page"><svg width="14" height="14"><use href="#i-chevron-right"/></svg></button>
+              </div>
+              <label class="lc-pagination__perpage">Items per page
+                <select id="lcPerPage">
+                  <option>16</option>
+                  <option>25</option>
+                  <option>50</option>
+                  <option>100</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- ALARMS PAGE ---------- -->
+      <section id="page-alarms" style="display:none">
+        <div class="page-head">
+          <div>
+            <h1>Alarms</h1>
+            <div class="page-head__sub">
+              <span class="page-head__live"><span class="pulse"></span>Live · Updated 14:32 CET · 26 May 2026</span>
+              <span class="dot-sep"></span>
+              <span>184 managed devices</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lock-wrap lock-wrap--page">
+          <div class="lock-body blurred" id="alarmsBody" aria-hidden="true">
+        <div class="al-summary">
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-disaster"><svg width="20" height="20"><use href="#i-alert-triangle"/></svg></span>
+            <div><div class="al-sev-card__value">2</div><div class="al-sev-card__label">Disaster</div></div>
+          </div>
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-high"><svg width="20" height="20"><use href="#i-alert-triangle"/></svg></span>
+            <div><div class="al-sev-card__value">4</div><div class="al-sev-card__label">High</div></div>
+          </div>
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-average"><svg width="20" height="20"><use href="#i-bell"/></svg></span>
+            <div><div class="al-sev-card__value">34</div><div class="al-sev-card__label">Average</div></div>
+          </div>
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-warning"><svg width="20" height="20"><use href="#i-bell"/></svg></span>
+            <div><div class="al-sev-card__value">58</div><div class="al-sev-card__label">Warning</div></div>
+          </div>
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-info"><svg width="20" height="20"><use href="#i-info"/></svg></span>
+            <div><div class="al-sev-card__value">42</div><div class="al-sev-card__label">Information</div></div>
+          </div>
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-unclassified"><svg width="20" height="20"><use href="#i-help"/></svg></span>
+            <div><div class="al-sev-card__value">9</div><div class="al-sev-card__label">Unclassified</div></div>
+          </div>
+        </div>
+
+        <div class="al-filters">
+          <label class="al-filter">Filter<input type="text" id="alFilterText" placeholder="Search problem or hostname…"></label>
+          <label class="al-filter">Site
+            <select id="alFilterSite">
+              <option value="">All sites</option>
+              <option value="HQ — Uden">HQ — Uden</option>
+              <option value="DR site — Veghel">DR site — Veghel</option>
+              <option value="Branch — Oss">Branch — Oss</option>
+            </select>
+          </label>
+          <label class="al-filter">Severity
+            <select id="alFilterSeverity">
+              <option value="">All severities</option>
+              <option value="disaster">Disaster</option>
+              <option value="high">High</option>
+              <option value="average">Average</option>
+              <option value="warning">Warning</option>
+              <option value="information">Information</option>
+              <option value="unclassified">Unclassified</option>
+            </select>
+          </label>
+          <label class="al-filter">Source
+            <select id="alFilterSource">
+              <option value="">All sources</option>
+              <option value="Consciana Monitor">Consciana Monitor</option>
+              <option value="SNMP Trap">SNMP Trap</option>
+              <option value="Syslog">Syslog</option>
+              <option value="Manual">Manual</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="tabline">
+          <button class="tabline__item active" id="alTabActive">Active Alarms</button>
+          <button class="tabline__item" id="alTabAll">All Alarms</button>
+        </div>
+
+        <div class="lc-table-card">
+          <div class="lc-table-scroll">
+            <table class="lc-table al-table">
+              <thead>
+                <tr>
+                  <th>Severity</th>
+                  <th>Site</th>
+                  <th>Time</th>
+                  <th>Problem</th>
+                  <th>Hostname</th>
+                  <th>Host IP</th>
+                  <th>Incident</th>
+                  <th>Duration</th>
+                  <th>Resolved At</th>
+                  <th>Source</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="alTableBody">
+                <tr data-status="active" data-severity="disaster" data-site="HQ — Uden" data-source="Consciana Monitor">
+                  <td><span class="al-sev-pill sev-disaster">Disaster</span></td>
+                  <td>HQ — Uden</td>
+                  <td>26/05/2026 14:18</td>
+                  <td>Core router down</td>
+                  <td><a href="#" class="al-link" data-toast="Opening RPP1L2C001H1">RPP1L2C001H1</a></td>
+                  <td>10.20.0.1</td>
+                  <td><a href="#" class="al-link" data-toast="Opening incident 30012">30012</a></td>
+                  <td>14 min</td>
+                  <td>—</td>
+                  <td>Consciana Monitor</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="active" data-severity="high" data-site="HQ — Uden" data-source="Consciana Monitor">
+                  <td><span class="al-sev-pill sev-high">High</span></td>
+                  <td>HQ — Uden</td>
+                  <td>26/05/2026 12:32</td>
+                  <td>High CPU on firewall</td>
+                  <td><a href="#" class="al-link" data-toast="Opening FPP1L0H0">FPP1L0H0</a></td>
+                  <td>10.20.0.5</td>
+                  <td><a href="#" class="al-link" data-toast="Opening incident 30011">30011</a></td>
+                  <td>2 h 0 min</td>
+                  <td>—</td>
+                  <td>Consciana Monitor</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr class="al-acknowledged" data-status="active" data-severity="disaster" data-site="DR site — Veghel" data-source="SNMP Trap">
+                  <td><span class="al-sev-pill sev-disaster">Disaster</span></td>
+                  <td>DR site — Veghel</td>
+                  <td>26/05/2026 09:50</td>
+                  <td>Interface Gi0/1 down</td>
+                  <td><a href="#" class="al-link" data-toast="Opening RTP1C0M002">RTP1C0M002</a></td>
+                  <td>10.20.1.12</td>
+                  <td><a href="#" class="al-link" data-toast="Opening incident 30009">30009</a></td>
+                  <td>4 h 42 min</td>
+                  <td>—</td>
+                  <td>SNMP Trap</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="active" data-severity="high" data-site="HQ — Uden" data-source="Consciana Monitor">
+                  <td><span class="al-sev-pill sev-high">High</span></td>
+                  <td>HQ — Uden</td>
+                  <td>25/05/2026 20:10</td>
+                  <td>Used disk space is more than 90% on volume /</td>
+                  <td><a href="#" class="al-link" data-toast="Opening SRV-DC01">SRV-DC01</a></td>
+                  <td>10.20.2.10</td>
+                  <td><a href="#" class="al-link" data-toast="Opening incident 29988">29988</a></td>
+                  <td>18 h 22 min</td>
+                  <td>—</td>
+                  <td>Consciana Monitor</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="active" data-severity="average" data-site="Branch — Oss" data-source="Syslog">
+                  <td><span class="al-sev-pill sev-average">Average</span></td>
+                  <td>Branch — Oss</td>
+                  <td>25/05/2026 08:15</td>
+                  <td>Container consciana_collector_1 has been restarted</td>
+                  <td><a href="#" class="al-link" data-toast="Opening SWP2L1C001">SWP2L1C001</a></td>
+                  <td>10.20.3.4</td>
+                  <td><a href="#" class="al-link" data-toast="Opening incident 29965">29965</a></td>
+                  <td>1 day, 6 h</td>
+                  <td>—</td>
+                  <td>Syslog</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="active" data-severity="average" data-site="Branch — Oss" data-source="Consciana Monitor">
+                  <td><span class="al-sev-pill sev-average">Average</span></td>
+                  <td>Branch — Oss</td>
+                  <td>24/05/2026 22:40</td>
+                  <td>High memory utilization (&gt;85%)</td>
+                  <td><a href="#" class="al-link" data-toast="Opening APP3L2W001">APP3L2W001</a></td>
+                  <td>10.20.3.20</td>
+                  <td><a href="#" class="al-link" data-toast="Opening incident 29958">29958</a></td>
+                  <td>1 day, 15 h</td>
+                  <td>—</td>
+                  <td>Consciana Monitor</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="active" data-severity="warning" data-site="HQ — Uden" data-source="Consciana Monitor">
+                  <td><span class="al-sev-pill sev-warning">Warning</span></td>
+                  <td>HQ — Uden</td>
+                  <td>23/05/2026 11:05</td>
+                  <td>SSL certificate expires in 14 days</td>
+                  <td><a href="#" class="al-link" data-toast="Opening FWP1L0S01A1">FWP1L0S01A1</a></td>
+                  <td>10.20.0.2</td>
+                  <td><a href="#" class="al-link" data-toast="Opening incident 29901">29901</a></td>
+                  <td>3 days, 3 h</td>
+                  <td>—</td>
+                  <td>Consciana Monitor</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="resolved" data-severity="warning" data-site="DR site — Veghel" data-source="Syslog" hidden>
+                  <td><span class="al-sev-pill sev-warning">Warning</span></td>
+                  <td>DR site — Veghel</td>
+                  <td>22/05/2026 07:30</td>
+                  <td>NTP time sync lost</td>
+                  <td><a href="#" class="al-link" data-toast="Opening RTP1C0M003">RTP1C0M003</a></td>
+                  <td>10.20.5.6</td>
+                  <td><a href="#" class="al-link" data-toast="Opening incident 29877">29877</a></td>
+                  <td>4 h 10 min</td>
+                  <td>22/05/2026 11:40</td>
+                  <td>Syslog</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="active" data-severity="information" data-site="DR site — Veghel" data-source="Manual">
+                  <td><span class="al-sev-pill sev-info">Information</span></td>
+                  <td>DR site — Veghel</td>
+                  <td>21/05/2026 03:12</td>
+                  <td>Configuration backup completed</td>
+                  <td><a href="#" class="al-link" data-toast="Opening SRV-FILE02">SRV-FILE02</a></td>
+                  <td>10.20.5.20</td>
+                  <td><a href="#" class="al-link" data-toast="Opening incident 29844">29844</a></td>
+                  <td>5 days, 11 h</td>
+                  <td>—</td>
+                  <td>Manual</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="active" data-severity="unclassified" data-site="HQ — Uden" data-source="SNMP Trap">
+                  <td><span class="al-sev-pill sev-unclassified">Unclassified</span></td>
+                  <td>HQ — Uden</td>
+                  <td>20/05/2026 16:48</td>
+                  <td>SNMP timeout</td>
+                  <td><a href="#" class="al-link" data-toast="Opening WKS-0231">WKS-0231</a></td>
+                  <td>10.20.2.31</td>
+                  <td><a href="#" class="al-link" data-toast="Opening incident 29820">29820</a></td>
+                  <td>5 days, 22 h</td>
+                  <td>—</td>
+                  <td>SNMP Trap</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="resolved" data-severity="high" data-site="HQ — Uden" data-source="Consciana Monitor" hidden>
+                  <td><span class="al-sev-pill sev-high">High</span></td>
+                  <td>HQ — Uden</td>
+                  <td>18/05/2026 09:00</td>
+                  <td>Host became unavailable by ICMP ping</td>
+                  <td><a href="#" class="al-link" data-toast="Opening SWP2L1C002">SWP2L1C002</a></td>
+                  <td>10.20.1.13</td>
+                  <td><a href="#" class="al-link" data-toast="Opening incident 29750">29750</a></td>
+                  <td>3 h 12 min</td>
+                  <td>18/05/2026 12:12</td>
+                  <td>Consciana Monitor</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="resolved" data-severity="average" data-site="Branch — Oss" data-source="SNMP Trap" hidden>
+                  <td><span class="al-sev-pill sev-average">Average</span></td>
+                  <td>Branch — Oss</td>
+                  <td>15/05/2026 14:20</td>
+                  <td>Interface errors above threshold</td>
+                  <td><a href="#" class="al-link" data-toast="Opening APP3L2W002">APP3L2W002</a></td>
+                  <td>10.20.3.21</td>
+                  <td><a href="#" class="al-link" data-toast="Opening incident 29688">29688</a></td>
+                  <td>6 h 5 min</td>
+                  <td>15/05/2026 20:25</td>
+                  <td>SNMP Trap</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="resolved" data-severity="warning" data-site="HQ — Uden" data-source="Consciana Monitor" hidden>
+                  <td><span class="al-sev-pill sev-warning">Warning</span></td>
+                  <td>HQ — Uden</td>
+                  <td>10/05/2026 06:00</td>
+                  <td>Disk space warning cleared after cleanup</td>
+                  <td><a href="#" class="al-link" data-toast="Opening SRV-DC01">SRV-DC01</a></td>
+                  <td>10.20.2.10</td>
+                  <td><a href="#" class="al-link" data-toast="Opening incident 29511">29511</a></td>
+                  <td>2 h 40 min</td>
+                  <td>10/05/2026 08:40</td>
+                  <td>Consciana Monitor</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="resolved" data-severity="information" data-site="HQ — Uden" data-source="Manual" hidden>
+                  <td><span class="al-sev-pill sev-info">Information</span></td>
+                  <td>HQ — Uden</td>
+                  <td>05/05/2026 09:00</td>
+                  <td>Firmware update completed</td>
+                  <td><a href="#" class="al-link" data-toast="Opening FWP1L0S01A2">FWP1L0S01A2</a></td>
+                  <td>10.20.0.3</td>
+                  <td><a href="#" class="al-link" data-toast="Opening incident 29400">29400</a></td>
+                  <td>45 min</td>
+                  <td>05/05/2026 09:45</td>
+                  <td>Manual</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="al-empty" id="alEmptyState" hidden>No alarms match your filters.</div>
+          </div>
+          <div class="lc-table-foot" id="alTableFoot">Showing 9 of 9 active alarms</div>
+        </div>
+          </div>
+          <div class="locked-overlay" id="alarmsOverlayPage">
+            <p>Your current tier does not grant access to Alarms.</p>
+            <button class="btn btn-primary" data-open-modal="upgradeModal"><svg width="18" height="18"><use href="#i-upgrade"/></svg>Upgrade tier</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- ADVISORIES (CVEs) PAGE ---------- -->
+      <section id="page-cves" style="display:none">
+        <div class="page-head">
+          <div>
+            <h1>Advisories</h1>
+            <div class="page-head__sub">
+              <span class="page-head__live"><span class="pulse"></span>Live · Updated 14:32 CET · 26 May 2026</span>
+              <span class="dot-sep"></span>
+              <span>184 managed devices</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="adv-page" id="cvesBody">
+            <div class="al-filters adv-filters">
+              <label class="al-filter">Filter<input type="text" id="cvesFilterText" placeholder="Search title or CVE…"></label>
+              <label class="al-filter">Severity<input type="text" id="cvesFilterSeverity" placeholder="Search…"></label>
+              <label class="al-filter">Vendor<input type="text" id="cvesFilterVendor" placeholder="Search…"></label>
+              <label class="al-filter">OS<input type="text" id="cvesFilterOs" placeholder="Search…"></label>
+              <label class="al-filter">OS version<input type="text" id="cvesFilterOsVersion" placeholder="Search…"></label>
+            </div>
+
+            <div class="adv-toggles">
+              <label class="adv-toggle"><input type="checkbox" id="cvesOnlyAffected" checked>Show advisories with affected devices only</label>
+              <label class="adv-toggle"><input type="checkbox" id="cvesOnlyActive" checked>Only count active devices</label>
+            </div>
+
+            <div class="adv-sync">
+              <span>The last synchronization with <b>Cisco:</b> 26.05.2026 14:12 &nbsp;&nbsp; <b>PaloAlto:</b> 26.05.2026 05:00 &nbsp;&nbsp; <b>PSIRT matching:</b> 26.05.2026 14:12</span>
+              <span class="rel">
+                <button class="al-actions-btn" id="cvesSyncMenuBtn" aria-label="Sync options"><svg width="16" height="16"><use href="#i-more"/></svg></button>
+                <div class="dropdown" id="cvesSyncMenu" style="right:0;top:32px">
+                  <div class="dropdown-item" data-toast="Forcing a fresh sync with Cisco PSIRT and PaloAlto…">Force resync now</div>
+                  <div class="dropdown-item" data-toast="Opening sync log">View sync log</div>
+                </div>
+              </span>
+            </div>
+
+            <div class="lc-table-card">
+              <div class="lc-table-scroll">
+                <table class="lc-table adv-table">
+                  <thead>
+                    <tr>
+                      <th>Advisory title</th>
+                      <th>CVEs</th>
+                      <th>Severity</th>
+                      <th>Version</th>
+                      <th>Vendor</th>
+                      <th>Last updated</th>
+                      <th>Related devices</th>
+                      <th>Vulnerable</th>
+                      <th>Not vulnerable</th>
+                      <th>Not checked</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cvesTableBody">
+                    <tr data-severity="critical" data-vendor="cisco" data-os="asa" data-osver="9.8(4)" data-related="2">
+                      <td class="adv-title-cell">Cisco Secure Firewall ASA Software Denial of Service Vulnerability</td>
+                      <td><a href="#" class="al-link" data-toast="Opening CVE-2024-20356 detail">CVE-2024-20356</a></td>
+                      <td><span class="adv-sev-pill critical">Critical</span></td>
+                      <td>1.0</td>
+                      <td><span class="adv-vendor-pill">Cisco</span></td>
+                      <td>26.05.2026 09:12</td>
+                      <td>2</td><td>2</td><td>0</td><td>0</td>
+                    </tr>
+                    <tr data-severity="high" data-vendor="cisco" data-os="ftd" data-osver="7.2" data-related="1">
+                      <td class="adv-title-cell">Cisco Firepower Threat Defense Software Command Injection Vulnerability</td>
+                      <td><a href="#" class="al-link" data-toast="Opening CVE-2024-20399 detail">CVE-2024-20399</a></td>
+                      <td><span class="adv-sev-pill high">High</span></td>
+                      <td>1.0</td>
+                      <td><span class="adv-vendor-pill">Cisco</span></td>
+                      <td>24.05.2026 08:00</td>
+                      <td>1</td><td>1</td><td>0</td><td>0</td>
+                    </tr>
+                    <tr data-severity="medium" data-vendor="cisco" data-os="ios xe" data-osver="17.3.4" data-related="4">
+                      <td class="adv-title-cell">Cisco IOS XE Software Denial of Service Vulnerability</td>
+                      <td><a href="#" class="al-link" data-toast="Opening CVE-2025-20110 detail">CVE-2025-20110</a></td>
+                      <td><span class="adv-sev-pill medium">Medium</span></td>
+                      <td>1.1</td>
+                      <td><span class="adv-vendor-pill">Cisco</span></td>
+                      <td>22.05.2026 19:43</td>
+                      <td>4</td><td>0</td><td>4</td><td>0</td>
+                    </tr>
+                    <tr data-severity="high" data-vendor="cisco" data-os="ios xe" data-osver="17.3.4" data-related="4">
+                      <td class="adv-title-cell">Cisco IOS XE Software for Cisco Catalyst and Rugged Series Switches Secure Boot Bypass Vulnerability</td>
+                      <td><a href="#" class="al-link" data-toast="Opening CVE-2025-20104 detail">CVE-2025-20104</a></td>
+                      <td><span class="adv-sev-pill high">High</span></td>
+                      <td>1.0</td>
+                      <td><span class="adv-vendor-pill">Cisco</span></td>
+                      <td>20.05.2026 16:00</td>
+                      <td>4</td><td>0</td><td>0</td><td>4</td>
+                    </tr>
+                    <tr data-severity="high" data-vendor="cisco" data-os="ios xe" data-osver="17.3.4" data-related="2">
+                      <td class="adv-title-cell">Cisco IOS XE Software for Catalyst 9000 Series Switches DHCP Snooping Vulnerability</td>
+                      <td><a href="#" class="al-link" data-toast="Opening CVE-2025-20084 detail">CVE-2025-20084</a></td>
+                      <td><span class="adv-sev-pill high">High</span></td>
+                      <td>1.0</td>
+                      <td><span class="adv-vendor-pill">Cisco</span></td>
+                      <td>18.05.2026 16:00</td>
+                      <td>2</td><td>0</td><td>2</td><td>0</td>
+                    </tr>
+                    <tr data-severity="medium" data-vendor="cisco" data-os="ios xe" data-osver="17.3.4" data-related="4">
+                      <td class="adv-title-cell">Cisco IOx Application Hosting Environment Stored Cross-Site Scripting Vulnerability</td>
+                      <td><a href="#" class="al-link" data-toast="Opening CVE-2025-20112 detail">CVE-2025-20112</a></td>
+                      <td><span class="adv-sev-pill medium">Medium</span></td>
+                      <td>1.0</td>
+                      <td><span class="adv-vendor-pill">Cisco</span></td>
+                      <td>15.05.2026 16:00</td>
+                      <td>4</td><td>0</td><td>0</td><td>4</td>
+                    </tr>
+                    <tr data-severity="medium" data-vendor="cisco" data-os="meraki" data-osver="—" data-related="2">
+                      <td class="adv-title-cell">Cisco IOS XE Software Secure Channel for Meraki Information Disclosure Vulnerability</td>
+                      <td><a href="#" class="al-link" data-toast="Opening CVE-2025-20115 detail">CVE-2025-20115</a></td>
+                      <td><span class="adv-sev-pill medium">Medium</span></td>
+                      <td>1.0</td>
+                      <td><span class="adv-vendor-pill">Cisco</span></td>
+                      <td>12.05.2026 16:00</td>
+                      <td>2</td><td>0</td><td>2</td><td>0</td>
+                    </tr>
+                    <tr data-severity="high" data-vendor="cisco" data-os="asa" data-osver="9.8(4)" data-related="3">
+                      <td class="adv-title-cell">Cisco IOS, IOS XE, Secure Firewall Adaptive Security Appliance, and Secure Firewall Threat Defense Software IKEv2 Denial of Service Vulnerability</td>
+                      <td><a href="#" class="al-link" data-toast="Opening CVE-2025-20012 detail">CVE-2025-20012</a></td>
+                      <td><span class="adv-sev-pill high">High</span></td>
+                      <td>1.0</td>
+                      <td><span class="adv-vendor-pill">Cisco</span></td>
+                      <td>08.05.2026 16:00</td>
+                      <td>3</td><td>1</td><td>2</td><td>0</td>
+                    </tr>
+                    <tr data-severity="high" data-vendor="cisco" data-os="ios xe" data-osver="17.3.4" data-related="2">
+                      <td class="adv-title-cell">Cisco IOS XE Software TLS Memory Exhaustion Denial of Service Vulnerability</td>
+                      <td><a href="#" class="al-link" data-toast="Opening CVE-2025-20004 detail">CVE-2025-20004</a></td>
+                      <td><span class="adv-sev-pill high">High</span></td>
+                      <td>1.0</td>
+                      <td><span class="adv-vendor-pill">Cisco</span></td>
+                      <td>20.04.2026 16:00</td>
+                      <td>2</td><td>0</td><td>2</td><td>0</td>
+                    </tr>
+                    <tr data-severity="medium" data-vendor="cisco" data-os="ios xe" data-osver="17.3.4" data-related="4">
+                      <td class="adv-title-cell">Cisco IOS XE Software Lobby Ambassador Privilege Escalation Vulnerability</td>
+                      <td><a href="#" class="al-link" data-toast="Opening CVE-2025-20114 detail">CVE-2025-20114</a></td>
+                      <td><span class="adv-sev-pill medium">Medium</span></td>
+                      <td>1.0</td>
+                      <td><span class="adv-vendor-pill">Cisco</span></td>
+                      <td>15.04.2026 16:00</td>
+                      <td>4</td><td>0</td><td>0</td><td>4</td>
+                    </tr>
+                    <tr data-severity="medium" data-vendor="cisco" data-os="nexus" data-osver="—" data-related="0">
+                      <td class="adv-title-cell">Cisco Nexus 3000 and 9000 Series Switches Border Gateway Protocol Denial of Service Vulnerability</td>
+                      <td><a href="#" class="al-link" data-toast="Opening CVE-2025-20171 detail">CVE-2025-20171</a></td>
+                      <td><span class="adv-sev-pill medium">Medium</span></td>
+                      <td>1.0</td>
+                      <td><span class="adv-vendor-pill">Cisco</span></td>
+                      <td>10.05.2026 16:00</td>
+                      <td>0</td><td>0</td><td>0</td><td>0</td>
+                    </tr>
+                    <tr data-severity="critical" data-vendor="cisco" data-os="fmc" data-osver="—" data-related="0">
+                      <td class="adv-title-cell">Cisco Secure Firewall Management Center Software Remote Code Execution Vulnerability</td>
+                      <td><a href="#" class="al-link" data-toast="Opening CVE-2025-20131 detail">CVE-2025-20131</a></td>
+                      <td><span class="adv-sev-pill critical">Critical</span></td>
+                      <td>1.2</td>
+                      <td><span class="adv-vendor-pill">Cisco</span></td>
+                      <td>05.05.2026 14:21</td>
+                      <td>0</td><td>0</td><td>0</td><td>0</td>
+                    </tr>
+                    <tr data-severity="high" data-vendor="cisco" data-os="nexus" data-osver="—" data-related="0">
+                      <td class="adv-title-cell">Cisco Nexus 3600 and 9500-R Series Switching Platforms Layer 2 Loop Denial of Service Vulnerability</td>
+                      <td><a href="#" class="al-link" data-toast="Opening CVE-2025-20051 detail">CVE-2025-20051</a></td>
+                      <td><span class="adv-sev-pill high">High</span></td>
+                      <td>1.0</td>
+                      <td><span class="adv-vendor-pill">Cisco</span></td>
+                      <td>01.05.2026 16:00</td>
+                      <td>0</td><td>0</td><td>0</td><td>0</td>
+                    </tr>
+                    <tr data-severity="high" data-vendor="cisco" data-os="wireless" data-osver="—" data-related="0">
+                      <td class="adv-title-cell">Cisco IOS XE Wireless Controller Software for the Catalyst CW9800 Family CAPWAP Denial of Service Vulnerability</td>
+                      <td><a href="#" class="al-link" data-toast="Opening CVE-2025-20086 detail">CVE-2025-20086</a></td>
+                      <td><span class="adv-sev-pill high">High</span></td>
+                      <td>1.0</td>
+                      <td><span class="adv-vendor-pill">Cisco</span></td>
+                      <td>28.04.2026 16:00</td>
+                      <td>0</td><td>0</td><td>0</td><td>0</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="al-empty" id="cvesEmptyState" hidden>No advisories match your filters.</div>
+              </div>
+              <div class="lc-table-foot" id="cvesTableFoot">Showing 10 of 14 advisories</div>
+            </div>
+          </div>
+
+      </section>
+
+      <!-- ---------- CASES PAGE ---------- -->
+      <section id="page-cases" style="display:none">
+        <div class="page-head">
+          <div>
+            <h1>Cases</h1>
+            <div class="page-head__sub">
+              <span class="page-head__live"><span class="pulse"></span>Connected to ServiceNow · synced 2 min ago</span>
+              <span class="dot-sep"></span>
+              <span>184 managed devices</span>
+            </div>
+          </div>
+          <div class="page-head__actions">
+            <button class="btn btn-primary" data-toast="Opening the new case form in ServiceNow…"><svg width="16" height="16"><use href="#i-plus"/></svg>New case</button>
+          </div>
+        </div>
+
+        <div class="al-summary cs-summary">
+          <div class="al-sev-card al-sev-card--alert">
+            <span class="al-sev-card__icon sev-disaster"><svg width="20" height="20"><use href="#i-alert-triangle"/></svg></span>
+            <div><div class="al-sev-card__value">2</div><div class="al-sev-card__label">Open incidents</div></div>
+          </div>
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-info"><svg width="20" height="20"><use href="#i-ticket"/></svg></span>
+            <div><div class="al-sev-card__value">4</div><div class="al-sev-card__label">Open cases</div></div>
+          </div>
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-average"><svg width="20" height="20"><use href="#i-user"/></svg></span>
+            <div><div class="al-sev-card__value">2</div><div class="al-sev-card__label">Awaiting you</div></div>
+          </div>
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-high"><svg width="20" height="20"><use href="#i-clock"/></svg></span>
+            <div><div class="al-sev-card__value">1</div><div class="al-sev-card__label">At risk (SLA)</div></div>
+          </div>
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-low"><svg width="20" height="20"><use href="#i-check-circle"/></svg></span>
+            <div><div class="al-sev-card__value">4</div><div class="al-sev-card__label">Resolved (30d)</div></div>
+          </div>
+        </div>
+
+        <div class="al-filters cs-filters">
+          <label class="al-filter">Filter<input type="text" id="csFilterText" placeholder="Search number or description…"></label>
+          <label class="al-filter">State
+            <select id="csFilterState">
+              <option value="">All states</option>
+              <option value="in progress">In Progress</option>
+              <option value="awaiting customer">Awaiting customer</option>
+              <option value="resolved">Resolved</option>
+              <option value="closed">Closed</option>
+            </select>
+          </label>
+          <label class="al-filter">Priority
+            <select id="csFilterPriority">
+              <option value="">All priorities</option>
+              <option value="p1">P1 - Critical</option>
+              <option value="p2">P2 - High</option>
+              <option value="p3">P3 - Moderate</option>
+              <option value="p4">P4 - Low</option>
+            </select>
+          </label>
+          <label class="al-filter">Assignment group
+            <select id="csFilterGroup">
+              <option value="">All groups</option>
+              <option value="Network Operations">Network Operations</option>
+              <option value="Security Operations">Security Operations</option>
+              <option value="Procurement">Procurement</option>
+              <option value="Finance &amp; IT Leadership">Finance &amp; IT Leadership</option>
+              <option value="Service Desk">Service Desk</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="tabline">
+          <button class="tabline__item active" id="csTabOpen">Open Cases</button>
+          <button class="tabline__item" id="csTabAll">All Cases</button>
+        </div>
+
+        <div class="lc-table-card">
+          <div class="lc-table-scroll">
+            <table class="lc-table cs-table">
+              <thead>
+                <tr>
+                  <th>Number</th>
+                  <th>Short description</th>
+                  <th>Priority</th>
+                  <th>State</th>
+                  <th>Assignment group</th>
+                  <th>Assigned to</th>
+                  <th>Category</th>
+                  <th>Opened</th>
+                  <th>Updated</th>
+                  <th>SLA</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="csTableBody">
+                <tr data-status="open" data-state="in progress" data-priority="p1" data-group="Network Operations">
+                  <td><a href="#" class="al-link" data-toast="Opening INC0089412 in ServiceNow">INC0089412</a></td>
+                  <td class="adv-title-cell">Core router down — RPP1L2C001H1 unreachable</td>
+                  <td><span class="al-sev-pill p1">P1 - Critical</span></td>
+                  <td><span class="cs-state-pill progress">In Progress</span></td>
+                  <td>Network Operations</td>
+                  <td>Unassigned</td>
+                  <td>Network</td>
+                  <td>26/05/2026 14:20</td>
+                  <td>26/05/2026 14:35</td>
+                  <td class="cs-sla-risk">At risk · 4h left</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="open" data-state="in progress" data-priority="p2" data-group="Security Operations">
+                  <td><a href="#" class="al-link" data-toast="Opening INC0089388 in ServiceNow">INC0089388</a></td>
+                  <td class="adv-title-cell">High CPU on firewall — FPP1L0H0</td>
+                  <td><span class="al-sev-pill p2">P2 - High</span></td>
+                  <td><span class="cs-state-pill progress">In Progress</span></td>
+                  <td>Security Operations</td>
+                  <td>John Doe</td>
+                  <td>Security</td>
+                  <td>26/05/2026 12:35</td>
+                  <td>26/05/2026 13:10</td>
+                  <td>1 day left</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="open" data-state="awaiting customer" data-priority="p2" data-group="Procurement">
+                  <td><a href="#" class="al-link" data-toast="Opening REQ0089301 in ServiceNow">REQ0089301</a></td>
+                  <td class="adv-title-cell">Replace ASA5506 firewalls (past End-of-Support) — approval needed</td>
+                  <td><span class="al-sev-pill p2">P2 - High</span></td>
+                  <td><span class="cs-state-pill awaiting">Awaiting customer</span></td>
+                  <td>Procurement</td>
+                  <td>S. van Dijk</td>
+                  <td>Hardware</td>
+                  <td>22/05/2026 09:00</td>
+                  <td>25/05/2026 16:00</td>
+                  <td>Paused · waiting on you</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="open" data-state="awaiting customer" data-priority="p3" data-group="Finance &amp; IT Leadership">
+                  <td><a href="#" class="al-link" data-toast="Opening REQ0089180 in ServiceNow">REQ0089180</a></td>
+                  <td class="adv-title-cell">Add €84k EoX budget to next capex plan</td>
+                  <td><span class="al-sev-pill p3">P3 - Moderate</span></td>
+                  <td><span class="cs-state-pill awaiting">Awaiting customer</span></td>
+                  <td>Finance &amp; IT Leadership</td>
+                  <td>S. van Dijk</td>
+                  <td>Budget</td>
+                  <td>20/05/2026 09:00</td>
+                  <td>24/05/2026 11:00</td>
+                  <td>Paused · waiting on you</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="closed" data-state="resolved" data-priority="p2" data-group="Network Operations" hidden>
+                  <td><a href="#" class="al-link" data-toast="Opening REQ0089345 in ServiceNow">REQ0089345</a></td>
+                  <td class="adv-title-cell">Service request — Cisco TAC guidance for ASA5506 replacement</td>
+                  <td><span class="al-sev-pill p2">P2 - High</span></td>
+                  <td><span class="cs-state-pill resolved">Resolved</span></td>
+                  <td>Network Operations</td>
+                  <td>John Doe</td>
+                  <td>Hardware</td>
+                  <td>24/05/2026 09:10</td>
+                  <td>25/05/2026 15:30</td>
+                  <td>Met</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="closed" data-state="resolved" data-priority="p4" data-group="Network Operations" hidden>
+                  <td><a href="#" class="al-link" data-toast="Opening INC0089042 in ServiceNow">INC0089042</a></td>
+                  <td class="adv-title-cell">NTP time sync lost — RTP1C0M003</td>
+                  <td><span class="al-sev-pill p4">P4 - Low</span></td>
+                  <td><span class="cs-state-pill resolved">Resolved</span></td>
+                  <td>Network Operations</td>
+                  <td>R. Jansen</td>
+                  <td>Network</td>
+                  <td>22/05/2026 07:35</td>
+                  <td>22/05/2026 11:45</td>
+                  <td>Met</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="closed" data-state="closed" data-priority="p4" data-group="Service Desk" hidden>
+                  <td><a href="#" class="al-link" data-toast="Opening INC0088765 in ServiceNow">INC0088765</a></td>
+                  <td class="adv-title-cell">SNMP timeout — WKS-0231</td>
+                  <td><span class="al-sev-pill p4">P4 - Low</span></td>
+                  <td><span class="cs-state-pill closed">Closed</span></td>
+                  <td>Service Desk</td>
+                  <td>R. Jansen</td>
+                  <td>Endpoint</td>
+                  <td>18/05/2026 16:50</td>
+                  <td>19/05/2026 10:00</td>
+                  <td>Met</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+                <tr data-status="closed" data-state="resolved" data-priority="p2" data-group="Network Operations" hidden>
+                  <td><a href="#" class="al-link" data-toast="Opening INC0088701 in ServiceNow">INC0088701</a></td>
+                  <td class="adv-title-cell">Host unavailable by ICMP ping — SWP2L1C002</td>
+                  <td><span class="al-sev-pill p2">P2 - High</span></td>
+                  <td><span class="cs-state-pill resolved">Resolved</span></td>
+                  <td>Network Operations</td>
+                  <td>John Doe</td>
+                  <td>Network</td>
+                  <td>18/05/2026 09:00</td>
+                  <td>18/05/2026 12:15</td>
+                  <td>Met</td>
+                  <td class="al-actions-cell"></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="al-empty" id="csEmptyState" hidden>No cases match your filters.</div>
+          </div>
+          <div class="lc-table-foot" id="csTableFoot">Showing 4 of 4 open cases</div>
+        </div>
+      </section>
+
+      <!-- ---------- UPTIME PAGE ---------- -->
+      <section id="page-uptime" style="display:none">
+        <div class="page-head">
+          <div>
+            <h1>Uptime</h1>
+            <div class="page-head__sub">
+              <span class="page-head__live"><span class="pulse"></span>Live · Updated 14:32 CET · 26 May 2026</span>
+              <span class="dot-sep"></span>
+              <span>184 managed devices</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="al-summary ut-summary">
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-info"><svg width="20" height="20"><use href="#i-activity"/></svg></span>
+            <div><div class="al-sev-card__value">99.1<span class="unit">%</span></div><div class="al-sev-card__label">Overall uptime (30d)</div></div>
+          </div>
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-low"><svg width="20" height="20"><use href="#i-check-circle"/></svg></span>
+            <div><div class="al-sev-card__value">4/5</div><div class="al-sev-card__label">Layers meeting 99% SLA</div></div>
+          </div>
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-high"><svg width="20" height="20"><use href="#i-alert-triangle"/></svg></span>
+            <div><div class="al-sev-card__value">1</div><div class="al-sev-card__label">Below target (Security)</div></div>
+          </div>
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-unclassified"><svg width="20" height="20"><use href="#i-clock"/></svg></span>
+            <div><div class="al-sev-card__value">6h 5m</div><div class="al-sev-card__label">Longest outage (30d)</div></div>
+          </div>
+          <div class="al-sev-card">
+            <span class="al-sev-card__icon sev-brand"><svg width="20" height="20"><use href="#i-ticket"/></svg></span>
+            <div><div class="al-sev-card__value">6</div><div class="al-sev-card__label">Related incidents (30d)</div></div>
+          </div>
+        </div>
+
+        <div class="card ut-chart-card" style="animation-delay:.06s">
+          <div class="card__head">
+            <div class="card__title"><svg width="15" height="15"><use href="#i-activity"/></svg>Uptime trend</div>
+            <div class="ut-range-toggle">
+              <button class="ut-range-btn" data-range="7">7d</button>
+              <button class="ut-range-btn active" data-range="30">30d</button>
+              <button class="ut-range-btn" data-range="90">90d</button>
+            </div>
+          </div>
+          <div class="card__body">
+            <div class="ut-legend">
+              <button class="ut-legend-item" data-series="core"><i class="ut-legend-dot core"></i>Core <span>99.8%</span></button>
+              <button class="ut-legend-item" data-series="security"><i class="ut-legend-dot security"></i>Security <span>97.2%</span></button>
+              <button class="ut-legend-item" data-series="edge"><i class="ut-legend-dot edge"></i>Edge <span>99.5%</span></button>
+              <button class="ut-legend-item" data-series="wlan"><i class="ut-legend-dot wlan"></i>WLAN <span>99.1%</span></button>
+              <button class="ut-legend-item" data-series="services"><i class="ut-legend-dot services"></i>Services <span>100%</span></button>
+            </div>
+            <div class="ut-chart-wrap">
+<svg class="ut-chart" data-range-chart="7" viewBox="0 0 800 260" hidden>
+<g class="ut-grid-group">
+<line x1="34" y1="212.5" x2="790" y2="212.5" class="ut-grid"></line>
+<text x="28" y="215.5" class="ut-axis-label" text-anchor="end">96%</text>
+<line x1="34" y1="165.4" x2="790" y2="165.4" class="ut-grid"></line>
+<text x="28" y="168.4" class="ut-axis-label" text-anchor="end">97%</text>
+<line x1="34" y1="118.3" x2="790" y2="118.3" class="ut-grid"></line>
+<text x="28" y="121.3" class="ut-axis-label" text-anchor="end">98%</text>
+<line x1="34" y1="71.2" x2="790" y2="71.2" class="ut-grid"></line>
+<text x="28" y="74.2" class="ut-axis-label" text-anchor="end">99%</text>
+<line x1="34" y1="24.1" x2="790" y2="24.1" class="ut-grid"></line>
+<text x="28" y="27.1" class="ut-axis-label" text-anchor="end">100%</text>
+</g>
+<path class="ut-line core" d="M 34.0,29.6 L 160.0,36.6 L 286.0,33.7 L 412.0,34.3 L 538.0,28.5 L 664.0,29.2 L 790.0,33.5"></path>
+<path class="ut-line security" d="M 34.0,60.0 L 160.0,76.6 L 286.0,94.8 L 412.0,107.9 L 538.0,122.0 L 664.0,143.9 L 790.0,156.0"></path>
+<path class="ut-line edge" d="M 34.0,45.8 L 160.0,49.2 L 286.0,50.9 L 412.0,43.4 L 538.0,49.2 L 664.0,51.5 L 790.0,47.7"></path>
+<path class="ut-line wlan" d="M 34.0,64.9 L 160.0,67.7 L 286.0,65.4 L 412.0,66.3 L 538.0,68.4 L 664.0,63.5 L 790.0,66.5"></path>
+<path class="ut-line services" d="M 34.0,25.3 L 160.0,24.0 L 286.0,25.0 L 412.0,23.8 L 538.0,25.2 L 664.0,24.6 L 790.0,24.1"></path>
+<circle class="ut-pt core" cx="34.0" cy="29.6" r="2.6" data-tip="Core · 20 May: 99.9%"></circle>
+<circle class="ut-pt core" cx="160.0" cy="36.6" r="2.6" data-tip="Core · 21 May: 99.7%"></circle>
+<circle class="ut-pt core" cx="286.0" cy="33.7" r="2.6" data-tip="Core · 22 May: 99.8%"></circle>
+<circle class="ut-pt core" cx="412.0" cy="34.3" r="2.6" data-tip="Core · 23 May: 99.8%"></circle>
+<circle class="ut-pt core" cx="538.0" cy="28.5" r="2.6" data-tip="Core · 24 May: 99.9%"></circle>
+<circle class="ut-pt core" cx="664.0" cy="29.2" r="2.6" data-tip="Core · 25 May: 99.9%"></circle>
+<circle class="ut-pt core" cx="790.0" cy="33.5" r="2.6" data-tip="Core · 26 May: 99.8%"></circle>
+<circle class="ut-pt security" cx="34.0" cy="60.0" r="2.6" data-tip="Security · 20 May: 99.2%"></circle>
+<circle class="ut-pt security" cx="160.0" cy="76.6" r="2.6" data-tip="Security · 21 May: 98.9%"></circle>
+<circle class="ut-pt security" cx="286.0" cy="94.8" r="2.6" data-tip="Security · 22 May: 98.5%"></circle>
+<circle class="ut-pt security" cx="412.0" cy="107.9" r="2.6" data-tip="Security · 23 May: 98.2%"></circle>
+<circle class="ut-pt security" cx="538.0" cy="122.0" r="2.6" data-tip="Security · 24 May: 97.9%"></circle>
+<circle class="ut-pt security" cx="664.0" cy="143.9" r="2.6" data-tip="Security · 25 May: 97.5%"></circle>
+<circle class="ut-pt security" cx="790.0" cy="156.0" r="2.6" data-tip="Security · 26 May: 97.2%"></circle>
+<circle class="ut-pt edge" cx="34.0" cy="45.8" r="2.6" data-tip="Edge · 20 May: 99.5%"></circle>
+<circle class="ut-pt edge" cx="160.0" cy="49.2" r="2.6" data-tip="Edge · 21 May: 99.5%"></circle>
+<circle class="ut-pt edge" cx="286.0" cy="50.9" r="2.6" data-tip="Edge · 22 May: 99.4%"></circle>
+<circle class="ut-pt edge" cx="412.0" cy="43.4" r="2.6" data-tip="Edge · 23 May: 99.6%"></circle>
+<circle class="ut-pt edge" cx="538.0" cy="49.2" r="2.6" data-tip="Edge · 24 May: 99.5%"></circle>
+<circle class="ut-pt edge" cx="664.0" cy="51.5" r="2.6" data-tip="Edge · 25 May: 99.4%"></circle>
+<circle class="ut-pt edge" cx="790.0" cy="47.7" r="2.6" data-tip="Edge · 26 May: 99.5%"></circle>
+<circle class="ut-pt wlan" cx="34.0" cy="64.9" r="2.6" data-tip="WLAN · 20 May: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="160.0" cy="67.7" r="2.6" data-tip="WLAN · 21 May: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="286.0" cy="65.4" r="2.6" data-tip="WLAN · 22 May: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="412.0" cy="66.3" r="2.6" data-tip="WLAN · 23 May: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="538.0" cy="68.4" r="2.6" data-tip="WLAN · 24 May: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="664.0" cy="63.5" r="2.6" data-tip="WLAN · 25 May: 99.2%"></circle>
+<circle class="ut-pt wlan" cx="790.0" cy="66.5" r="2.6" data-tip="WLAN · 26 May: 99.1%"></circle>
+<circle class="ut-pt services" cx="34.0" cy="25.3" r="2.6" data-tip="Services · 20 May: 100.0%"></circle>
+<circle class="ut-pt services" cx="160.0" cy="24.0" r="2.6" data-tip="Services · 21 May: 100.0%"></circle>
+<circle class="ut-pt services" cx="286.0" cy="25.0" r="2.6" data-tip="Services · 22 May: 100.0%"></circle>
+<circle class="ut-pt services" cx="412.0" cy="23.8" r="2.6" data-tip="Services · 23 May: 100.0%"></circle>
+<circle class="ut-pt services" cx="538.0" cy="25.2" r="2.6" data-tip="Services · 24 May: 100.0%"></circle>
+<circle class="ut-pt services" cx="664.0" cy="24.6" r="2.6" data-tip="Services · 25 May: 100.0%"></circle>
+<circle class="ut-pt services" cx="790.0" cy="24.1" r="2.6" data-tip="Services · 26 May: 100.0%"></circle>
+<g class="ut-xlabels"><text x="34.0" y="254" class="ut-axis-label" text-anchor="middle">20 May</text>
+<text x="160.0" y="254" class="ut-axis-label" text-anchor="middle">21 May</text>
+<text x="286.0" y="254" class="ut-axis-label" text-anchor="middle">22 May</text>
+<text x="412.0" y="254" class="ut-axis-label" text-anchor="middle">23 May</text>
+<text x="538.0" y="254" class="ut-axis-label" text-anchor="middle">24 May</text>
+<text x="664.0" y="254" class="ut-axis-label" text-anchor="middle">25 May</text>
+<text x="790.0" y="254" class="ut-axis-label" text-anchor="middle">26 May</text></g>
+</svg>
+
+<svg class="ut-chart" data-range-chart="30" viewBox="0 0 800 260" >
+<g class="ut-grid-group">
+<line x1="34" y1="212.5" x2="790" y2="212.5" class="ut-grid"></line>
+<text x="28" y="215.5" class="ut-axis-label" text-anchor="end">96%</text>
+<line x1="34" y1="165.4" x2="790" y2="165.4" class="ut-grid"></line>
+<text x="28" y="168.4" class="ut-axis-label" text-anchor="end">97%</text>
+<line x1="34" y1="118.3" x2="790" y2="118.3" class="ut-grid"></line>
+<text x="28" y="121.3" class="ut-axis-label" text-anchor="end">98%</text>
+<line x1="34" y1="71.2" x2="790" y2="71.2" class="ut-grid"></line>
+<text x="28" y="74.2" class="ut-axis-label" text-anchor="end">99%</text>
+<line x1="34" y1="24.1" x2="790" y2="24.1" class="ut-grid"></line>
+<text x="28" y="27.1" class="ut-axis-label" text-anchor="end">100%</text>
+</g>
+<path class="ut-line core" d="M 34.0,34.3 L 60.1,33.6 L 86.1,35.9 L 112.2,34.2 L 138.3,35.7 L 164.3,33.7 L 190.4,29.7 L 216.5,32.7 L 242.6,32.7 L 268.6,34.5 L 294.7,33.8 L 320.8,26.3 L 346.8,29.5 L 372.9,30.0 L 399.0,34.9 L 425.0,28.6 L 451.1,35.0 L 477.2,32.5 L 503.2,25.7 L 529.3,29.6 L 555.4,30.5 L 581.4,29.1 L 607.5,27.3 L 633.6,28.1 L 659.7,34.2 L 685.7,36.5 L 711.8,33.3 L 737.9,33.8 L 763.9,34.5 L 790.0,33.5"></path>
+<path class="ut-line security" d="M 34.0,40.0 L 60.1,47.9 L 86.1,43.1 L 112.2,46.8 L 138.3,39.5 L 164.3,45.9 L 190.4,48.6 L 216.5,48.9 L 242.6,44.4 L 268.6,48.7 L 294.7,44.1 L 320.8,39.7 L 346.8,46.7 L 372.9,49.3 L 399.0,38.3 L 425.0,45.2 L 451.1,51.1 L 477.2,51.7 L 503.2,50.8 L 529.3,43.5 L 555.4,41.2 L 581.4,46.4 L 607.5,51.5 L 633.6,65.0 L 659.7,81.1 L 685.7,98.0 L 711.8,110.1 L 737.9,129.0 L 763.9,141.5 L 790.0,156.0"></path>
+<path class="ut-line edge" d="M 34.0,43.4 L 60.1,44.1 L 86.1,49.9 L 112.2,47.7 L 138.3,50.7 L 164.3,43.8 L 190.4,44.2 L 216.5,49.6 L 242.6,46.4 L 268.6,46.6 L 294.7,50.9 L 320.8,45.2 L 346.8,47.3 L 372.9,45.0 L 399.0,47.4 L 425.0,52.4 L 451.1,49.3 L 477.2,52.2 L 503.2,43.6 L 529.3,44.1 L 555.4,44.5 L 581.4,49.5 L 607.5,51.8 L 633.6,44.1 L 659.7,43.5 L 685.7,51.6 L 711.8,47.8 L 737.9,51.7 L 763.9,45.2 L 790.0,47.7"></path>
+<path class="ut-line wlan" d="M 34.0,73.1 L 60.1,69.1 L 86.1,68.3 L 112.2,71.5 L 138.3,64.6 L 164.3,69.7 L 190.4,72.1 L 216.5,68.4 L 242.6,66.3 L 268.6,72.2 L 294.7,71.0 L 320.8,63.3 L 346.8,67.2 L 372.9,69.6 L 399.0,68.7 L 425.0,73.1 L 451.1,72.0 L 477.2,70.7 L 503.2,67.9 L 529.3,71.9 L 555.4,72.0 L 581.4,73.7 L 607.5,67.4 L 633.6,71.9 L 659.7,64.3 L 685.7,64.8 L 711.8,73.7 L 737.9,71.8 L 763.9,66.9 L 790.0,66.5"></path>
+<path class="ut-line services" d="M 34.0,27.3 L 60.1,23.5 L 86.1,25.2 L 112.2,25.7 L 138.3,24.2 L 164.3,24.1 L 190.4,27.0 L 216.5,27.4 L 242.6,25.9 L 268.6,25.9 L 294.7,25.7 L 320.8,24.5 L 346.8,24.7 L 372.9,23.3 L 399.0,27.4 L 425.0,26.0 L 451.1,26.3 L 477.2,23.8 L 503.2,26.7 L 529.3,27.0 L 555.4,25.8 L 581.4,25.9 L 607.5,26.6 L 633.6,26.7 L 659.7,23.5 L 685.7,25.8 L 711.8,23.8 L 737.9,25.3 L 763.9,27.7 L 790.0,24.1"></path>
+<circle class="ut-pt core" cx="34.0" cy="34.3" r="2.6" data-tip="Core · 27 Apr: 99.8%"></circle>
+<circle class="ut-pt core" cx="112.2" cy="34.2" r="2.6" data-tip="Core · 30 Apr: 99.8%"></circle>
+<circle class="ut-pt core" cx="190.4" cy="29.7" r="2.6" data-tip="Core · 03 May: 99.9%"></circle>
+<circle class="ut-pt core" cx="268.6" cy="34.5" r="2.6" data-tip="Core · 06 May: 99.8%"></circle>
+<circle class="ut-pt core" cx="346.8" cy="29.5" r="2.6" data-tip="Core · 09 May: 99.9%"></circle>
+<circle class="ut-pt core" cx="425.0" cy="28.6" r="2.6" data-tip="Core · 12 May: 99.9%"></circle>
+<circle class="ut-pt core" cx="503.2" cy="25.7" r="2.6" data-tip="Core · 15 May: 100.0%"></circle>
+<circle class="ut-pt core" cx="581.4" cy="29.1" r="2.6" data-tip="Core · 18 May: 99.9%"></circle>
+<circle class="ut-pt core" cx="659.7" cy="34.2" r="2.6" data-tip="Core · 21 May: 99.8%"></circle>
+<circle class="ut-pt core" cx="737.9" cy="33.8" r="2.6" data-tip="Core · 24 May: 99.8%"></circle>
+<circle class="ut-pt core" cx="790.0" cy="33.5" r="2.6" data-tip="Core · 26 May: 99.8%"></circle>
+<circle class="ut-pt security" cx="34.0" cy="40.0" r="2.6" data-tip="Security · 27 Apr: 99.7%"></circle>
+<circle class="ut-pt security" cx="112.2" cy="46.8" r="2.6" data-tip="Security · 30 Apr: 99.5%"></circle>
+<circle class="ut-pt security" cx="190.4" cy="48.6" r="2.6" data-tip="Security · 03 May: 99.5%"></circle>
+<circle class="ut-pt security" cx="268.6" cy="48.7" r="2.6" data-tip="Security · 06 May: 99.5%"></circle>
+<circle class="ut-pt security" cx="346.8" cy="46.7" r="2.6" data-tip="Security · 09 May: 99.5%"></circle>
+<circle class="ut-pt security" cx="425.0" cy="45.2" r="2.6" data-tip="Security · 12 May: 99.6%"></circle>
+<circle class="ut-pt security" cx="503.2" cy="50.8" r="2.6" data-tip="Security · 15 May: 99.4%"></circle>
+<circle class="ut-pt security" cx="581.4" cy="46.4" r="2.6" data-tip="Security · 18 May: 99.5%"></circle>
+<circle class="ut-pt security" cx="659.7" cy="81.1" r="2.6" data-tip="Security · 21 May: 98.8%"></circle>
+<circle class="ut-pt security" cx="737.9" cy="129.0" r="2.6" data-tip="Security · 24 May: 97.8%"></circle>
+<circle class="ut-pt security" cx="790.0" cy="156.0" r="2.6" data-tip="Security · 26 May: 97.2%"></circle>
+<circle class="ut-pt edge" cx="34.0" cy="43.4" r="2.6" data-tip="Edge · 27 Apr: 99.6%"></circle>
+<circle class="ut-pt edge" cx="112.2" cy="47.7" r="2.6" data-tip="Edge · 30 Apr: 99.5%"></circle>
+<circle class="ut-pt edge" cx="190.4" cy="44.2" r="2.6" data-tip="Edge · 03 May: 99.6%"></circle>
+<circle class="ut-pt edge" cx="268.6" cy="46.6" r="2.6" data-tip="Edge · 06 May: 99.5%"></circle>
+<circle class="ut-pt edge" cx="346.8" cy="47.3" r="2.6" data-tip="Edge · 09 May: 99.5%"></circle>
+<circle class="ut-pt edge" cx="425.0" cy="52.4" r="2.6" data-tip="Edge · 12 May: 99.4%"></circle>
+<circle class="ut-pt edge" cx="503.2" cy="43.6" r="2.6" data-tip="Edge · 15 May: 99.6%"></circle>
+<circle class="ut-pt edge" cx="581.4" cy="49.5" r="2.6" data-tip="Edge · 18 May: 99.5%"></circle>
+<circle class="ut-pt edge" cx="659.7" cy="43.5" r="2.6" data-tip="Edge · 21 May: 99.6%"></circle>
+<circle class="ut-pt edge" cx="737.9" cy="51.7" r="2.6" data-tip="Edge · 24 May: 99.4%"></circle>
+<circle class="ut-pt edge" cx="790.0" cy="47.7" r="2.6" data-tip="Edge · 26 May: 99.5%"></circle>
+<circle class="ut-pt wlan" cx="34.0" cy="73.1" r="2.6" data-tip="WLAN · 27 Apr: 99.0%"></circle>
+<circle class="ut-pt wlan" cx="112.2" cy="71.5" r="2.6" data-tip="WLAN · 30 Apr: 99.0%"></circle>
+<circle class="ut-pt wlan" cx="190.4" cy="72.1" r="2.6" data-tip="WLAN · 03 May: 99.0%"></circle>
+<circle class="ut-pt wlan" cx="268.6" cy="72.2" r="2.6" data-tip="WLAN · 06 May: 99.0%"></circle>
+<circle class="ut-pt wlan" cx="346.8" cy="67.2" r="2.6" data-tip="WLAN · 09 May: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="425.0" cy="73.1" r="2.6" data-tip="WLAN · 12 May: 99.0%"></circle>
+<circle class="ut-pt wlan" cx="503.2" cy="67.9" r="2.6" data-tip="WLAN · 15 May: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="581.4" cy="73.7" r="2.6" data-tip="WLAN · 18 May: 98.9%"></circle>
+<circle class="ut-pt wlan" cx="659.7" cy="64.3" r="2.6" data-tip="WLAN · 21 May: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="737.9" cy="71.8" r="2.6" data-tip="WLAN · 24 May: 99.0%"></circle>
+<circle class="ut-pt wlan" cx="790.0" cy="66.5" r="2.6" data-tip="WLAN · 26 May: 99.1%"></circle>
+<circle class="ut-pt services" cx="34.0" cy="27.3" r="2.6" data-tip="Services · 27 Apr: 99.9%"></circle>
+<circle class="ut-pt services" cx="112.2" cy="25.7" r="2.6" data-tip="Services · 30 Apr: 100.0%"></circle>
+<circle class="ut-pt services" cx="190.4" cy="27.0" r="2.6" data-tip="Services · 03 May: 99.9%"></circle>
+<circle class="ut-pt services" cx="268.6" cy="25.9" r="2.6" data-tip="Services · 06 May: 100.0%"></circle>
+<circle class="ut-pt services" cx="346.8" cy="24.7" r="2.6" data-tip="Services · 09 May: 100.0%"></circle>
+<circle class="ut-pt services" cx="425.0" cy="26.0" r="2.6" data-tip="Services · 12 May: 100.0%"></circle>
+<circle class="ut-pt services" cx="503.2" cy="26.7" r="2.6" data-tip="Services · 15 May: 99.9%"></circle>
+<circle class="ut-pt services" cx="581.4" cy="25.9" r="2.6" data-tip="Services · 18 May: 100.0%"></circle>
+<circle class="ut-pt services" cx="659.7" cy="23.5" r="2.6" data-tip="Services · 21 May: 100.0%"></circle>
+<circle class="ut-pt services" cx="737.9" cy="25.3" r="2.6" data-tip="Services · 24 May: 100.0%"></circle>
+<circle class="ut-pt services" cx="790.0" cy="24.1" r="2.6" data-tip="Services · 26 May: 100.0%"></circle>
+<g class="ut-xlabels"><text x="34.0" y="254" class="ut-axis-label" text-anchor="middle">27 Apr</text>
+<text x="190.4" y="254" class="ut-axis-label" text-anchor="middle">03 May</text>
+<text x="346.8" y="254" class="ut-axis-label" text-anchor="middle">09 May</text>
+<text x="477.2" y="254" class="ut-axis-label" text-anchor="middle">14 May</text>
+<text x="633.6" y="254" class="ut-axis-label" text-anchor="middle">20 May</text>
+<text x="790.0" y="254" class="ut-axis-label" text-anchor="middle">26 May</text></g>
+</svg>
+
+<svg class="ut-chart" data-range-chart="90" viewBox="0 0 800 260" hidden>
+<g class="ut-grid-group">
+<line x1="34" y1="212.5" x2="790" y2="212.5" class="ut-grid"></line>
+<text x="28" y="215.5" class="ut-axis-label" text-anchor="end">96%</text>
+<line x1="34" y1="165.4" x2="790" y2="165.4" class="ut-grid"></line>
+<text x="28" y="168.4" class="ut-axis-label" text-anchor="end">97%</text>
+<line x1="34" y1="118.3" x2="790" y2="118.3" class="ut-grid"></line>
+<text x="28" y="121.3" class="ut-axis-label" text-anchor="end">98%</text>
+<line x1="34" y1="71.2" x2="790" y2="71.2" class="ut-grid"></line>
+<text x="28" y="74.2" class="ut-axis-label" text-anchor="end">99%</text>
+<line x1="34" y1="24.1" x2="790" y2="24.1" class="ut-grid"></line>
+<text x="28" y="27.1" class="ut-axis-label" text-anchor="end">100%</text>
+</g>
+<path class="ut-line core" d="M 34.0,27.4 L 42.5,25.9 L 51.0,26.4 L 59.5,27.2 L 68.0,35.0 L 76.5,31.3 L 85.0,34.4 L 93.5,32.3 L 102.0,36.2 L 110.4,32.6 L 118.9,25.7 L 127.4,33.8 L 135.9,28.0 L 144.4,31.7 L 152.9,32.1 L 161.4,26.0 L 169.9,25.6 L 178.4,30.6 L 186.9,28.7 L 195.4,35.1 L 203.9,33.5 L 212.4,25.9 L 220.9,30.3 L 229.4,30.7 L 237.9,28.4 L 246.4,36.2 L 254.9,30.2 L 263.3,31.2 L 271.8,27.2 L 280.3,35.1 L 288.8,26.0 L 297.3,35.9 L 305.8,34.7 L 314.3,30.1 L 322.8,29.2 L 331.3,34.2 L 339.8,35.5 L 348.3,26.8 L 356.8,34.1 L 365.3,30.1 L 373.8,29.8 L 382.3,32.1 L 390.8,30.2 L 399.3,30.9 L 407.8,26.3 L 416.2,34.5 L 424.7,28.7 L 433.2,34.1 L 441.7,32.4 L 450.2,29.2 L 458.7,33.4 L 467.2,33.3 L 475.7,28.3 L 484.2,36.0 L 492.7,31.7 L 501.2,25.6 L 509.7,25.6 L 518.2,36.0 L 526.7,34.4 L 535.2,33.8 L 543.7,26.3 L 552.2,26.9 L 560.7,26.9 L 569.1,32.7 L 577.6,35.1 L 586.1,27.4 L 594.6,28.9 L 603.1,29.9 L 611.6,25.7 L 620.1,29.4 L 628.6,36.7 L 637.1,27.6 L 645.6,33.5 L 654.1,29.3 L 662.6,26.2 L 671.1,35.3 L 679.6,35.5 L 688.1,35.6 L 696.6,30.6 L 705.1,33.8 L 713.6,30.0 L 722.0,28.7 L 730.5,34.5 L 739.0,29.7 L 747.5,33.9 L 756.0,31.3 L 764.5,26.6 L 773.0,27.3 L 781.5,35.8 L 790.0,33.5"></path>
+<path class="ut-line security" d="M 34.0,48.5 L 42.5,52.3 L 51.0,41.5 L 59.5,43.4 L 68.0,48.7 L 76.5,41.9 L 85.0,44.6 L 93.5,46.3 L 102.0,52.2 L 110.4,51.3 L 118.9,39.9 L 127.4,39.6 L 135.9,44.7 L 144.4,40.6 L 152.9,44.1 L 161.4,50.3 L 169.9,50.6 L 178.4,48.0 L 186.9,39.7 L 195.4,41.1 L 203.9,40.2 L 212.4,39.7 L 220.9,49.4 L 229.4,48.9 L 237.9,50.9 L 246.4,41.4 L 254.9,39.9 L 263.3,46.6 L 271.8,43.6 L 280.3,50.2 L 288.8,39.2 L 297.3,40.2 L 305.8,38.6 L 314.3,40.9 L 322.8,39.9 L 331.3,52.0 L 339.8,42.0 L 348.3,47.7 L 356.8,39.2 L 365.3,41.0 L 373.8,40.2 L 382.3,40.9 L 390.8,48.6 L 399.3,41.3 L 407.8,50.8 L 416.2,40.1 L 424.7,40.2 L 433.2,49.2 L 441.7,40.8 L 450.2,45.9 L 458.7,48.1 L 467.2,41.1 L 475.7,49.2 L 484.2,52.0 L 492.7,49.6 L 501.2,47.7 L 509.7,40.2 L 518.2,38.7 L 526.7,48.4 L 535.2,43.3 L 543.7,46.7 L 552.2,38.5 L 560.7,44.8 L 569.1,39.1 L 577.6,50.7 L 586.1,38.7 L 594.6,49.9 L 603.1,38.8 L 611.6,48.6 L 620.1,50.8 L 628.6,46.2 L 637.1,42.1 L 645.6,47.9 L 654.1,43.8 L 662.6,45.2 L 671.1,46.9 L 679.6,44.2 L 688.1,48.8 L 696.6,42.4 L 705.1,52.4 L 713.6,39.3 L 722.0,44.8 L 730.5,42.2 L 739.0,55.8 L 747.5,73.1 L 756.0,92.5 L 764.5,108.6 L 773.0,124.1 L 781.5,140.4 L 790.0,156.0"></path>
+<path class="ut-line edge" d="M 34.0,51.2 L 42.5,48.4 L 51.0,43.5 L 59.5,46.0 L 68.0,43.9 L 76.5,46.6 L 85.0,49.5 L 93.5,47.2 L 102.0,52.4 L 110.4,49.7 L 118.9,48.3 L 127.4,46.9 L 135.9,46.2 L 144.4,48.0 L 152.9,48.2 L 161.4,50.4 L 169.9,47.9 L 178.4,43.9 L 186.9,44.9 L 195.4,50.8 L 203.9,51.6 L 212.4,47.5 L 220.9,46.4 L 229.4,49.2 L 237.9,44.7 L 246.4,45.3 L 254.9,46.0 L 263.3,50.3 L 271.8,50.5 L 280.3,52.1 L 288.8,50.1 L 297.3,47.9 L 305.8,44.4 L 314.3,51.7 L 322.8,48.5 L 331.3,46.4 L 339.8,50.5 L 348.3,45.8 L 356.8,47.7 L 365.3,50.1 L 373.8,46.2 L 382.3,52.3 L 390.8,45.3 L 399.3,45.1 L 407.8,51.4 L 416.2,48.4 L 424.7,50.7 L 433.2,43.4 L 441.7,47.5 L 450.2,51.9 L 458.7,50.0 L 467.2,44.4 L 475.7,48.1 L 484.2,44.8 L 492.7,46.1 L 501.2,43.1 L 509.7,46.8 L 518.2,43.4 L 526.7,44.0 L 535.2,46.6 L 543.7,45.6 L 552.2,47.6 L 560.7,44.6 L 569.1,47.2 L 577.6,43.9 L 586.1,45.4 L 594.6,47.9 L 603.1,49.9 L 611.6,50.0 L 620.1,46.4 L 628.6,45.2 L 637.1,47.5 L 645.6,46.5 L 654.1,49.8 L 662.6,51.6 L 671.1,49.7 L 679.6,49.8 L 688.1,49.4 L 696.6,47.3 L 705.1,51.1 L 713.6,50.2 L 722.0,45.8 L 730.5,45.7 L 739.0,51.8 L 747.5,48.5 L 756.0,47.3 L 764.5,48.5 L 773.0,50.4 L 781.5,48.4 L 790.0,47.7"></path>
+<path class="ut-line wlan" d="M 34.0,67.9 L 42.5,66.6 L 51.0,64.8 L 59.5,65.9 L 68.0,70.2 L 76.5,74.4 L 85.0,70.5 L 93.5,66.0 L 102.0,64.9 L 110.4,63.7 L 118.9,69.8 L 127.4,66.1 L 135.9,68.3 L 144.4,67.7 L 152.9,72.0 L 161.4,72.0 L 169.9,69.6 L 178.4,74.2 L 186.9,70.7 L 195.4,66.8 L 203.9,69.9 L 212.4,72.6 L 220.9,69.2 L 229.4,73.1 L 237.9,67.5 L 246.4,74.2 L 254.9,70.1 L 263.3,68.1 L 271.8,74.2 L 280.3,67.2 L 288.8,73.0 L 297.3,69.3 L 305.8,73.9 L 314.3,70.2 L 322.8,72.1 L 331.3,70.8 L 339.8,65.9 L 348.3,70.2 L 356.8,66.0 L 365.3,65.1 L 373.8,71.7 L 382.3,73.6 L 390.8,74.3 L 399.3,68.4 L 407.8,63.2 L 416.2,70.5 L 424.7,67.2 L 433.2,65.7 L 441.7,67.1 L 450.2,66.0 L 458.7,63.8 L 467.2,72.3 L 475.7,74.3 L 484.2,72.8 L 492.7,73.1 L 501.2,66.9 L 509.7,68.1 L 518.2,72.0 L 526.7,66.6 L 535.2,65.8 L 543.7,72.6 L 552.2,67.6 L 560.7,66.1 L 569.1,73.2 L 577.6,65.2 L 586.1,63.6 L 594.6,73.3 L 603.1,74.2 L 611.6,71.0 L 620.1,66.9 L 628.6,63.7 L 637.1,70.0 L 645.6,66.4 L 654.1,73.6 L 662.6,66.7 L 671.1,67.4 L 679.6,73.4 L 688.1,65.8 L 696.6,64.9 L 705.1,67.7 L 713.6,73.1 L 722.0,63.4 L 730.5,65.7 L 739.0,70.6 L 747.5,69.7 L 756.0,70.3 L 764.5,68.8 L 773.0,70.6 L 781.5,64.9 L 790.0,66.5"></path>
+<path class="ut-line services" d="M 34.0,27.4 L 42.5,23.4 L 51.0,24.9 L 59.5,24.0 L 68.0,24.6 L 76.5,25.8 L 85.0,24.4 L 93.5,23.3 L 102.0,26.6 L 110.4,24.1 L 118.9,25.4 L 127.4,25.6 L 135.9,25.8 L 144.4,24.4 L 152.9,26.6 L 161.4,23.9 L 169.9,24.0 L 178.4,27.5 L 186.9,23.7 L 195.4,26.7 L 203.9,25.7 L 212.4,25.0 L 220.9,26.1 L 229.4,27.8 L 237.9,23.9 L 246.4,27.0 L 254.9,26.9 L 263.3,24.1 L 271.8,26.3 L 280.3,23.7 L 288.8,24.6 L 297.3,26.6 L 305.8,27.8 L 314.3,23.4 L 322.8,27.5 L 331.3,24.5 L 339.8,25.6 L 348.3,24.3 L 356.8,24.6 L 365.3,24.9 L 373.8,25.6 L 382.3,24.2 L 390.8,27.5 L 399.3,26.8 L 407.8,24.6 L 416.2,26.4 L 424.7,25.2 L 433.2,25.7 L 441.7,25.4 L 450.2,25.9 L 458.7,24.4 L 467.2,26.3 L 475.7,24.6 L 484.2,26.6 L 492.7,26.7 L 501.2,27.3 L 509.7,27.0 L 518.2,27.3 L 526.7,25.4 L 535.2,24.3 L 543.7,27.0 L 552.2,26.9 L 560.7,25.6 L 569.1,24.5 L 577.6,23.3 L 586.1,25.4 L 594.6,26.6 L 603.1,27.4 L 611.6,27.0 L 620.1,26.8 L 628.6,27.0 L 637.1,27.8 L 645.6,25.4 L 654.1,26.6 L 662.6,23.3 L 671.1,25.3 L 679.6,24.6 L 688.1,27.3 L 696.6,23.8 L 705.1,25.6 L 713.6,23.8 L 722.0,25.2 L 730.5,25.7 L 739.0,25.8 L 747.5,27.0 L 756.0,27.6 L 764.5,23.5 L 773.0,25.6 L 781.5,24.0 L 790.0,24.1"></path>
+<circle class="ut-pt core" cx="34.0" cy="27.4" r="2.6" data-tip="Core · 26 Feb: 99.9%"></circle>
+<circle class="ut-pt core" cx="85.0" cy="34.4" r="2.6" data-tip="Core · 04 Mar: 99.8%"></circle>
+<circle class="ut-pt core" cx="135.9" cy="28.0" r="2.6" data-tip="Core · 10 Mar: 99.9%"></circle>
+<circle class="ut-pt core" cx="186.9" cy="28.7" r="2.6" data-tip="Core · 16 Mar: 99.9%"></circle>
+<circle class="ut-pt core" cx="237.9" cy="28.4" r="2.6" data-tip="Core · 22 Mar: 99.9%"></circle>
+<circle class="ut-pt core" cx="288.8" cy="26.0" r="2.6" data-tip="Core · 28 Mar: 100.0%"></circle>
+<circle class="ut-pt core" cx="339.8" cy="35.5" r="2.6" data-tip="Core · 03 Apr: 99.8%"></circle>
+<circle class="ut-pt core" cx="390.8" cy="30.2" r="2.6" data-tip="Core · 09 Apr: 99.9%"></circle>
+<circle class="ut-pt core" cx="441.7" cy="32.4" r="2.6" data-tip="Core · 15 Apr: 99.8%"></circle>
+<circle class="ut-pt core" cx="492.7" cy="31.7" r="2.6" data-tip="Core · 21 Apr: 99.8%"></circle>
+<circle class="ut-pt core" cx="543.7" cy="26.3" r="2.6" data-tip="Core · 27 Apr: 100.0%"></circle>
+<circle class="ut-pt core" cx="594.6" cy="28.9" r="2.6" data-tip="Core · 03 May: 99.9%"></circle>
+<circle class="ut-pt core" cx="645.6" cy="33.5" r="2.6" data-tip="Core · 09 May: 99.8%"></circle>
+<circle class="ut-pt core" cx="696.6" cy="30.6" r="2.6" data-tip="Core · 15 May: 99.9%"></circle>
+<circle class="ut-pt core" cx="747.5" cy="33.9" r="2.6" data-tip="Core · 21 May: 99.8%"></circle>
+<circle class="ut-pt core" cx="790.0" cy="33.5" r="2.6" data-tip="Core · 26 May: 99.8%"></circle>
+<circle class="ut-pt security" cx="34.0" cy="48.5" r="2.6" data-tip="Security · 26 Feb: 99.5%"></circle>
+<circle class="ut-pt security" cx="85.0" cy="44.6" r="2.6" data-tip="Security · 04 Mar: 99.6%"></circle>
+<circle class="ut-pt security" cx="135.9" cy="44.7" r="2.6" data-tip="Security · 10 Mar: 99.6%"></circle>
+<circle class="ut-pt security" cx="186.9" cy="39.7" r="2.6" data-tip="Security · 16 Mar: 99.7%"></circle>
+<circle class="ut-pt security" cx="237.9" cy="50.9" r="2.6" data-tip="Security · 22 Mar: 99.4%"></circle>
+<circle class="ut-pt security" cx="288.8" cy="39.2" r="2.6" data-tip="Security · 28 Mar: 99.7%"></circle>
+<circle class="ut-pt security" cx="339.8" cy="42.0" r="2.6" data-tip="Security · 03 Apr: 99.6%"></circle>
+<circle class="ut-pt security" cx="390.8" cy="48.6" r="2.6" data-tip="Security · 09 Apr: 99.5%"></circle>
+<circle class="ut-pt security" cx="441.7" cy="40.8" r="2.6" data-tip="Security · 15 Apr: 99.6%"></circle>
+<circle class="ut-pt security" cx="492.7" cy="49.6" r="2.6" data-tip="Security · 21 Apr: 99.5%"></circle>
+<circle class="ut-pt security" cx="543.7" cy="46.7" r="2.6" data-tip="Security · 27 Apr: 99.5%"></circle>
+<circle class="ut-pt security" cx="594.6" cy="49.9" r="2.6" data-tip="Security · 03 May: 99.5%"></circle>
+<circle class="ut-pt security" cx="645.6" cy="47.9" r="2.6" data-tip="Security · 09 May: 99.5%"></circle>
+<circle class="ut-pt security" cx="696.6" cy="42.4" r="2.6" data-tip="Security · 15 May: 99.6%"></circle>
+<circle class="ut-pt security" cx="747.5" cy="73.1" r="2.6" data-tip="Security · 21 May: 99.0%"></circle>
+<circle class="ut-pt security" cx="790.0" cy="156.0" r="2.6" data-tip="Security · 26 May: 97.2%"></circle>
+<circle class="ut-pt edge" cx="34.0" cy="51.2" r="2.6" data-tip="Edge · 26 Feb: 99.4%"></circle>
+<circle class="ut-pt edge" cx="85.0" cy="49.5" r="2.6" data-tip="Edge · 04 Mar: 99.5%"></circle>
+<circle class="ut-pt edge" cx="135.9" cy="46.2" r="2.6" data-tip="Edge · 10 Mar: 99.5%"></circle>
+<circle class="ut-pt edge" cx="186.9" cy="44.9" r="2.6" data-tip="Edge · 16 Mar: 99.6%"></circle>
+<circle class="ut-pt edge" cx="237.9" cy="44.7" r="2.6" data-tip="Edge · 22 Mar: 99.6%"></circle>
+<circle class="ut-pt edge" cx="288.8" cy="50.1" r="2.6" data-tip="Edge · 28 Mar: 99.4%"></circle>
+<circle class="ut-pt edge" cx="339.8" cy="50.5" r="2.6" data-tip="Edge · 03 Apr: 99.4%"></circle>
+<circle class="ut-pt edge" cx="390.8" cy="45.3" r="2.6" data-tip="Edge · 09 Apr: 99.6%"></circle>
+<circle class="ut-pt edge" cx="441.7" cy="47.5" r="2.6" data-tip="Edge · 15 Apr: 99.5%"></circle>
+<circle class="ut-pt edge" cx="492.7" cy="46.1" r="2.6" data-tip="Edge · 21 Apr: 99.5%"></circle>
+<circle class="ut-pt edge" cx="543.7" cy="45.6" r="2.6" data-tip="Edge · 27 Apr: 99.5%"></circle>
+<circle class="ut-pt edge" cx="594.6" cy="47.9" r="2.6" data-tip="Edge · 03 May: 99.5%"></circle>
+<circle class="ut-pt edge" cx="645.6" cy="46.5" r="2.6" data-tip="Edge · 09 May: 99.5%"></circle>
+<circle class="ut-pt edge" cx="696.6" cy="47.3" r="2.6" data-tip="Edge · 15 May: 99.5%"></circle>
+<circle class="ut-pt edge" cx="747.5" cy="48.5" r="2.6" data-tip="Edge · 21 May: 99.5%"></circle>
+<circle class="ut-pt edge" cx="790.0" cy="47.7" r="2.6" data-tip="Edge · 26 May: 99.5%"></circle>
+<circle class="ut-pt wlan" cx="34.0" cy="67.9" r="2.6" data-tip="WLAN · 26 Feb: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="85.0" cy="70.5" r="2.6" data-tip="WLAN · 04 Mar: 99.0%"></circle>
+<circle class="ut-pt wlan" cx="135.9" cy="68.3" r="2.6" data-tip="WLAN · 10 Mar: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="186.9" cy="70.7" r="2.6" data-tip="WLAN · 16 Mar: 99.0%"></circle>
+<circle class="ut-pt wlan" cx="237.9" cy="67.5" r="2.6" data-tip="WLAN · 22 Mar: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="288.8" cy="73.0" r="2.6" data-tip="WLAN · 28 Mar: 99.0%"></circle>
+<circle class="ut-pt wlan" cx="339.8" cy="65.9" r="2.6" data-tip="WLAN · 03 Apr: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="390.8" cy="74.3" r="2.6" data-tip="WLAN · 09 Apr: 98.9%"></circle>
+<circle class="ut-pt wlan" cx="441.7" cy="67.1" r="2.6" data-tip="WLAN · 15 Apr: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="492.7" cy="73.1" r="2.6" data-tip="WLAN · 21 Apr: 99.0%"></circle>
+<circle class="ut-pt wlan" cx="543.7" cy="72.6" r="2.6" data-tip="WLAN · 27 Apr: 99.0%"></circle>
+<circle class="ut-pt wlan" cx="594.6" cy="73.3" r="2.6" data-tip="WLAN · 03 May: 99.0%"></circle>
+<circle class="ut-pt wlan" cx="645.6" cy="66.4" r="2.6" data-tip="WLAN · 09 May: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="696.6" cy="64.9" r="2.6" data-tip="WLAN · 15 May: 99.1%"></circle>
+<circle class="ut-pt wlan" cx="747.5" cy="69.7" r="2.6" data-tip="WLAN · 21 May: 99.0%"></circle>
+<circle class="ut-pt wlan" cx="790.0" cy="66.5" r="2.6" data-tip="WLAN · 26 May: 99.1%"></circle>
+<circle class="ut-pt services" cx="34.0" cy="27.4" r="2.6" data-tip="Services · 26 Feb: 99.9%"></circle>
+<circle class="ut-pt services" cx="85.0" cy="24.4" r="2.6" data-tip="Services · 04 Mar: 100.0%"></circle>
+<circle class="ut-pt services" cx="135.9" cy="25.8" r="2.6" data-tip="Services · 10 Mar: 100.0%"></circle>
+<circle class="ut-pt services" cx="186.9" cy="23.7" r="2.6" data-tip="Services · 16 Mar: 100.0%"></circle>
+<circle class="ut-pt services" cx="237.9" cy="23.9" r="2.6" data-tip="Services · 22 Mar: 100.0%"></circle>
+<circle class="ut-pt services" cx="288.8" cy="24.6" r="2.6" data-tip="Services · 28 Mar: 100.0%"></circle>
+<circle class="ut-pt services" cx="339.8" cy="25.6" r="2.6" data-tip="Services · 03 Apr: 100.0%"></circle>
+<circle class="ut-pt services" cx="390.8" cy="27.5" r="2.6" data-tip="Services · 09 Apr: 99.9%"></circle>
+<circle class="ut-pt services" cx="441.7" cy="25.4" r="2.6" data-tip="Services · 15 Apr: 100.0%"></circle>
+<circle class="ut-pt services" cx="492.7" cy="26.7" r="2.6" data-tip="Services · 21 Apr: 99.9%"></circle>
+<circle class="ut-pt services" cx="543.7" cy="27.0" r="2.6" data-tip="Services · 27 Apr: 99.9%"></circle>
+<circle class="ut-pt services" cx="594.6" cy="26.6" r="2.6" data-tip="Services · 03 May: 99.9%"></circle>
+<circle class="ut-pt services" cx="645.6" cy="25.4" r="2.6" data-tip="Services · 09 May: 100.0%"></circle>
+<circle class="ut-pt services" cx="696.6" cy="23.8" r="2.6" data-tip="Services · 15 May: 100.0%"></circle>
+<circle class="ut-pt services" cx="747.5" cy="27.0" r="2.6" data-tip="Services · 21 May: 99.9%"></circle>
+<circle class="ut-pt services" cx="790.0" cy="24.1" r="2.6" data-tip="Services · 26 May: 100.0%"></circle>
+<g class="ut-xlabels"><text x="34.0" y="254" class="ut-axis-label" text-anchor="middle">26 Feb</text>
+<text x="186.9" y="254" class="ut-axis-label" text-anchor="middle">16 Mar</text>
+<text x="339.8" y="254" class="ut-axis-label" text-anchor="middle">03 Apr</text>
+<text x="484.2" y="254" class="ut-axis-label" text-anchor="middle">20 Apr</text>
+<text x="637.1" y="254" class="ut-axis-label" text-anchor="middle">08 May</text>
+<text x="790.0" y="254" class="ut-axis-label" text-anchor="middle">26 May</text></g>
+</svg>
+            </div>
+          </div>
+          <div class="card__foot">
+            <span class="warn"><svg class="inline-icon" width="13" height="13"><use href="#i-alert-triangle"/></svg><strong>Security layer trending down</strong> - tracks the ASA5506 EoSupport issue this week</span>
+          </div>
+        </div>
+
+        <div class="card" style="animation-delay:.1s">
+          <div class="card__head">
+            <div class="card__title">Today by layer</div>
+          </div>
+          <div class="card__body">
+            <div class="uptime">
+              <div class="uptime__legend">
+                <span><i class="legend-dot neutral"></i>&ge; 99% target met</span>
+                <span><i class="legend-dot orange"></i>Below SLA</span>
+              </div>
+              <div class="uptime-row" data-tip="Core: 99.8% uptime, target met">
+                  <div class="uptime-row__label"><i class="legend-dot neutral"></i>Core</div>
+                  <div class="uptime-row__track"><div class="uptime-row__fill" data-w="99.8"></div><div class="uptime-row__threshold"></div></div>
+                  <div class="uptime-row__value">99.8%</div>
+                </div>
+                <div class="uptime-row" data-tip="Security: 97.2% uptime, below SLA">
+                  <div class="uptime-row__label"><i class="legend-dot orange"></i>Security</div>
+                  <div class="uptime-row__track"><div class="uptime-row__fill warn" data-w="97.2"></div><div class="uptime-row__threshold"></div></div>
+                  <div class="uptime-row__value warn">97.2%</div>
+                </div>
+                <div class="uptime-row" data-tip="Edge: 99.5% uptime, target met">
+                  <div class="uptime-row__label"><i class="legend-dot neutral"></i>Edge</div>
+                  <div class="uptime-row__track"><div class="uptime-row__fill" data-w="99.5"></div><div class="uptime-row__threshold"></div></div>
+                  <div class="uptime-row__value">99.5%</div>
+                </div>
+                <div class="uptime-row" data-tip="WLAN: 99.1% uptime, target met">
+                  <div class="uptime-row__label"><i class="legend-dot neutral"></i>WLAN</div>
+                  <div class="uptime-row__track"><div class="uptime-row__fill" data-w="99.1"></div><div class="uptime-row__threshold"></div></div>
+                  <div class="uptime-row__value">99.1%</div>
+                </div>
+                <div class="uptime-row" data-tip="Services: 100% uptime, target met">
+                  <div class="uptime-row__label"><i class="legend-dot neutral"></i>Services</div>
+                  <div class="uptime-row__track"><div class="uptime-row__fill" data-w="100"></div><div class="uptime-row__threshold"></div></div>
+                  <div class="uptime-row__value">100%</div>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lc-table-card" style="animation-delay:.14s">
+          <div class="lc-table-head">
+            <div class="lc-table-title">Recent outages <span class="lc-count">(30d)</span></div>
+          </div>
+          <div class="lc-table-scroll">
+            <table class="lc-table">
+              <thead>
+                <tr><th>Layer</th><th>Started</th><th>Duration</th><th>Problem</th><th>Status</th><th>Reference</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Core</td>
+                  <td>26/05/2026 14:18</td>
+                  <td>Ongoing · 14 min</td>
+                  <td class="adv-title-cell">Core router down — RPP1L2C001H1</td>
+                  <td><span class="pill pill-critical">Ongoing</span></td>
+                  <td><a href="#" class="al-link" data-toast="Opening INC0089412">INC0089412</a></td>
+                </tr>
+                <tr>
+                  <td>Security</td>
+                  <td>26/05/2026 12:32</td>
+                  <td>Ongoing · 2h 0min</td>
+                  <td class="adv-title-cell">High CPU on firewall — FPP1L0H0</td>
+                  <td><span class="pill pill-critical">Ongoing</span></td>
+                  <td><a href="#" class="al-link" data-toast="Opening INC0089388">INC0089388</a></td>
+                </tr>
+                <tr>
+                  <td>Core</td>
+                  <td>22/05/2026 07:30</td>
+                  <td>4h 10min</td>
+                  <td class="adv-title-cell">NTP time sync lost — RTP1C0M003</td>
+                  <td><span class="pill pill-neutral">Resolved</span></td>
+                  <td><a href="#" class="al-link" data-toast="Opening INC0089042">INC0089042</a></td>
+                </tr>
+                <tr>
+                  <td>Edge</td>
+                  <td>18/05/2026 09:00</td>
+                  <td>3h 12min</td>
+                  <td class="adv-title-cell">Host unavailable by ICMP ping — SWP2L1C002</td>
+                  <td><span class="pill pill-neutral">Resolved</span></td>
+                  <td><a href="#" class="al-link" data-toast="Opening INC0088701">INC0088701</a></td>
+                </tr>
+                <tr>
+                  <td>WLAN</td>
+                  <td>15/05/2026 14:20</td>
+                  <td>6h 5min</td>
+                  <td class="adv-title-cell">Interface errors above threshold — APP3L2W002</td>
+                  <td><span class="pill pill-neutral">Resolved</span></td>
+                  <td><a href="#" class="al-link" data-toast="Opening Alarm 29688">Alarm 29688</a></td>
+                </tr>
+                <tr>
+                  <td>Services</td>
+                  <td>10/05/2026 06:00</td>
+                  <td>2h 40min</td>
+                  <td class="adv-title-cell">Disk space warning — SRV-DC01</td>
+                  <td><span class="pill pill-neutral">Resolved</span></td>
+                  <td><a href="#" class="al-link" data-toast="Opening Alarm 29511">Alarm 29511</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="lc-table-foot">Showing 6 of 6 outages</div>
+        </div>
+      </section>
+
+      <!-- ---------- PLACEHOLDER PAGES ---------- -->
+      <section id="page-generic" style="display:none">
+        <div class="page-head">
+          <div>
+            <h1 id="genericTitle">Devices</h1>
+            <div class="page-head__sub"><span class="page-head__live"><span class="pulse"></span>Live · Updated 14:32 CET · 26 May 2026</span></div>
+          </div>
+        </div>
+        <div class="placeholder">
+          <svg width="46" height="46"><use href="#i-checks"/></svg>
+          <h2 id="genericHeading">Devices</h2>
+          <p id="genericSub">This section isn't wired up in this prototype — it's focused on the Overview dashboard from the Figma file.</p>
+          <button class="btn btn-primary" data-page="overview"><svg width="18" height="18"><use href="#i-home"/></svg>Back to Overview</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Consultant chat widget -->
+<div class="chat-widget" id="chatWidget">
+  <button class="chat-widget__pill" id="chatWidgetPill">
+    <span class="chat-widget__text">
+      <span class="chat-widget__title">Need help?</span>
+      <span class="chat-widget__sub">Contact our IT consultant.</span>
+    </span>
+    <span class="chat-widget__avatar">
+      <img src="assets/team-daan.png" width="38" height="38" alt="" />
+      <span class="chat-widget__status"></span>
+    </span>
+  </button>
+
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-panel__head">
+      <span class="chat-panel__avatar">
+        <img src="assets/team-daan.png" width="36" height="36" alt="" />
+        <span class="chat-widget__status"></span>
+      </span>
+      <div class="chat-panel__who">
+        <div class="chat-panel__name">Daan Herpers</div>
+        <div class="chat-panel__role">Service delivery manager · Conscia</div>
+      </div>
+      <button class="chat-panel__min" id="chatPanelMinimize" aria-label="Minimize conversation">
+        <svg width="14" height="14"><use href="#i-chevron-down"/></svg>
+      </button>
+    </div>
+    <div class="chat-panel__body" id="chatPanelBody">
+      <div class="chat-msg chat-msg--them">
+        <img class="chat-msg__avatar" src="assets/team-daan.png" width="24" height="24" alt="" />
+        <div class="chat-msg__bubble">Hi, I'm Daan from Conscia 👋 I'm keeping an eye on Bernhoven's landing zone — happy to help with the ASA5506 replacement, the 2 cases awaiting you, or anything else on your dashboard.</div>
+      </div>
+    </div>
+    <div class="chat-panel__input-wrap" id="chatInputWrap">
+      <textarea class="chat-panel__input" id="chatInput" rows="1" placeholder="Type a message…"></textarea>
+      <button class="chat-panel__send" id="chatSend" aria-label="Send"><svg width="13" height="13"><use href="#i-send"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast stack -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- Generic tooltip -->
+<div class="tooltip" id="tooltip"></div>
+
+<!-- Upgrade SLA tier modal -->
+<div class="modal-backdrop" id="upgradeModalBackdrop">
+  <div class="modal modal-upgrade" role="dialog" aria-modal="true" aria-labelledby="upgradeTitle">
+    <div class="modal-upgrade__head">
+      <div>
+        <div class="modal-upgrade__eyebrow">Alarms</div>
+        <h3 id="upgradeTitle">Upgrade your SLA tier</h3>
+      </div>
+      <button class="modal-close" id="upgradeModalCloseX" aria-label="Close">
+        <svg width="13" height="13"><use href="#i-x"/></svg>
+      </button>
+    </div>
+    <p class="modal-upgrade__sub">Live alarms are available from the Standard tier and above. Choose the tier that fits your needs.</p>
+
+    <div class="tier-grid">
+      <div class="tier-card">
+        <div class="tier-card__label">Essential</div>
+        <div class="tier-card__title">Current tier</div>
+        <div class="tier-card__sub">No alarm access</div>
+        <ul class="tier-check">
+          <li class="on"><svg width="16" height="16"><use href="#i-box-check"/></svg>Device monitoring</li>
+          <li class="on"><svg width="16" height="16"><use href="#i-box-check"/></svg>Advisories</li>
+          <li><svg width="16" height="16"><use href="#i-box-empty"/></svg>Alarms</li>
+          <li><svg width="16" height="16"><use href="#i-box-empty"/></svg>Priority support</li>
+        </ul>
+      </div>
+      <div class="tier-card tier-card--popular">
+        <div class="tier-card__badge">Most popular</div>
+        <div class="tier-card__label">Standard</div>
+        <div class="tier-card__title">Alarms included</div>
+        <div class="tier-card__sub">Live monitoring + acknowledge</div>
+        <ul class="tier-check">
+          <li class="on"><svg width="16" height="16"><use href="#i-box-check"/></svg>Device monitoring</li>
+          <li class="on"><svg width="16" height="16"><use href="#i-box-check"/></svg>Advisories</li>
+          <li class="on"><svg width="16" height="16"><use href="#i-box-check"/></svg>Alarms</li>
+          <li><svg width="16" height="16"><use href="#i-box-empty"/></svg>Priority support</li>
+        </ul>
+      </div>
+      <div class="tier-card">
+        <div class="tier-card__label">Enterprise</div>
+        <div class="tier-card__title">Full access</div>
+        <div class="tier-card__sub">Custom SLA + dedicated TAM</div>
+        <ul class="tier-check">
+          <li class="on"><svg width="16" height="16"><use href="#i-box-check"/></svg>Device monitoring</li>
+          <li class="on"><svg width="16" height="16"><use href="#i-box-check"/></svg>Advisories</li>
+          <li class="on"><svg width="16" height="16"><use href="#i-box-check"/></svg>Alarms</li>
+          <li class="on"><svg width="16" height="16"><use href="#i-box-check"/></svg>Priority support</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="modal-upgrade__warning">
+      <svg width="15" height="15"><use href="#i-alert-triangle"/></svg>
+      <span>A critical alarm is active on your core router right now (RPP1L2C001H1, 14 min). Upgrading gives your team live visibility and lets you acknowledge it here.</span>
+    </div>
+
+    <div class="modal-upgrade__foot">
+      <span>Your account director will confirm the change.</span>
+      <div class="modal-upgrade__actions">
+        <button class="btn btn-ghost" id="upgradeCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="upgradeConfirmBtn">Request upgrade<svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Generate summary drawer -->
+<div class="drawer-backdrop" id="reportDrawerBackdrop">
+  <aside class="drawer" id="reportDrawer" aria-label="Summary">
+    <div class="drawer__top">
+      <div>
+        <div class="drawer__eyebrow"><svg width="14" height="14"><use href="#i-sparkle"/></svg>Summary</div>
+        <div class="drawer__date" id="reportDrawerDate">26 May 2026, 14:32</div>
+      </div>
+      <button class="drawer__close" id="reportDrawerClose" aria-label="Close summary">
+        <svg width="22" height="22"><use href="#i-x-circle"/></svg>
+      </button>
+    </div>
+    <div class="drawer__body" id="reportDrawerBody">
+      <div class="drawer__skeleton" id="reportDrawerSkeleton">
+        <div class="sk-line sk-line--h"></div>
+        <div class="sk-line" style="width:95%"></div>
+        <div class="sk-line sk-line--sub"></div>
+        <div class="sk-line"></div>
+        <div class="sk-line" style="width:88%"></div>
+        <div class="sk-line" style="width:92%"></div>
+        <div class="sk-line sk-line--sub"></div>
+        <div class="sk-line"></div>
+        <div class="sk-line" style="width:70%"></div>
+      </div>
+      <div class="drawer__report" id="reportDrawerReport" hidden>
+        <p class="rp-alert">2 decisions need your attention today</p>
+        <p>Bernhoven's landing zone is operationally stable — the SOC is quiet — but your hardware lifecycle and two open approvals need decisions now.</p>
+        <h4>Immediate action required</h4>
+        <p>Two <b>ASA5506 firewalls</b> are 2 years 9 months past End-of-Support and carry <b>CVE-2024-20356</b> (CVSS 9.8) with no fix available. In total <b>23 devices</b> reach a lifecycle milestone within the next 3 months. Replacement lead time is 6–8 weeks, so the ASA5506 order should go out this week.</p>
+        <h4>Plan this quarter</h4>
+        <p>The core router <b>RPP1L2C001H1</b> has been down for 14 minutes (P1 incident INC0089412, pending assignment). €84k of End-of-Life replacements is not yet in your budget, and <b>2 cases are awaiting you</b> in ServiceNow: the ASA5506 replacement (REQ0089301) and the capex request (REQ0089180).</p>
+        <h4>What is working well</h4>
+        <p>Threat pressure is down 67% with no open security incidents, SLA adherence is 100% and average triage is 9 minutes. Uptime is strong across all layers except Security at 97.2%, which is directly linked to the ASA5506 issue above.</p>
+        <p class="rp-decisions-label">The two decisions you need to make today</p>
+        <p>Approve the ASA5506 replacement (REQ0089301), and add the €84k End-of-Life spend to the next capex plan (REQ0089180).</p>
+      </div>
+    </div>
+    <div class="drawer__bottom">
+      <div class="drawer__input-wrap" id="drawerInputWrap">
+        <textarea class="drawer__input" id="reportDrawerInput" placeholder="Enter your own question or prompt" rows="1"></textarea>
+        <button class="drawer__send" id="reportDrawerSend" aria-label="Send"><svg width="14" height="14"><use href="#i-send"/></svg></button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script src="script.js?v=16"></script>
+</body>
+</html>
