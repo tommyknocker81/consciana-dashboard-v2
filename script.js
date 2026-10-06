@@ -296,63 +296,51 @@
   window.addEventListener("resize", refreshIndicators);
 
   /* ---------------- Sparklines (SOC tiles) ---------------- */
-  // 30 daily points ending "today" (26 May 2026); last point = the tile's value.
-  const SPARK_DATA = {
-    openIncidents: [0, 2, 0, 2, 2, 0, 0, 0, 2, 2, 0, 1, 1, 0, 0, 0, 2, 1, 1, 0, 0, 0, 1, 2, 2, 0, 0, 0, 0, 0],
-    incidentTrend: [11, 10, 10, 11, 10, 9, 9, 8, 9, 10, 9, 9, 8, 9, 10, 9, 8, 8, 7, 8, 8, 7, 7, 8, 8, 7, 8, 9, 10, 12],
-    threatPressure: [3, 4, 4, 3, 4, 4, 3, 3, 4, 3, 2, 3, 4, 4, 3, 3, 2, 2, 3, 3, 2, 2, 1, 2, 2, 1, 1, 1, 1, 0],
-    slaAdherence: [100, 100, 99, 100, 100, 100, 98, 100, 100, 99, 100, 100, 100, 97, 100, 100, 100, 99, 100, 100, 100, 100, 98, 100, 100, 100, 99, 100, 100, 100],
-    avgTriage: [8, 8, 7, 8, 8, 8, 7, 7, 8, 8, 7, 7, 8, 7, 7, 8, 8, 7, 7, 8, 7, 7, 8, 8, 8, 8, 9, 8, 9, 9],
+  // Curves sampled from the Figma sparkline exports (assets/spark-1.svg pulses, assets/spark-2.svg wave),
+  // window x 16–301 = the slice the Figma tile actually shows (576px-wide image at left:-16px):
+  // 0 = top of the line band, 1 = bottom. Every wave tile reuses the same curve, as in the design.
+  const SPARK_SHAPES = {
+    pulse: [1,1,1,1,1,0.997,0.965,0.672,0.348,0.052,0.019,0.016,0.024,0.137,0.499,0.862,0.99,1,1,1,1,1,1,1,1,1,1,0.998,0.968,0.8,0.616,0.433,0.249,0.066,0.006,0,0.01,0.106,0.306,0.506,0.705,0.905,0.991,1,1,1,1,1,1,0.996,0.956,0.84,0.725,0.609,0.493,0.378,0.262,0.146,0.034,0.003,0,0.004,0.045,0.138,0.231,0.323,0.394,0.407,0.407,0.407,0.407,0.407,0.407,0.415,0.479,0.602,0.726,0.849,0.968,0.997,1,1,1,1.0,0.983,0.895,0.783,0.671,0.559,0.447,0.335,0.223,0.146,0.134,0.146,0.228,0.362,0.496,0.63,0.763,0.897,0.987,1.0,1,1,1,1,1,1,1,0.997,0.968,0.843,0.714,0.584,0.455,0.325,0.196,0.067,0.007],
+    wave: [0.02,0.01,0.0,0.002,0.026,0.068,0.11,0.151,0.185,0.196,0.196,0.196,0.196,0.196,0.196,0.209,0.23,0.252,0.273,0.29,0.287,0.267,0.246,0.226,0.205,0.184,0.163,0.142,0.121,0.102,0.098,0.115,0.145,0.157,0.158,0.158,0.164,0.192,0.25,0.353,0.47,0.587,0.703,0.791,0.837,0.857,0.856,0.833,0.784,0.691,0.575,0.485,0.434,0.389,0.344,0.299,0.254,0.21,0.187,0.185,0.203,0.228,0.252,0.276,0.301,0.325,0.349,0.382,0.418,0.454,0.49,0.526,0.562,0.598,0.619,0.621,0.621,0.621,0.62,0.601,0.562,0.521,0.48,0.444,0.428,0.435,0.463,0.522,0.604,0.687,0.771,0.854,0.932,0.979,1.0,0.999,0.987,0.975,0.963,0.946,0.929,0.912,0.896,0.879,0.862,0.845,0.829,0.812,0.803,0.803,0.803,0.803,0.803,0.803,0.798,0.771,0.716,0.619,0.513,0.411],
   };
-  const SPARK_LINEAR = { openIncidents: true };
+  // Per tile: which curve, and the value at the top (0) and bottom (1) of its band — used for the hover read-out.
+  const SPARK_SCALE = {
+    openIncidents: { shape: "pulse", top: 2, bottom: 0, decimals: 0 },
+    incidentTrend: { shape: "wave", top: 14.5, bottom: 8.5, decimals: 0 },
+    threatPressure: { shape: "wave", top: 9, bottom: 2, decimals: 0 },
+    slaAdherence: { shape: "wave", top: 100, bottom: 99, decimals: 0 },
+    avgTriage: { shape: "wave", top: 11, bottom: 6, decimals: 1 },
+  };
   const TODAY = new Date(2026, 4, 26);
   const fmtDay = (d) => d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 
-  function sparkPaths(values, linear, W, H) {
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-    const span = max - min || 1;
-    // Figma draws continuous series in the upper band (fill below, trend label clear);
-    // the on/off incident pulses use the full height.
-    const top = 8;
-    const bottom = linear ? H - 6 : H * 0.55;
-    const pts = values.map((v, i) => [(i / (values.length - 1)) * W, bottom - ((v - min) / span) * (bottom - top)]);
-    let d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
-    for (let i = 1; i < pts.length; i++) {
-      const [x, y] = pts[i];
-      if (linear) {
-        d += `L${x.toFixed(1)},${y.toFixed(1)}`;
-      } else {
-        // gentle Catmull-Rom → Bézier, clamped so it never overshoots the data range
-        const p0 = pts[i - 2] || pts[i - 1];
-        const p1 = pts[i - 1];
-        const p3 = pts[i + 1] || pts[i];
-        const t = 0.2;
-        const c1y = Math.min(bottom, Math.max(top, p1[1] + (y - p0[1]) * t));
-        const c2y = Math.min(bottom, Math.max(top, y - (p3[1] - p1[1]) * t));
-        d += `C${(p1[0] + (x - p0[0]) * t).toFixed(1)},${c1y.toFixed(1)} ${(x - (p3[0] - p1[0]) * t).toFixed(1)},${c2y.toFixed(1)} ${x.toFixed(1)},${y.toFixed(1)}`;
-      }
-    }
-    return { line: d, area: `${d}L${W},${H + 2}L0,${H + 2}Z`, pts };
+  function sparkPaths(shape, W, H, band) {
+    // band = [top, bottom] in viewBox units: the line lives in this strip, the fill runs to the bottom
+    const pts = shape.map((v, i) => [(i / (shape.length - 1)) * W, band[0] + v * (band[1] - band[0])]);
+    const line = "M" + pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join("L");
+    return { line, area: `${line}L${W},${H}L0,${H}Z`, pts };
   }
 
   document.querySelectorAll(".spark[data-spark]").forEach((el) => {
     const key = el.getAttribute("data-spark");
-    const values = SPARK_DATA[key];
-    if (!values) return;
+    const scale = SPARK_SCALE[key];
+    if (!scale) return;
+    const shape = SPARK_SHAPES[scale.shape];
     const W = 300;
-    const H = 76;
-    const { line, area, pts } = sparkPaths(values, SPARK_LINEAR[key], W, H);
+    const H = 72;
+    const band = scale.shape === "pulse" ? [7, H - 2] : [4, 37];
+    const { line, area, pts } = sparkPaths(shape, W, H, band);
     el.classList.add("spark--" + (el.getAttribute("data-tone") || "brand"));
     el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="spark__area" d="${area}"/><path class="spark__line" d="${line}"/></svg><span class="spark__cursor"></span><span class="spark__dot"></span>`;
     const cursor = el.querySelector(".spark__cursor");
     const dot = el.querySelector(".spark__dot");
     const unit = el.getAttribute("data-unit") || "";
+    const days = 30;
 
     el.addEventListener("mousemove", (e) => {
       const r = el.getBoundingClientRect();
       const frac = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
-      const i = Math.round(frac * (values.length - 1));
+      const i = Math.round(frac * (pts.length - 1));
       const xPct = (pts[i][0] / W) * 100;
       const yPct = (pts[i][1] / H) * 100;
       cursor.style.left = xPct + "%";
@@ -360,8 +348,9 @@
       dot.style.top = yPct + "%";
       el.classList.add("hovering");
       const day = new Date(TODAY);
-      day.setDate(TODAY.getDate() - (values.length - 1 - i));
-      showTooltipAt(r.left + (xPct / 100) * r.width, r.top + (yPct / 100) * r.height - 4, `${fmtDay(day)} · ${values[i]} ${unit}`);
+      day.setDate(TODAY.getDate() - Math.round((1 - frac) * (days - 1)));
+      const value = scale.top + shape[i] * (scale.bottom - scale.top);
+      showTooltipAt(r.left + (xPct / 100) * r.width, r.top + (yPct / 100) * r.height - 4, `${fmtDay(day)} · ${value.toFixed(scale.decimals)} ${unit}`);
     });
     el.addEventListener("mouseleave", () => {
       el.classList.remove("hovering");
@@ -476,8 +465,27 @@
     });
   });
 
+  // data-scroll="id": bring a section into view (after navigating, if data-page is set) and flash it briefly
+  function scrollToSection(id) {
+    const target = document.getElementById(id);
+    if (!target) return;
+    target.scrollIntoView({ block: "start", behavior: reduceMotion ? "auto" : "smooth" });
+    target.classList.remove("flash");
+    void target.offsetWidth;
+    target.classList.add("flash");
+    setTimeout(() => target.classList.remove("flash"), 1600);
+  }
+  document.querySelectorAll("[data-scroll]").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = el.getAttribute("data-scroll");
+      // let navigate() show the page (and its entrance animation) before scrolling
+      setTimeout(() => scrollToSection(id), el.hasAttribute("data-page") ? 120 : 0);
+    });
+  });
+
   // clickable tiles are divs: make them reachable and operable from the keyboard
-  document.querySelectorAll("[data-page], [data-toast]").forEach((el) => {
+  document.querySelectorAll("[data-page], [data-toast], [data-scroll]").forEach((el) => {
     if (el.matches("button, a, input, select, textarea")) return;
     el.setAttribute("tabindex", "0");
     el.setAttribute("role", "button");
@@ -508,6 +516,46 @@
     });
   });
 
+  /* ---------------- Lifecycle: investment breakdown ---------------- */
+  const investToggle = document.getElementById("investToggle");
+  if (investToggle) {
+    const panel = document.getElementById("investBreakdown");
+    investToggle.addEventListener("click", () => {
+      const open = panel.hidden;
+      panel.hidden = !open;
+      investToggle.setAttribute("aria-expanded", String(open));
+      investToggle.firstChild.textContent = open ? "Hide breakdown" : "View breakdown";
+      if (open) panel.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+    });
+  }
+
+  /* ---------------- Lifecycle tables: show the first N rows, expand on demand ---------------- */
+  function applyCollapse(card) {
+    const limit = parseInt(card.getAttribute("data-collapse"), 10);
+    const rows = [...card.querySelectorAll("tbody tr")];
+    const expanded = card.classList.contains("expanded");
+    rows.forEach((r, i) => r.classList.toggle("lc-row-collapsed", !expanded && i >= limit));
+    const label = card.querySelector(".lc-table-foot__label");
+    if (label) label.textContent = `Showing ${expanded ? rows.length : Math.min(limit, rows.length)} of ${rows.length} devices`;
+  }
+  document.querySelectorAll(".lc-table-card[data-collapse]").forEach((card) => {
+    const limit = parseInt(card.getAttribute("data-collapse"), 10);
+    const total = card.querySelectorAll("tbody tr").length;
+    if (total <= limit) return;
+    const foot = card.querySelector(".lc-table-foot");
+    foot.innerHTML = `<span class="lc-table-foot__label"></span><button class="btn btn-link btn-sm lc-expand">Show all ${total}<svg width="16" height="16"><use href="#i-chevron-down"/></svg></button>`;
+    const btn = foot.querySelector(".lc-expand");
+    btn.setAttribute("aria-expanded", "false");
+    btn.addEventListener("click", () => {
+      const expanded = card.classList.toggle("expanded");
+      btn.setAttribute("aria-expanded", String(expanded));
+      btn.firstChild.textContent = expanded ? "Show less" : `Show all ${total}`;
+      applyCollapse(card);
+      if (!expanded) card.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+    });
+    applyCollapse(card);
+  });
+
   /* ---------------- Lifecycle page: sortable ID column ---------------- */
   document.querySelectorAll(".lc-th-sort").forEach((th) => {
     th.addEventListener("click", () => {
@@ -521,6 +569,8 @@
       });
       rows.forEach((r) => tbody.appendChild(r));
       th.classList.toggle("sort-desc", desc);
+      const card = th.closest(".lc-table-card[data-collapse]");
+      if (card && card.querySelector(".lc-expand")) applyCollapse(card);
     });
   });
 
@@ -534,7 +584,7 @@
       }
       document.querySelectorAll(".lc-page-btn").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
-      toast(`Loading page ${val} — devices ${(val - 1) * 16 + 1}–${val * 16}…`);
+      toast(`Loading page ${val} — devices ${(val - 1) * 18 + 1}–${val * 18}…`);
     });
   });
   const lcPerPage = document.getElementById("lcPerPage");

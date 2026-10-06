@@ -19,11 +19,12 @@ The core router went down 14 minutes ago (P1, pending assignment). Bernhoven's t
 Client: **S. van Dijk** (IT manager, assignee of the 2 "awaiting you" requests). Conscia: Daan Herpers (chat consultant), Roel Ottenheijm, Michel Koerting,
 Inge Willems (inside sales, Commercial tab), Conscia Service Desk 24/7 (Escalation tab). Case engineers: John Doe, M. Koerting, R. Jansen.
 
-## Device inventory (Devices page shows 16 of 184)
+## Device inventory (Devices page shows 18 of 184)
 | ID | Model | Hostname | Site | Status |
 |---|---|---|---|---|
 | 4102 / 4103 | ASA5506-X | FWP1L0S01A1 / A2 | HQ — Uden | Replace now (past EoSupport) |
-| 6110 / 6111 | Meraki MR33 | APP1L1W011 / 012 | HQ — Uden | Replace within 3 months (2 of 21 shown) |
+| 6201 / 6202 | Catalyst 2960-X-48FPD-L | SWP2L2A001 / 002 | HQ — Uden | Budget & schedule (2 of 17 on Devices) |
+| 6110 / 6111 | Meraki MR33 | APP1L1W011 / 012 | HQ — Uden | Replace within 3 months (2 of 21 on Devices; all 21 on Lifecycle) |
 | 5210–5213 | ISR4331/K9 | RTP1C0M001–004 | HQ / DR / DR / Branch | Plan replacement (past EoSale) |
 | 6001 / 6002 | Catalyst 9300-48P | SWP2L1C001 / 002 | HQ | Supported |
 | 6103 / 6104 | Meraki MR46 | APP3L2W001 / 002 | Branch — Oss | Supported |
@@ -45,7 +46,17 @@ Core router **RPP1L2C001H1** (10.20.0.1). Layer mapping (Uptime): Core = ISR/cor
 - **Your Conscia Team:** Primary (Daan, Roel, Michel) · Commercial (Roel, Inge Willems) · Escalation (Service Desk 24/7, Daan).
 
 ## Lifecycle page
-Donut **23 act / 4 plan / 17 schedule / 140 none of 184**. Tiles mirror the Overview + Est. investment **€84k** (ASA5506 + ISR4331 quote).
+Donut **23 act / 4 plan / 17 schedule / 140 none of 184**. Tiles mirror the Overview + Est. investment **€84k quoted + ~€19k to quote**.
+"View breakdown" (fictional, indicative list prices): 2 × ASA5506-X → Firepower 1120 **€28k** (quoted) · 4 × ISR4331/K9 → Catalyst 8300 **€56k** (quoted) ·
+21 × Meraki MR33 → MR36 **~€19k** (to quote) · total ~€103k. The €84k (= ASA + ISR) is the figure used everywhere else (Actions, REQ0089180, Summary).
+The 3 lifecycle tables show 5 rows, then "Show all N" (only the MR33 table has more: 21 rows, 6110–6130, APP1L1W011–031).
+Tables are organised by **bucket** (tiles on Overview and Lifecycle scroll to them via `data-scroll`):
+- **Act now — replace within 3 months (23):** 2 × ASA5506-X (EoSale 29/1/2021, EoSW 29/1/2022, EoSupport 31/8 + 24/7/2023 — already unsupported)
+  + 21 × Meraki MR33 (6110–6130, APP1L1W011–031; EoSale 14/7/2022, EoSupport 21/7/2026).
+- **Plan now — decide within 3–6 months (4):** 4 × ISR4331/K9 (EoSale 31/10/2023, software maintenance ended 24/5/2026, EoSupport 31/10/2028).
+- **Budget & Schedule — 6+ months out (17):** 17 × Catalyst 2960-X-48FPD-L access switches (6201–6217, SWP2L2A001–017, Cisco IOS 15.2(7)E8;
+  9 HQ, 4 DR, 4 Branch; EoSale 30/10/2022, EoSW 31/1/2027, EoSupport 31/10/2027).
+Each table shows 5 rows, then "Show all N". Bucket = when Bernhoven has to act, not which vendor milestone passed.
 Tables: End of support passed (2 ASA5506) · End of Support within 3 months (21 × MR33, 2 rows shown: EoSale 14/7/2022, EoSupport 21/7/2026) ·
 End of Sale passed (4 × ISR4331/K9: EoSale 31/10/2023, EoSW 24/5/2026, EoSupport 31/10/2028).
 
@@ -88,5 +99,5 @@ Summary: 99.1% · 4/5 · 1 below target · **6h 5m** longest outage (v1 said 3h 
 | RPP1L2C001H1 core router | Overview (Cases, Alarms rows), Alarms #1, Cases INC0089412, Uptime log, Notifications, Upgrade modal, Summary |
 | FPP1L0H0 / CVE-2024-20399 | Overview (Advisories, Cases, Alarms rows, Actions), Devices, Alarms #2, Cases INC0089388, Advisories, Uptime log |
 | 2 open incidents / 4 open cases / 2 awaiting you | Overview Cases card, Cases page summary + tables, Notifications, Summary, Chat |
-| €84k | Overview Actions, Lifecycle Est. investment, Cases REQ0089180, Summary, Chat |
+| €84k (+ ~€19k MR33 to quote) | Overview Actions, Lifecycle Est. investment + breakdown, Cases REQ0089180, Summary, Chat |
 | 184 devices · 26 May 2026 14:32 | every page subtitle, Lifecycle donut, Summary date |

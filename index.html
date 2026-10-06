@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Conscia Landing Zone — Overview</title>
-<link rel="stylesheet" href="styles.css?v=25" />
+<link rel="stylesheet" href="styles.css?v=29" />
 </head>
 <body>
 
@@ -188,7 +188,7 @@
               </div>
               <div class="kpi-tile__value"><span data-count="0">0</span></div>
               <div class="kpi-tile__label">Attacks</div>
-              <div class="spark" data-spark="threatPressure" data-tone="success" data-unit="attacks"></div>
+              <div class="spark" data-spark="threatPressure" data-tone="success" data-unit="blocked attempts"></div>
               <div class="kpi-tile__trend kpi-tile__trend--success">Trend is down <span class="trend-pill trend-pill--down">67%<svg width="14" height="14"><use href="#i-trend-down"/></svg></span></div>
             </div>
             <div class="kpi-tile kpi-tile--graph" data-page="uptime">
@@ -219,7 +219,7 @@
           <div class="section-card" data-tabs>
             <h2 class="section-card__title">Lifecycle management</h2>
             <div class="kpi-grid kpi-grid--3">
-              <div class="kpi-tile kpi-tile--alert" data-page="lifecycle">
+              <div class="kpi-tile kpi-tile--alert" data-page="lifecycle" data-scroll="lcCardAct">
                 <div class="kpi-tile__head">
                   <span class="kpi-tile__title">Act now<span class="kpi-tile__info" data-tip="Devices reaching a lifecycle milestone within 3 months — incl. 2 already past End-of-Support"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
                   <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
@@ -227,7 +227,7 @@
                 <div class="kpi-tile__value"><span data-count="23">0</span></div>
                 <div class="kpi-tile__label">within <b>3 months</b></div>
               </div>
-              <div class="kpi-tile kpi-tile--plan" data-page="lifecycle">
+              <div class="kpi-tile kpi-tile--plan" data-page="lifecycle" data-scroll="lcCardPlan">
                 <div class="kpi-tile__head">
                   <span class="kpi-tile__title">Plan now<span class="kpi-tile__info" data-tip="Devices reaching a lifecycle milestone in 3–6 months"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
                   <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
@@ -235,9 +235,9 @@
                 <div class="kpi-tile__value"><span data-count="4">0</span></div>
                 <div class="kpi-tile__label">within <b>3-6 months</b></div>
               </div>
-              <div class="kpi-tile kpi-tile--success" data-page="lifecycle">
+              <div class="kpi-tile kpi-tile--success" data-page="lifecycle" data-scroll="lcCardBudget">
                 <div class="kpi-tile__head">
-                  <span class="kpi-tile__title">Budget &amp; Schedule<span class="kpi-tile__info" data-tip="Devices with a lifecycle milestone more than 6 months out — budget them now"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
+                  <span class="kpi-tile__title">Budget &amp; Schedule<span class="kpi-tile__info" data-tip="17 × Catalyst 2960-X switches — End-of-Support 31/10/2027, budget the refresh now"><svg width="16" height="16"><use href="#i-info"/></svg></span></span>
                   <span class="kpi-tile__link"><svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></span>
                 </div>
                 <div class="kpi-tile__value"><span data-count="17">0</span></div>
@@ -256,14 +256,14 @@
               </div>
             </div>
             <div class="row-list" data-tab-panel="eosupport">
-              <button class="row" data-page="lifecycle">
+              <button class="row" data-page="lifecycle" data-scroll="lcCardAct">
                 <span class="row__icon danger"><svg width="14" height="14"><use href="#i-chip"/></svg></span>
                 <span class="row__main"><span class="row__title">ASA5506 × 2</span><span class="row__meta">Security</span></span>
                 <span class="row__right"><span class="pill pill-critical">Overdue 2y 9m</span></span>
               </button>
             </div>
             <div class="row-list" data-tab-panel="eosale" hidden>
-              <button class="row" data-page="lifecycle">
+              <button class="row" data-page="lifecycle" data-scroll="lcCardPlan">
                 <span class="row__icon warn"><svg width="14" height="14"><use href="#i-chip"/></svg></span>
                 <span class="row__main"><span class="row__title">ISR4331/K9 × 4</span><span class="row__meta">Core modules</span></span>
                 <span class="row__right"><span class="pill pill-orange">Overdue 2y 7m</span></span>
@@ -535,17 +535,17 @@
               </div>
 
               <div class="kpi-grid kpi-grid--4 lc-tiles">
-                <div class="kpi-tile kpi-tile--alert" data-tip="21 × Meraki MR33 reach End-of-Support on 21/07/2026, plus 2 × ASA5506 already past it">
+                <div class="kpi-tile kpi-tile--alert" data-scroll="lcCardAct" data-tip="2 × ASA5506 past End-of-Support + 21 × Meraki MR33 (support ends 21/07/2026) — click to see them">
                   <div class="kpi-tile__head"><span class="kpi-tile__title">Act now</span></div>
                   <div class="kpi-tile__value"><span data-count="23">0</span></div>
                   <div class="kpi-tile__label">within <b>3 months</b></div>
                 </div>
-                <div class="kpi-tile kpi-tile--plan" data-tip="4 × ISR4331/K9 — End-of-Sale passed, End-of-Software 24/05/2026">
+                <div class="kpi-tile kpi-tile--plan" data-scroll="lcCardPlan" data-tip="4 × ISR4331/K9 — End-of-Sale passed, software maintenance ended 24/05/2026 — click to see them">
                   <div class="kpi-tile__head"><span class="kpi-tile__title">Plan now</span></div>
                   <div class="kpi-tile__value"><span data-count="4">0</span></div>
                   <div class="kpi-tile__label">within <b>3-6 months</b></div>
                 </div>
-                <div class="kpi-tile kpi-tile--success" data-tip="17 devices with a milestone more than 6 months out">
+                <div class="kpi-tile kpi-tile--success" data-scroll="lcCardBudget" data-tip="17 × Catalyst 2960-X — End-of-Support 31/10/2027 — click to see them">
                   <div class="kpi-tile__head"><span class="kpi-tile__title">Budget &amp; Schedule</span></div>
                   <div class="kpi-tile__value"><span data-count="17">0</span></div>
                   <div class="kpi-tile__label">within <b>6+ months</b></div>
@@ -553,18 +553,55 @@
                 <div class="kpi-tile kpi-tile--cta">
                   <div class="kpi-tile__head"><span class="kpi-tile__title">Est. investment</span></div>
                   <div class="kpi-tile__value">€<span data-count="84">0</span>k</div>
-                  <div class="kpi-tile__label">ASA5506 + ISR4331 quote</div>
-                  <button class="btn btn-secondary btn-sm" data-toast="Requesting a full replacement quote from your Conscia account director…"><svg width="16" height="16"><use href="#i-euro"/></svg>Get a quote</button>
+                  <div class="kpi-tile__label">quoted · <b>+ €19k to quote</b></div>
+                  <button class="btn btn-secondary btn-sm" id="investToggle" aria-expanded="false" aria-controls="investBreakdown">View breakdown<svg width="16" height="16"><use href="#i-chevron-down"/></svg></button>
                 </div>
+              </div>
+            </div>
+            <div class="invest" id="investBreakdown" hidden>
+              <table class="invest__table">
+                <thead>
+                  <tr><th>Replace</th><th>With</th><th>Why</th><th>Status</th><th class="num">Estimate</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><b>2 × ASA5506-X</b><span>FWP1L0S01A1, FWP1L0S01A2</span></td>
+                    <td>Firepower 1120 · licences + install</td>
+                    <td><span class="pill pill-critical">Past End of Support</span></td>
+                    <td><span class="pill pill-neutral">Quoted</span></td>
+                    <td class="num">€28k</td>
+                  </tr>
+                  <tr>
+                    <td><b>4 × ISR4331/K9</b><span>RTP1C0M001–004</span></td>
+                    <td>Catalyst 8300 · install</td>
+                    <td><span class="pill pill-orange">Past End of Sale</span></td>
+                    <td><span class="pill pill-neutral">Quoted</span></td>
+                    <td class="num">€56k</td>
+                  </tr>
+                  <tr>
+                    <td><b>21 × Meraki MR33</b><span>APP1L1W011–031</span></td>
+                    <td>Meraki MR36 · licences</td>
+                    <td><span class="pill pill-critical">End of Support 21/07/2026</span></td>
+                    <td><span class="pill pill-orange">To quote</span></td>
+                    <td class="num">~€19k</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr><td colspan="4">Total · <b>€84k</b> quoted (not yet in budget, REQ0089180) + <b>~€19k</b> still to quote</td><td class="num">~€103k</td></tr>
+                </tfoot>
+              </table>
+              <div class="invest__actions">
+                <span>Estimates are indicative list prices; your account director confirms the final quote.</span>
+                <button class="btn btn-primary btn-sm" data-toast="Quote request for 21 × Meraki MR36 sent to Roel Ottenheijm"><svg width="16" height="16"><use href="#i-euro"/></svg>Request MR33 quote</button>
               </div>
             </div>
             <div class="lc-summary__foot"><i class="legend-dot neutral"></i>140 devices fully supported — no lifecycle milestone due.</div>
           </div>
 
-          <div class="lc-table-card" style="animation-delay:.06s">
+          <div class="lc-table-card" id="lcCardAct" data-collapse="5" style="animation-delay:.06s">
             <div class="lc-table-head">
-              <div class="lc-table-title"><i class="legend-dot red"></i>End of support passed - replace immediately <span class="lc-count">(2)</span></div>
-              <span class="lc-info" data-tip="These devices no longer receive vendor security patches. No fix path exists for known CVEs — replace as soon as possible.">
+              <div class="lc-table-title"><i class="legend-dot red"></i>Act now — replace within 3 months <span class="lc-count">(23)</span></div>
+              <span class="lc-info" data-tip="2 × ASA5506 are already past End-of-Support (no security patches, CVE-2024-20356 has no fix). 21 × Meraki MR33 lose support on 21/07/2026. Order replacements now — lead time is 6–8 weeks.">
                 <svg width="16" height="16"><use href="#i-info"/></svg>
               </span>
             </div>
@@ -572,8 +609,8 @@
               <table class="lc-table">
                 <thead>
                   <tr>
-                    <th class="lc-th-check"><button class="lc-checkbox" data-check-all="lcTableSupport" aria-label="Select all"></button></th>
-                    <th class="lc-th-sort" data-sort-table="lcTableSupport">ID<svg width="12" height="12"><use href="#i-chevron-down"/></svg></th>
+                    <th class="lc-th-check"><button class="lc-checkbox" data-check-all="lcTableAct" aria-label="Select all"></button></th>
+                    <th class="lc-th-sort" data-sort-table="lcTableAct">ID<svg width="12" height="12"><use href="#i-chevron-down"/></svg></th>
                     <th>Device</th>
                     <th>Hostname</th>
                     <th>OS</th>
@@ -584,7 +621,7 @@
                     <th>End-Of-Support</th>
                   </tr>
                 </thead>
-                <tbody id="lcTableSupport">
+                <tbody id="lcTableAct">
                   <tr data-id="4102">
                     <td class="lc-th-check"><button class="lc-checkbox"></button></td>
                     <td class="lc-id">4102</td>
@@ -609,36 +646,6 @@
                     <td class="lc-date lc-date--past">29/1/2022</td>
                     <td class="lc-date lc-date--past">24/7/2023</td>
                   </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="lc-table-foot">Showing 2 of 2 devices</div>
-          </div>
-
-          <div class="lc-table-card" style="animation-delay:.08s">
-            <div class="lc-table-head">
-              <div class="lc-table-title"><i class="legend-dot red"></i>End of Support within 3 months - replace now <span class="lc-count">(21)</span></div>
-              <span class="lc-info" data-tip="Meraki MR33 access points lose vendor support on 21/07/2026. Together with the 2 ASA5506 these make up the 23 'Act now' devices.">
-                <svg width="16" height="16"><use href="#i-info"/></svg>
-              </span>
-            </div>
-            <div class="lc-table-scroll">
-              <table class="lc-table">
-                <thead>
-                  <tr>
-                    <th class="lc-th-check"><button class="lc-checkbox" data-check-all="lcTableSoon" aria-label="Select all"></button></th>
-                    <th class="lc-th-sort" data-sort-table="lcTableSoon">ID<svg width="12" height="12"><use href="#i-chevron-down"/></svg></th>
-                    <th>Device</th>
-                    <th>Hostname</th>
-                    <th>OS</th>
-                    <th>OS version</th>
-                    <th>Serial number</th>
-                    <th>End-Of-Sale</th>
-                    <th>End-Of-Software</th>
-                    <th>End-Of-Support</th>
-                  </tr>
-                </thead>
-                <tbody id="lcTableSoon">
                   <tr data-id="6110">
                     <td class="lc-th-check"><button class="lc-checkbox"></button></td>
                     <td class="lc-id">6110</td>
@@ -663,16 +670,244 @@
                     <td class="lc-date lc-date--soon">21/7/2026</td>
                     <td class="lc-date lc-date--soon">21/7/2026</td>
                   </tr>
+                  <tr data-id="6112">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6112</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W013</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9LP</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6113">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6113</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W014</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9LQ</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6114">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6114</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W015</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9LR</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6115">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6115</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W016</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9LS</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6116">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6116</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W017</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9LT</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6117">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6117</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W018</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9LU</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6118">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6118</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W019</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9LV</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6119">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6119</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W020</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9LW</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6120">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6120</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W021</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9MM</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6121">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6121</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W022</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9MN</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6122">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6122</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W023</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9MP</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6123">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6123</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W024</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9MQ</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6124">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6124</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W025</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9MR</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6125">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6125</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W026</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9MS</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6126">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6126</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W027</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9MT</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6127">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6127</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W028</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9MU</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6128">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6128</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W029</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9MV</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6129">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6129</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W030</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9MW</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
+                  <tr data-id="6130">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6130</td>
+                    <td>Meraki MR33</td>
+                    <td>APP1L1W031</td>
+                    <td>Meraki MR</td>
+                    <td>30.7</td>
+                    <td>Q2PD-7HX4-K9NM</td>
+                    <td class="lc-date lc-date--past">14/7/2022</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                    <td class="lc-date lc-date--soon">21/7/2026</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
-            <div class="lc-table-foot">Showing 2 of 21 devices</div>
+            <div class="lc-table-foot">Showing 23 of 23 devices</div>
           </div>
 
-          <div class="lc-table-card" style="animation-delay:.12s">
+          <div class="lc-table-card" id="lcCardPlan" data-collapse="5" style="animation-delay:.1s">
             <div class="lc-table-head">
-              <div class="lc-table-title"><i class="legend-dot orange"></i>End of Sale passed - Plan replacement <span class="lc-count">(4)</span></div>
-              <span class="lc-info" data-tip="These devices can no longer be purchased new and are approaching End-of-Software. Budget for replacement this year.">
+              <div class="lc-table-title"><i class="legend-dot orange"></i>Plan now — decide within 3–6 months <span class="lc-count">(4)</span></div>
+              <span class="lc-info" data-tip="4 × ISR4331/K9: End-of-Sale passed and software maintenance ended on 24/05/2026 (no more bug fixes). Still supported until 31/10/2028 — plan the replacement this half-year.">
                 <svg width="16" height="16"><use href="#i-info"/></svg>
               </span>
             </div>
@@ -680,8 +915,8 @@
               <table class="lc-table">
                 <thead>
                   <tr>
-                    <th class="lc-th-check"><button class="lc-checkbox" data-check-all="lcTableSale" aria-label="Select all"></button></th>
-                    <th class="lc-th-sort" data-sort-table="lcTableSale">ID<svg width="12" height="12"><use href="#i-chevron-down"/></svg></th>
+                    <th class="lc-th-check"><button class="lc-checkbox" data-check-all="lcTablePlan" aria-label="Select all"></button></th>
+                    <th class="lc-th-sort" data-sort-table="lcTablePlan">ID<svg width="12" height="12"><use href="#i-chevron-down"/></svg></th>
                     <th>Device</th>
                     <th>Hostname</th>
                     <th>OS</th>
@@ -692,7 +927,7 @@
                     <th>End-Of-Support</th>
                   </tr>
                 </thead>
-                <tbody id="lcTableSale">
+                <tbody id="lcTablePlan">
                   <tr data-id="5210">
                     <td class="lc-th-check"><button class="lc-checkbox"></button></td>
                     <td class="lc-id">5210</td>
@@ -746,6 +981,240 @@
             </div>
             <div class="lc-table-foot">Showing 4 of 4 devices</div>
           </div>
+
+          <div class="lc-table-card" id="lcCardBudget" data-collapse="5" style="animation-delay:.14s">
+            <div class="lc-table-head">
+              <div class="lc-table-title"><i class="legend-dot green"></i>Budget &amp; Schedule — 6+ months out <span class="lc-count">(17)</span></div>
+              <span class="lc-info" data-tip="17 × Catalyst 2960-X access switches: End-of-Sale passed, support ends 31/10/2027. No risk today — put the refresh in next year's budget.">
+                <svg width="16" height="16"><use href="#i-info"/></svg>
+              </span>
+            </div>
+            <div class="lc-table-scroll">
+              <table class="lc-table">
+                <thead>
+                  <tr>
+                    <th class="lc-th-check"><button class="lc-checkbox" data-check-all="lcTableBudget" aria-label="Select all"></button></th>
+                    <th class="lc-th-sort" data-sort-table="lcTableBudget">ID<svg width="12" height="12"><use href="#i-chevron-down"/></svg></th>
+                    <th>Device</th>
+                    <th>Hostname</th>
+                    <th>OS</th>
+                    <th>OS version</th>
+                    <th>Serial number</th>
+                    <th>End-Of-Sale</th>
+                    <th>End-Of-Software</th>
+                    <th>End-Of-Support</th>
+                  </tr>
+                </thead>
+                <tbody id="lcTableBudget">
+                  <tr data-id="6201">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6201</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A001</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X01A</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6202">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6202</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A002</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X02B</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6203">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6203</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A003</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X03C</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6204">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6204</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A004</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X04D</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6205">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6205</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A005</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X05E</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6206">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6206</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A006</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X06F</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6207">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6207</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A007</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X07G</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6208">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6208</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A008</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X08H</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6209">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6209</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A009</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X09J</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6210">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6210</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A010</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X10K</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6211">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6211</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A011</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X11L</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6212">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6212</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A012</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X12M</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6213">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6213</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A013</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X13N</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6214">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6214</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A014</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X14P</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6215">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6215</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A015</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X15Q</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6216">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6216</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A016</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X16R</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                  <tr data-id="6217">
+                    <td class="lc-th-check"><button class="lc-checkbox"></button></td>
+                    <td class="lc-id">6217</td>
+                    <td>Catalyst 2960-X-48FPD-L</td>
+                    <td>SWP2L2A017</td>
+                    <td>Cisco IOS</td>
+                    <td>15.2(7)E8</td>
+                    <td>FOC2231X17S</td>
+                    <td class="lc-date lc-date--past">30/10/2022</td>
+                    <td class="lc-date">31/1/2027</td>
+                    <td class="lc-date">31/10/2027</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="lc-table-foot">Showing 17 of 17 devices</div>
+          </div>
         </div>
       </section>
 
@@ -789,6 +1258,8 @@
                   <tr data-id="5213"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">5213</td><td>ISR4331/K9</td><td>RTP1C0M004</td><td>Cisco IOS XE</td><td>Branch — Oss</td><td><span class="pill pill-orange">Plan replacement</span></td></tr>
                   <tr data-id="6110"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">6110</td><td>Meraki MR33</td><td>APP1L1W011</td><td>Meraki</td><td>HQ — Uden</td><td><span class="pill pill-critical">Replace within 3 months</span></td></tr>
                   <tr data-id="6111"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">6111</td><td>Meraki MR33</td><td>APP1L1W012</td><td>Meraki</td><td>HQ — Uden</td><td><span class="pill pill-critical">Replace within 3 months</span></td></tr>
+                  <tr data-id="6201"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">6201</td><td>Catalyst 2960-X-48FPD-L</td><td>SWP2L2A001</td><td>Cisco IOS</td><td>HQ — Uden</td><td><span class="pill pill-success">Budget &amp; schedule</span></td></tr>
+                  <tr data-id="6202"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">6202</td><td>Catalyst 2960-X-48FPD-L</td><td>SWP2L2A002</td><td>Cisco IOS</td><td>HQ — Uden</td><td><span class="pill pill-success">Budget &amp; schedule</span></td></tr>
                   <tr data-id="6001"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">6001</td><td>Catalyst 9300-48P</td><td>SWP2L1C001</td><td>Cisco IOS XE</td><td>HQ — Uden</td><td><span class="pill pill-neutral">Supported</span></td></tr>
                   <tr data-id="6002"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">6002</td><td>Catalyst 9300-48P</td><td>SWP2L1C002</td><td>Cisco IOS XE</td><td>HQ — Uden</td><td><span class="pill pill-neutral">Supported</span></td></tr>
                   <tr data-id="6103"><td class="lc-th-check"><button class="lc-checkbox"></button></td><td class="lc-id">6103</td><td>Meraki MR46</td><td>APP3L2W001</td><td>Meraki</td><td>Branch — Oss</td><td><span class="pill pill-neutral">Supported</span></td></tr>
@@ -801,7 +1272,7 @@
               </table>
             </div>
             <div class="lc-pagination">
-              <span class="lc-pagination__count">Showing 1–16 of 184 devices</span>
+              <span class="lc-pagination__count">Showing 1–18 of 184 devices</span>
               <div class="lc-pagination__pages">
                 <button class="lc-page-btn" data-lc-page="prev" aria-label="Previous page"><svg width="14" height="14" style="transform:scaleX(-1)"><use href="#i-chevron-right"/></svg></button>
                 <button class="lc-page-btn active">1</button>
@@ -812,7 +1283,7 @@
               </div>
               <label class="lc-pagination__perpage">Items per page
                 <select id="lcPerPage">
-                  <option>16</option>
+                  <option>18</option>
                   <option>25</option>
                   <option>50</option>
                   <option>100</option>
@@ -2091,7 +2562,7 @@
         <h4>Immediate action required</h4>
         <p>Two <b>ASA5506 firewalls</b> are 2 years 9 months past End-of-Support and carry <b>CVE-2024-20356</b> (CVSS 9.8) with no fix available. In total <b>23 devices</b> reach a lifecycle milestone within the next 3 months. Replacement lead time is 6–8 weeks, so the ASA5506 order should go out this week.</p>
         <h4>Plan this quarter</h4>
-        <p>The core router <b>RPP1L2C001H1</b> has been down for 14 minutes (P1 incident INC0089412, pending assignment). €84k of End-of-Life replacements is not yet in your budget, and <b>2 cases are awaiting you</b> in ServiceNow: the ASA5506 replacement (REQ0089301) and the capex request (REQ0089180).</p>
+        <p>The core router <b>RPP1L2C001H1</b> has been down for 14 minutes (P1 incident INC0089412, pending assignment). €84k of quoted End-of-Life replacements is not yet in your budget (plus ~€19k still to quote for the 21 Meraki MR33 access points), and <b>2 cases are awaiting you</b> in ServiceNow: the ASA5506 replacement (REQ0089301) and the capex request (REQ0089180).</p>
         <h4>What is working well</h4>
         <p>Threat pressure is down 67% with no open security incidents, SLA adherence is 100% and average triage is 9 minutes. Uptime is strong across all layers except Security at 97.2%, which is directly linked to the ASA5506 issue above.</p>
         <p class="rp-decisions-label">The two decisions you need to make today</p>
@@ -2107,6 +2578,6 @@
   </aside>
 </div>
 
-<script src="script.js?v=16"></script>
+<script src="script.js?v=22"></script>
 </body>
 </html>

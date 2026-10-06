@@ -34,13 +34,15 @@ Figma assets (logo, nav icons, team photos) are in `assets/`; most icons are als
   Recommendations and Admin use the generic placeholder (`pageMeta`).
 - **Behaviour via data attributes**, attached once at load: `data-page`, `data-toast`, `data-tip`, `data-open-modal`, `data-count` (+`data-decimals`),
   `data-tabs` / `data-tab` / `data-tab-panel` (pill tab groups with a sliding indicator), `data-spark` + `data-tone` + `data-unit` (sparklines).
-  Non-button elements with `data-page`/`data-toast` get `tabindex=0` + `role=button` + Enter/Space automatically.
+  `data-scroll="id"` scrolls to + flashes a section (after navigating if `data-page` is set); `data-collapse="5"` on a table card shows 5 rows + "Show all N".
+  Non-button elements with `data-page`/`data-toast`/`data-scroll` get `tabindex=0` + `role=button` + Enter/Space automatically.
 - **Gating:** the upgrade modal unlocks **Alarms** (Overview card `#alarmsCardBody` + page `#alarmsBody`) via `unlockAlarms()`. Advisories is open in v2.
-- **Charts:** SOC sparklines are generated in JS from `SPARK_DATA` (30 daily points, last = tile value) — reveal with `clip-path`, hover crosshair + tooltip.
+- **Charts:** SOC sparklines use `SPARK_SHAPES` — curves sampled from the Figma exports (`assets/spark-1/2.svg`, visible window x 16–301) — with `SPARK_SCALE`
+  mapping them to hover values; reveal with `clip-path`, hover crosshair + tooltip.
   Lifecycle donut animates `stroke-dasharray` from `data-dash`/`data-offset`. Uptime trend = 3 pre-rendered SVGs (line draw-in via CSS).
 
 ## Gotchas (v1 lessons still apply)
-1. **Cache busting is manual:** `styles.css?v=25`, `script.js?v=16` — bump on every edit. The HTML itself can also be cached: open `/?r=N` to force it.
+1. **Cache busting is manual:** `styles.css?v=29`, `script.js?v=22` — bump on every edit. The HTML itself can also be cached: open `/?r=N` to force it.
 2. Grids: always `repeat(N, minmax(0, 1fr))`. Never `overflow-x:hidden` on `body` (only `html`).
 3. Anything with an author `display` needs `[hidden]` handling — v2 has a global `[hidden]{display:none!important}`.
 4. Listeners attach at load → dynamically created elements don't get `data-tip`/`data-toast` behaviour.
@@ -54,6 +56,6 @@ Match existing code density; no dependencies; keep it a static site (GitHub Page
 (user requirement), and motion stays **subtle** (user brief) and honours `prefers-reduced-motion`. Verify at 1440 / 768 / 375 (also checked 1280, 1000, 881).
 
 ## Git / publishing
-Not a git repo yet. **Init git + create the GitHub repo only when the user gives the repo name; never commit or push until asked.**
-Pattern: one public repo per app folder under `tommyknocker81`, Pages from `main` root, repo-scoped git identity
-(`tommyknocker81` / `tommyknocker81@users.noreply.github.com`). See `docs/NEW_CHAT_KICKOFF.md` §E step 8 for the exact `gh` commands.
+Repo `tommyknocker81/consciana-dashboard-v2` (public), GitHub Pages from `main` root → https://tommyknocker81.github.io/consciana-dashboard-v2/.
+Repo-scoped identity `tommyknocker81` / `tommyknocker81@users.noreply.github.com`. Font files are git-ignored (`.gitignore`).
+**Commit and push only when the user asks**; after pushing, poll the live URL for a string unique to the new build (Pages takes ~1 min).
