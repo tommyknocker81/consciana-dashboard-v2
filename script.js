@@ -26,7 +26,7 @@
     return new Date(y, m - 1, d);
   }
   function monthsBetween(a, b) {
-    return (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth()) + (b.getDate() >= a.getDate() ? 0 : -1);
+    return Math.round((b - a) / (30.44 * 864e5)); // nearest whole month
   }
   function fmtAge(months) {
     const y = Math.floor(months / 12);
@@ -491,13 +491,33 @@
         extra: `<div class="spark" data-spark-index="${i}"></div><div class="kpi-tile__trend${trendCls}">${s.trend.text} <span class="trend-pill ${pillCls}">${s.trend.pill}${ICON("trend-" + (s.trend.icon || "flat"), 14)}</span></div>` });
     }).join("");
 
-    const urgentSupport = lm.act.filter((g) => g.unsupported).map((g) => {
-      const oldest = g.rows.filter((r) => r.unsupported).map((r) => parseDate(r.eosupport)).sort((a, b) => a - b)[0];
-      return row({ icon: "chip", iconTone: "disaster", title: `${shortModel(g.model)} × ${g.unsupported}`, meta: g.area, page: "lifecycle", scroll: "lcCardAct",
-        right: `<span class="pill pill-disaster">Unsupported ${fmtAge(monthsBetween(oldest, TODAY))}</span>` });
-    }).join("") || empty("No devices are past End of Support");
-    const urgentSale = lm.plan.map((g) => row({ icon: "chip", iconTone: "warn", title: `${shortModel(g.model)} × ${g.count}`, meta: g.area, page: "lifecycle", scroll: "lcCardPlan",
-      right: `<span class="pill pill-orange">Overdue ${fmtAge(monthsBetween(parseDate(g.dates[0]), TODAY))}</span>` })).join("") || empty("No devices are past End of Sale");
+    // Most urgent devices = the Act now bucket only (already unsupported, then soonest loss of support).
+    // End-of-Sale alone is a planning signal, not urgency — it only appears as a calm "next up" when nothing is urgent.
+    const supportDate = (g) => g.rows.map((r) => parseDate(r.eosupport)).sort((x, y) => x - y)[0];
+    const urgentGroups = lm.act.slice().sort((x, y) => (y.unsupported > 0) - (x.unsupported > 0) || supportDate(x) - supportDate(y));
+    const whenLabel = (d) => {
+      const days = Math.round((d - TODAY) / 864e5);
+      return days < 14 ? `${days} days` : days < 70 ? `${Math.round(days / 7)} weeks` : `${Math.round(days / 30)} months`;
+    };
+    let urgent = urgentGroups.slice(0, 3).map((g) => {
+      const d = supportDate(g);
+      // "unsupported for at least …": count from the group's most recent End-of-Support date
+      const latest = g.rows.map((r) => parseDate(r.eosupport)).sort((x, y) => y - x)[0];
+      return g.unsupported
+        ? row({ icon: "chip", iconTone: "disaster", title: `${shortModel(g.model)} × ${g.count}`, meta: g.area, page: "lifecycle", scroll: "lcCardAct",
+            right: `<span class="pill pill-disaster">Unsupported ${fmtAge(monthsBetween(latest, TODAY))}</span>` })
+        : row({ icon: "chip", iconTone: "danger", title: `${shortModel(g.model)} × ${g.count}`, meta: g.area, page: "lifecycle", scroll: "lcCardAct",
+            right: `<span class="pill pill-critical">Support ends in ${whenLabel(d)}</span>` });
+    }).join("");
+    if (!urgent) {
+      const next = lm.plan.length ? { groups: lm.plan, when: "plan within 3–6 months", pill: "pill-high", label: "Plan now", scroll: "lcCardPlan" }
+        : lm.budget.length ? { groups: lm.budget, when: "budget for next year", pill: "pill-medium", label: "Budget", scroll: "lcCardBudget" } : null;
+      urgent = next
+        ? row({ icon: "check-circle", iconTone: "ok", title: "Nothing urgent right now", page: "lifecycle", scroll: next.scroll,
+            meta: `Next up: ${next.groups.map((g) => `${shortModel(g.model)} × ${g.count}`).join(", ")} · ${next.when}`,
+            right: `<span class="pill ${next.pill}">${next.label}</span>` })
+        : empty("No lifecycle milestones coming up");
+    }
 
     const adv = c.advisories;
     const advRows = adv.urgent.map(([t, meta, score, crit]) => row({ icon: "bug", iconTone: crit ? "danger" : "", title: t, meta, page: "cves",
@@ -519,7 +539,7 @@
         <div class="kpi-grid kpi-grid--5">${soc}</div>
       </div>
       <div class="grid grid-2">
-        <div class="section-card" data-tabs>
+        <div class="section-card">
           <h2 class="section-card__title">Lifecycle management</h2>
           <div class="kpi-grid kpi-grid--3">
             ${tile({ tone: "critical", title: "Act now", tip: lm.tips.act, value: lm.actCount, label: "within <b>3 months</b>", page: "lifecycle", scroll: "lcCardAct" })}
@@ -530,15 +550,8 @@
             <span>Contact us to get estimated investment for replacement plan</span>
             <button class="btn btn-primary" data-toast="Your Conscia account director will contact you about a replacement quote">${ICON("euro", 18)}Contact Sales</button>
           </div>
-          <div class="sub-head">
-            <h3 class="sub-head__title">Most urgent devices</h3>
-            <div class="tabgroup">
-              <button class="tabgroup__tab active" data-tab="eosupport">PastEOSupport (${lm.unsupported})</button>
-              <button class="tabgroup__tab" data-tab="eosale">PastEOSale (${lm.planCount})</button>
-            </div>
-          </div>
-          <div class="row-list" data-tab-panel="eosupport">${urgentSupport}</div>
-          <div class="row-list" data-tab-panel="eosale" hidden>${urgentSale}</div>
+          <h3 class="sub-head__title sub-head__title--solo">Most urgent devices</h3>
+          <div class="row-list">${urgent}</div>
           <div class="section-card__foot"><button class="btn btn-link" data-page="devices">See all${ICON("arrow-up-right", 18)}</button></div>
         </div>
         <div class="section-card">
@@ -653,16 +666,27 @@
 
   function renderLifecycle(c, lm) {
     const segs = [
-      ["disaster", lm.unsupported, "Already unsupported"], ["critical", lm.soon, "Support ends within 3 months"],
-      ["high", lm.planCount, "Plan now (3–6 months)"], ["medium", lm.budgetCount, "Budget & schedule (6+ months)"], ["low", lm.supported, "Fully supported"],
+      ["disaster", lm.unsupported, "Already unsupported", "No security patches or vendor support"],
+      ["critical", lm.soon, "Support ends < 3 months", "Act now — order replacements"],
+      ["high", lm.planCount, "Plan now", "End of Sale passed · decide in 3–6 months"],
+      ["medium", lm.budgetCount, "Budget & schedule", "Support ends in 6+ months · budget it"],
+      ["low", lm.supported, "Fully supported", "No action needed"],
     ];
     let off = 0;
-    const circles = segs.filter((s) => s[1] > 0).map(([cls, n, label]) => {
+    const circles = segs.filter((sg) => sg[1] > 0).map(([cls, n]) => {
       const dash = (n / lm.total) * DONUT_C;
-      const el = `<circle class="lc-donut__seg ${cls}" cx="60" cy="60" r="50" data-dash="${dash.toFixed(2)}" data-offset="${(-off).toFixed(2)}" data-tip="${esc(label)} · ${n} device${n === 1 ? "" : "s"}" data-tip-follow></circle>`;
+      const el = `<circle class="lc-donut__seg ${cls}" cx="60" cy="60" r="50" data-seg="${cls}" data-dash="${dash.toFixed(2)}" data-offset="${(-off).toFixed(2)}"></circle>`;
       off += dash;
       return el;
     }).join("");
+    // hover / focus popover: one row per colour, the hovered segment's row is highlighted
+    const pop = `<div class="lc-pop" role="tooltip" id="lcPop">
+        <div class="lc-pop__head">${lm.total} devices by lifecycle status</div>
+        ${segs.map(([cls, n, label, desc]) => `<div class="lc-pop__row${n ? "" : " is-zero"}" data-seg="${cls}">
+          <i class="legend-dot ${cls}"></i>
+          <span class="lc-pop__text"><b>${esc(label)}</b><span>${esc(desc)}</span></span>
+          <span class="lc-pop__count">${n}</span></div>`).join("")}
+      </div>`;
 
     const estGroups = lm.groups.filter((g) => g.estimate);
     const why = (g) => g.unsupported ? `<span class="pill pill-disaster">Past End of Support</span>`
@@ -693,9 +717,10 @@
             <button class="btn btn-secondary" data-toast="Generating hardware lifecycle report…">${ICON("file")}Generate report</button>
           </div>
           <div class="card__body lc-summary">
-            <div class="lc-donut-wrap">
-              <svg class="lc-donut" viewBox="0 0 120 120" width="150" height="150"><circle class="lc-donut__track" cx="60" cy="60" r="50"/>${circles}</svg>
+            <div class="lc-donut-wrap" tabindex="0" aria-describedby="lcPop">
+              <svg class="lc-donut" viewBox="0 0 120 120" width="150" height="150" aria-hidden="true"><circle class="lc-donut__track" cx="60" cy="60" r="50"/>${circles}</svg>
               <div class="lc-donut__center"><b>${lm.total}</b><span>devices</span></div>
+              ${pop}
             </div>
             <div class="kpi-grid kpi-grid--4 lc-tiles">
               ${tile({ tone: "critical", title: "Act now", value: lm.actCount, label: "within <b>3 months</b>", scroll: "lcCardAct", tileTip: lm.tips.act })}
@@ -719,6 +744,16 @@
           flatRows(lm.budget), "Nothing to budget for yet.")}`;
     $("lcRoot").querySelectorAll(".lc-table-card[data-collapse]").forEach(setupCollapse);
   }
+
+  // donut: highlight the popover row of the hovered segment
+  document.addEventListener("mouseover", (e) => {
+    const wrap = e.target.closest(".lc-donut-wrap");
+    if (!wrap) return;
+    const seg = e.target.closest(".lc-donut__seg");
+    const key = seg ? seg.getAttribute("data-seg") : "";
+    wrap.querySelectorAll(".lc-pop__row").forEach((r) => r.classList.toggle("is-active", r.getAttribute("data-seg") === key));
+    wrap.classList.toggle("has-active", !!key);
+  });
 
   function animateDonut(root) {
     root.querySelectorAll(".lc-donut__seg[data-dash]").forEach((seg, i) => {

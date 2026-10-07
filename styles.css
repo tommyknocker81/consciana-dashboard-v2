@@ -617,6 +617,7 @@ b, strong { font-weight: 500; }
 .row:hover .row__icon { transform: scale(1.08); }
 .row__icon.danger { background: var(--danger-tint); color: #ff3b30; }
 .row__icon.warn { background: var(--warning-tint); color: var(--warning-text); }
+.row__icon.ok { background: var(--sev-low-tint); color: var(--success-text); }
 .row__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .row__title { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .row__meta { color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -1169,7 +1170,7 @@ b, strong { font-weight: 500; }
 .lc-donut__seg.medium { stroke: var(--sev-medium); }
 .lc-donut__seg.low { stroke: var(--sev-low); }
 .lc-donut-wrap:hover .lc-donut__seg { stroke-width: 14; }
-.lc-donut__center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.lc-donut__center { position: absolute; inset: 0; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .lc-donut__center b { font-size: 26px; font-weight: 500; letter-spacing: -0.4px; line-height: 1.1; }
 .lc-donut__center span { font-size: 12px; color: var(--text-muted); }
 .lc-tiles { flex: 1; min-width: 0; }
@@ -1671,3 +1672,40 @@ button.topbar__client { border: none; background: transparent; font-family: inhe
   .client-menu--compact { display: block; }
   #userDropdown { min-width: 300px; max-width: calc(100vw - 24px); }
 }
+
+/* donut popover: explains each colour with its device count */
+.lc-donut-wrap { z-index: 20; }
+.lc-donut-wrap:focus-visible { border-radius: 50%; }
+.lc-pop {
+  display: none;
+  position: absolute;
+  left: calc(100% + 14px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 320px;
+  background: #fff;
+  border: 1px solid var(--divider);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  padding: 6px;
+  z-index: 30;
+  pointer-events: none;
+}
+.lc-donut-wrap:hover .lc-pop, .lc-donut-wrap:focus-visible .lc-pop { display: block; animation: pop-in var(--dur-fast) var(--ease); }
+@keyframes pop-in { from { opacity: 0; transform: translate(-4px, -50%); } to { opacity: 1; transform: translate(0, -50%); } }
+.lc-pop__head { padding: 8px 10px 6px; font-size: 12px; font-weight: 500; color: var(--text-muted); }
+.lc-pop__row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius-xs); transition: background var(--dur-fast), opacity var(--dur-fast); }
+.lc-pop__row .legend-dot { width: 10px; height: 10px; }
+.lc-pop__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.lc-pop__text b { font-size: 14px; font-weight: 500; }
+.lc-pop__text span { font-size: 12px; color: var(--text-muted); }
+.lc-pop__count { font-size: 16px; font-weight: 500; }
+.lc-pop__row.is-zero { opacity: 0.45; }
+.lc-donut-wrap.has-active .lc-pop__row:not(.is-active) { opacity: 0.45; }
+.lc-pop__row.is-active { background: var(--subtle-bg); opacity: 1; }
+@media (max-width: 900px) {
+  .lc-pop { left: 50%; top: calc(100% + 10px); transform: translateX(-50%); width: min(320px, calc(100vw - 48px)); }
+  @keyframes pop-in { from { opacity: 0; transform: translate(-50%, -4px); } to { opacity: 1; transform: translate(-50%, 0); } }
+}
+/* the summary card sits above the tables that follow, so the donut popover isn't covered */
+.lc-summary-card { position: relative; z-index: 5; }

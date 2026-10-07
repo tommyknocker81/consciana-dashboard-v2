@@ -159,3 +159,7 @@ Contradictions inside the Figma that I propose to resolve like this (all pages u
   Budget & Schedule = Medium `#FFD561` / `#FEF6CD` · Fully supported = Low `#36BA85` / `#E6FAF1`. Green is reserved for "no action needed".
   Tokens `--sev-*` in `styles.css`; tile classes `kpi-tile--critical|high|medium`; pills `pill-disaster|high|medium|low`.
   Flag to the designer: swatch labels on the sheet look swapped ("Best" labelled #E6FAF1, "Neutral" labelled #FEF6CD), and Figma variables use #16A66C for Low.
+- **7 Oct 2026 — "Most urgent devices" is one sorted list, no tabs** (Figma had PastEOSupport / PastEOSale tabs). It shows the **Act now bucket only**:
+  already unsupported first ("Unsupported 2y 9m", Disaster pill, age from the group's most recent End-of-Support date), then soonest loss of support
+  ("Support ends in 8 weeks", Critical pill), max 3 rows. End-of-Sale alone is a planning signal, not urgency: when nothing is urgent the card shows
+  one calm row "Nothing urgent right now · Next up: … · plan within 3–6 months" linking to the Plan now table. Designer to update the Figma card.
