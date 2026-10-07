@@ -55,6 +55,18 @@
   --success-tint: #e6faf1;       /* severity/subtle/low bg */
   --success-text: #0b7d4f;       /* severity/subtle/low text */
 
+  /* severity scale (design-system sheet: Default / Subtle) — used for lifecycle buckets */
+  --sev-disaster: #a41c26;
+  --sev-critical: #e52e3b;
+  --sev-critical-tint: #ffebec;
+  --sev-high: #fa8b1b;
+  --sev-high-tint: #ffebcc;
+  --sev-medium: #ffd561;
+  --sev-medium-tint: #fef6cd;
+  --sev-medium-text: #8a6400;
+  --sev-low: #36ba85;
+  --sev-low-tint: #e6faf1;
+
   /* shape, elevation, motion */
   --radius: 10px;
   --radius-sm: 8px;
@@ -1146,19 +1158,26 @@ b, strong { font-weight: 500; }
 .lc-summary-card .card__head { padding-top: 0; }
 
 .lc-summary { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
-.lc-donut-wrap { position: relative; flex-shrink: 0; cursor: default; }
+.lc-donut-wrap { position: relative; flex-shrink: 0; width: 150px; height: 150px; cursor: default; }
+.lc-donut { display: block; }
 .lc-donut { transform: rotate(-90deg); }
 .lc-donut__track { fill: none; stroke: var(--stroke); stroke-width: 12; opacity: 0.6; }
 .lc-donut__seg { fill: none; stroke-width: 12; stroke-dasharray: 0 314.16; transition: stroke-dasharray var(--dur-chart) var(--ease), stroke-width var(--dur-fast); }
-.lc-donut__seg.red { stroke: var(--danger); }
-.lc-donut__seg.orange { stroke: var(--warning); }
-.lc-donut__seg.green { stroke: var(--success); }
+.lc-donut__seg.disaster { stroke: var(--sev-disaster); }
+.lc-donut__seg.critical { stroke: var(--sev-critical); }
+.lc-donut__seg.high { stroke: var(--sev-high); }
+.lc-donut__seg.medium { stroke: var(--sev-medium); }
+.lc-donut__seg.low { stroke: var(--sev-low); }
 .lc-donut-wrap:hover .lc-donut__seg { stroke-width: 14; }
 .lc-donut__center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .lc-donut__center b { font-size: 26px; font-weight: 500; letter-spacing: -0.4px; line-height: 1.1; }
 .lc-donut__center span { font-size: 12px; color: var(--text-muted); }
 .lc-tiles { flex: 1; min-width: 0; }
-.lc-tiles .kpi-tile__head { padding-bottom: 20px; padding-right: 16px; }
+.lc-tiles .kpi-tile__head { flex-grow: 0; padding-bottom: 12px; padding-right: 16px; }
+/* equal-height tiles: number + label sit centred in the space under the title */
+.lc-tiles .kpi-tile__value { margin-top: auto; }
+.lc-tiles .kpi-tile__label { margin-bottom: auto; padding-bottom: 26px; }
+.kpi-tile__btn { height: auto; padding: 0 4px; margin: -2px 0; font-size: 14px; line-height: 1.26; gap: 4px; }
 .invest { margin: 0 20px 20px; border: 1px solid var(--divider); border-radius: var(--radius); overflow: hidden; animation: panel-in var(--dur) var(--ease); }
 .invest__table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .invest__table th { text-align: left; font-size: 12px; font-weight: 500; color: var(--text-muted); background: var(--subtle-bg); padding: 10px 14px; border-bottom: 1px solid var(--divider); white-space: nowrap; }
@@ -1178,6 +1197,30 @@ b, strong { font-weight: 500; }
   .invest__table { min-width: 620px; }
 }
 .lc-summary__foot { border-top: 1px solid var(--divider); padding: 12px 20px; font-size: 14px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+/* lifecycle buckets on the severity scale */
+.kpi-tile--critical { background: var(--sev-critical-tint); border-color: var(--sev-critical); }
+.kpi-tile--high { background: var(--sev-high-tint); border-color: var(--sev-high); }
+.kpi-tile--medium { background: var(--sev-medium-tint); border-color: var(--sev-medium); }
+.kpi-tile--critical[data-page]:hover, .kpi-tile--critical[data-scroll]:hover { border-color: var(--sev-critical); }
+.kpi-tile--high[data-page]:hover, .kpi-tile--high[data-scroll]:hover { border-color: var(--sev-high); }
+.kpi-tile--medium[data-page]:hover, .kpi-tile--medium[data-scroll]:hover { border-color: #e9b93a; }
+.legend-dot.disaster { background: var(--sev-disaster); }
+.legend-dot.critical { background: var(--sev-critical); }
+.legend-dot.high { background: var(--sev-high); }
+.legend-dot.medium { background: var(--sev-medium); box-shadow: inset 0 0 0 1px rgba(138, 100, 0, 0.25); }
+.legend-dot.low { background: var(--sev-low); }
+.pill-disaster { background: var(--sev-disaster); color: #fff; }
+.pill-high { background: var(--sev-high-tint); color: var(--high-text); }
+.pill-medium { background: var(--sev-medium-tint); color: var(--sev-medium-text); }
+.pill-low { background: var(--sev-low-tint); color: var(--success-text); }
+.row__icon.disaster { background: var(--sev-disaster); color: #fff; }
+.lc-flag { display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--sev-critical-tint); color: var(--sev-disaster); font-size: 12px; font-weight: 500; }
+.lc-table tbody tr.lc-row-unsupported td:first-child { box-shadow: inset 3px 0 0 var(--sev-disaster); }
+.lc-table td.lc-date--unsupported { color: var(--sev-disaster); font-weight: 500; }
+.lc-legend { flex-wrap: wrap; gap: 8px 20px; }
+.lc-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.lc-legend b { color: var(--text); font-weight: 500; }
+
 
 .lc-table-card {
   background: #fff;
@@ -1563,4 +1606,68 @@ b, strong { font-weight: 500; }
     transition-duration: 0.01ms !important;
     transition-delay: 0ms !important;
   }
+}
+
+/* ===================== Multi-client additions ===================== */
+/* client switcher */
+button.topbar__client { border: none; background: transparent; font-family: inherit; line-height: 1.26; }
+.topbar__client-wrap { display: flex; align-items: center; }
+.dropdown--left { left: -8px; right: auto; transform-origin: top left; }
+.client-menu { min-width: 320px; }
+.client-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+.client-option:hover { background: var(--subtle-bg); }
+.client-option.active { background: var(--brand-tint); }
+.client-option svg { color: var(--brand); flex-shrink: 0; }
+.client-option__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.client-option__main b { font-size: 14px; }
+.client-option__main span { font-size: 12px; color: var(--text-muted); }
+.client-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 0 3px #fff; }
+.client-dot--alarming { background: var(--sev-critical); }
+.client-dot--mixed { background: var(--sev-high); }
+.client-dot--good { background: var(--sev-low); }
+
+/* empty states */
+.row-empty, .lc-table-empty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  border: 1px dashed var(--divider);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+}
+.row-empty svg, .lc-table-empty svg { color: var(--sev-low); flex-shrink: 0; }
+.lc-table-empty { margin: 0 20px 20px; }
+
+/* donut: hover a segment to read it, the rest steps back */
+.lc-donut__seg { cursor: pointer; transition: stroke-dasharray var(--dur-chart) var(--ease), stroke-width var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease); }
+.lc-donut-wrap:hover .lc-donut__seg { stroke-width: 12; opacity: 0.35; }
+.lc-donut-wrap .lc-donut__seg:hover { opacity: 1; stroke-width: 16; }
+
+/* summary drawer tone + misc */
+.drawer__report .rp-alert--good { color: var(--success-text); }
+.drawer__report .rp-alert--warn { color: var(--danger-text); }
+.drawer__report .rp-alert--danger { color: var(--sev-disaster); }
+.card__foot .good { color: var(--success-text); }
+.adv-table td.adv-vuln { color: var(--danger-text); font-weight: 500; }
+.cs-state-pill.new { background: var(--brand-tint); color: var(--brand); }
+
+/* on small screens the topbar client switcher is hidden: offer it in the account menu instead */
+.client-menu--compact { display: none; }
+@media (max-width: 760px) {
+  .topbar__client-wrap { display: none; }
+  .client-menu--compact { display: block; }
+  #userDropdown { min-width: 300px; max-width: calc(100vw - 24px); }
 }

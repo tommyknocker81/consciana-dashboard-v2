@@ -152,3 +152,10 @@ Contradictions inside the Figma that I propose to resolve like this (all pages u
 6. **Responsive** — SOC 5 tiles → 3/2/1 columns; section pairs → stacked ≤1100; sidebar drawer ≤900.
 7. **Motion & a11y** — §3, reduced-motion, focus rings (`--brand` 2px), aria on tabs/accordions.
 8. **Docs** — update CLAUDE.md / HANDOFF for v2. Publish only when asked (repo name still open).
+
+## Decision log
+- **6 Oct 2026 — lifecycle colours follow the design-system severity scale** (Default / Subtle sheet), not the Figma "Successful" green:
+  Already unsupported = Disaster `#A41C26` · Act now = Critical `#E52E3B` / `#FFEBEC` · Plan now = High `#FA8B1B` / `#FFEBCC` ·
+  Budget & Schedule = Medium `#FFD561` / `#FEF6CD` · Fully supported = Low `#36BA85` / `#E6FAF1`. Green is reserved for "no action needed".
+  Tokens `--sev-*` in `styles.css`; tile classes `kpi-tile--critical|high|medium`; pills `pill-disaster|high|medium|low`.
+  Flag to the designer: swatch labels on the sheet look swapped ("Best" labelled #E6FAF1, "Neutral" labelled #FEF6CD), and Figma variables use #16A66C for Low.

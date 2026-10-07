@@ -1,4 +1,13 @@
-# DATA NARRATIVE — v2 (Conscia Landing Zone · Bernhoven)
+# DATA NARRATIVE — v2 (Conscia Landing Zone · 3 clients)
+
+Since 6 Oct 2026 the prototype has **three clients** (switcher in the topbar; account menu on phones). All data lives in `clients.js`.
+| Client | State | Tier | Devices | Key story |
+|---|---|---|---|---|
+| **Noordkade Logistics** (Rotterdam / Moerdijk / Venlo) — contact P. de Graaf | alarming | Essential (Alarms locked) | 412 | Ransomware alert on SRV-FS01 (P1), WAN down at DC Moerdijk (P1), attacks +140%, SLA 92%; 41 act now (9 unsupported: 4 × ASA5506, 5 × Catalyst 3750-X; 32 × MR33), 12 plan (ISR4331), 26 budget (2960-X); 6 critical / 14 high CVE devices; 7 incidents / 11 open / 4 awaiting; uptime 96.4%, 2/5 layers OK; €56k quoted + ~€232k to quote |
+| **Bernhoven** (Uden / Veghel / Oss) — contact S. van Dijk | mixed | Essential (Alarms locked) | 184 | The original story below |
+| **Rivierland Gemeente** (Tiel / Culemborg / Geldermalsen) — contact J. Bakker | all good | Standard (Alarms open) | 326 | SOC quiet and improving; 0 act now, 3 plan (ISR4331, €42k quoted), 12 budget (2960-X, ~€28k 2027); 0 critical / 1 high CVE (patch scheduled); 0 incidents / 1 open request; uptime 99.9%, 5/5 layers |
+The Conscia team (Daan, Roel, Michel, Inge, Service Desk) is the same for every client. The rest of this file details **Bernhoven**.
+
 
 All data is fictional and hard-coded in `index.html` (+ `SPARK_DATA` in `script.js`). It is **deliberately consistent across pages**.
 v2 took the Figma Overview numbers as the truth (user decision, 5 Oct 2026) and rewrote the v1 story around them.
