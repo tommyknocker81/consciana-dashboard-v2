@@ -77,6 +77,11 @@ window.CLIENTS = {
     plan: {
       published: "20/1/2026", nextReview: "January 2027",
       accuracy: [5, 10, 15, 20, 25],
+      // devices from the in-house app's API that reach End of Support within 5 years but aren't in the plan yet (lifecycle groups without a line are added automatically)
+      inventory: [
+        { cat: "switching", item: "Meraki MS130-8", replaces: "Meraki MS120-8", type: "hardware", count: 6, eos: "30/6/2029", unit: 850 },
+        { cat: "servers", item: "UPS battery replacement", replaces: "APC Smart-UPS SMT1500", type: "hardware", count: 4, eos: "31/12/2027", unit: 320 },
+      ],
       prev: { label: "Plan 2025", totals: [64110, 108410, 37870, 33430, null] },
       changes: [
         "Meraki MR36 licences are now sold separately; the MR33 licences can't be transferred.",
@@ -252,6 +257,10 @@ window.CLIENTS = {
     plan: {
       published: "15/1/2026", nextReview: "January 2027",
       accuracy: [5, 10, 15, 20, 25],
+      inventory: [
+        { cat: "warehouse", item: "Zebra ZT411 label printer", replaces: "Zebra ZT410", type: "hardware", count: 14, eos: "31/3/2028", unit: 1900 },
+        { cat: "security", item: "Cisco ISE 3715 appliance", replaces: "Cisco ISE 3515", type: "hardware", count: 2, eos: "31/10/2027", unit: 18000 },
+      ],
       prev: { label: "Plan 2025", totals: [92520, 262380, 141600, 104300, null] },
       changes: [
         "Firewall and distribution-switch replacements (€91k) were deferred from 2025 at your request. Both are now past End of Support.",
@@ -433,6 +442,10 @@ window.CLIENTS = {
     plan: {
       published: "22/1/2026", nextReview: "January 2027",
       accuracy: [5, 10, 15, 20, 25],
+      inventory: [
+        { cat: "security", item: "Meraki MX85", replaces: "Meraki MX84", type: "hardware", count: 3, eos: "31/10/2028", unit: 2600 },
+        { cat: "workplace", item: "Dell WD22TB4 docking station", replaces: "Dell WD19", type: "hardware", count: 60, eos: "30/4/2027", unit: 210 },
+      ],
       prev: { label: "Plan 2025", totals: [118650, 88910, 63850, 181150, null] },
       changes: [
         "Threat Defense renewal up 3%; the router quote came in slightly above the estimate.",

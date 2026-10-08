@@ -79,6 +79,11 @@ Lines that replace a lifecycle group must use the group's `model` or `software` 
 | Bernhoven | €72.1k | €129k | €31.5k | €118k | €226k | €576k | +€107k (server refresh moved from 2030 to 2029) | FTD 7.0 upgrade (FPR-2130) |
 | Rivierland | €120k | €89.9k | €63.9k | €185k | €160k | €619k | +€6k | — |
 
+`plan.inventory` lists devices from the in-house app that aren't in the plan yet; the editor suggests them as lines:
+- Bernhoven: 6 × Meraki MS120-8 and 4 UPS units;
+- Noordkade: 14 Zebra label printers and 2 ISE appliances;
+- Rivierland: 3 × Meraki MX84 and 60 docks.
+
 Cross-checks: Bernhoven ASA → Firepower 1120 €19.6k + install €8.4k = €28k (2026) and ISR → Catalyst 8300 €50k + install €6k = €56k (2027), so the €84k matches REQ0089180. The Cisco DNA subscription (€1,900 per router) is a separate line, deliberately outside the router quotes. Rivierland 2960-X → 9200L €24.6k + install €3.4k ≈ €28k (2027), as in the chat.
 
 ## Alarms page (cards are totals; table is a sample)

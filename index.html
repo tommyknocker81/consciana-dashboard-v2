@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Conscia Landing Zone — Overview</title>
-<link rel="stylesheet" href="styles.css?v=47" />
+<link rel="stylesheet" href="styles.css?v=54" />
 </head>
 <body>
 
@@ -124,6 +124,8 @@
           <div class="dropdown-item" data-toast="Opening your profile"><svg width="15" height="15"><use href="#i-user"/></svg> Profile</div>
           <div class="dropdown-item" data-page="admin"><svg width="15" height="15"><use href="#i-settings"/></svg> Admin settings</div>
           <div class="dropdown-sep"></div>
+          <div class="dropdown-item dropdown-item--internal" data-page="planner"><svg width="15" height="15"><use href="#i-euro"/></svg> Plan editor <span class="internal-tag">Conscia internal</span></div>
+          <div class="dropdown-sep"></div>
           <div class="dropdown-item" data-toast="Signed out (prototype only)"><svg width="15" height="15"><use href="#i-log-out"/></svg> Log out</div>
         </div>
       </div>
@@ -200,6 +202,27 @@
         </div>
 
         <div class="lc-panel" id="planRoot"></div>
+      </section>
+
+      <!-- ---------- PLAN EDITOR (Conscia internal: the account director prepares and publishes the 5-year plan) ---------- -->
+      <section id="page-planner" style="display:none">
+        <div class="pe-banner">
+          <span class="internal-tag">Conscia internal</span>
+          <span>Account director view. Clients never see this page; they only see the plan after you publish it.</span>
+          <button class="btn btn-link btn-sm" data-page="plan">Back to client portal<svg width="16" height="16"><use href="#i-arrow-up-right"/></svg></button>
+        </div>
+        <div class="page-head">
+          <div>
+            <h1>Plan editor</h1>
+            <div class="page-head__sub" id="peSub"></div>
+          </div>
+          <div class="page-head__actions">
+            <button class="btn btn-secondary" id="peReset">Reset demo data</button>
+            <button class="btn btn-primary" id="pePublishBtn"><svg width="18" height="18"><use href="#i-send"/></svg>Review and publish</button>
+          </div>
+        </div>
+        <div class="lc-panel" id="peRoot"></div>
+        <div class="pe-pop" id="pePop" role="dialog" aria-label="Edit year" hidden></div>
       </section>
 
       <!-- ---------- DEVICES PAGE ---------- -->
@@ -616,6 +639,9 @@
 <div class="tooltip" id="tooltip"></div>
 
 <!-- Upgrade SLA tier modal -->
+<div class="modal-backdrop" id="peModalBackdrop">
+  <div class="modal pe-modal" role="dialog" aria-modal="true" aria-labelledby="peModalTitle" id="peModal"></div>
+</div>
 <div class="modal-backdrop" id="upgradeModalBackdrop">
   <div class="modal modal-upgrade" role="dialog" aria-modal="true" aria-labelledby="upgradeTitle">
     <div class="modal-upgrade__head">
@@ -716,7 +742,7 @@
   </aside>
 </div>
 
-<script src="clients.js?v=4"></script>
-<script src="script.js?v=38"></script>
+<script src="clients.js?v=5"></script>
+<script src="script.js?v=44"></script>
 </body>
 </html>

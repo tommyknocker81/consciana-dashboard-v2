@@ -940,8 +940,8 @@
   const fmtLongDay = (s) => { const d = parseDate(s); return d.getDate() + " " + d.toLocaleString("en-GB", { month: "short" }) + " " + d.getFullYear(); };
   const linkedGroup = (lm, line) => line.replaces && lm.groups.find((g) => g.model === line.replaces || g.software === line.replaces);
 
-  function planModel(c, type) {
-    const lines = c.plan.lines.filter((l) => type === "all" || l.type === type).map((l) => {
+  function planModel(c, type, plan = c.plan) {
+    const lines = plan.lines.filter((l) => type === "all" || l.type === type).map((l) => {
       const amounts = l.y.map((v) => (v ? v[0] * v[1] : 0));
       return Object.assign({}, l, { amounts, total: amounts.reduce((a, b) => a + b, 0) });
     });
@@ -1010,21 +1010,21 @@
     if (!pm.lines.length) return `<div class="lc-table-empty">${ICON("check-circle", 18)}<span>No items of this type in the plan.</span></div>`;
     const cell = (l, i) => l.y[i] ? `<td class="num" data-col="${i}"><b>${eurK(l.amounts[i])}</b><span>${l.y[i][0]} × ${eur(l.y[i][1])}</span></td>` : `<td class="num plan-empty" data-col="${i}">—</td>`;
     const body = pm.cats.map((k) => `
-        <tr class="plan-cat" data-cat="${k.id}" tabindex="0" aria-expanded="true">
+        <tr class="plan-cat" data-cat="${k.id}" tabindex="0" aria-expanded="false">
           <td><span class="plan-cat__name">${ICON("chevron-down", 14)}<i class="legend-dot" style="background:${catColor(k.id)}"></i>${esc(k.label)} <span class="lc-count">(${k.lines.length})</span></span></td>
           ${k.sub.map((v, i) => `<td class="num" data-col="${i}">${v ? eurK(v) : "—"}</td>`).join("")}<td class="num">${eurK(k.total)}</td>
         </tr>${k.lines.map((l) => {
           const g = linkedGroup(lm, l);
           const devices = g ? `<p><b>Linked to ${g.count} ${g.count === 1 ? "device" : "devices"} in Lifecycle:</b> ${esc(g.rows.slice(0, 4).map((r) => r.host).join(", "))}${g.count > 4 ? ` and ${g.count - 4} more` : ""} · <button class="btn btn-link btn-sm" data-page="lifecycle" data-scroll="${{ act: "lcCardAct", plan: "lcCardPlan", budget: "lcCardBudget" }[g.bucket]}">Show in Lifecycle${ICON("arrow-up-right")}</button></p>` : "";
           return `
-        <tr class="plan-line" data-cat="${k.id}" tabindex="0" aria-expanded="false">
+        <tr class="plan-line" data-cat="${k.id}" tabindex="0" aria-expanded="false" hidden>
           <td><b class="plan-line__item">${esc(l.item)}</b><span class="plan-line__meta">${l.replaces ? `Replaces ${esc(l.replaces)} · ` : ""}${LINE_TYPES[l.type]} <span class="pill ${BASIS[l.basis][1]}" data-tip="${esc(BASIS[l.basis][2])}">${BASIS[l.basis][0]}</span></span></td>
           ${YEARS.map((_, i) => cell(l, i)).join("")}<td class="num"><b>${eurK(l.total)}</b></td>
         </tr>
-        <tr class="plan-detail" data-cat="${k.id}" hidden><td colspan="7"><p>${esc(l.note || "")}</p>${devices}</td></tr>`;
+        <tr class="plan-detail" data-cat="${k.id}" hidden><td colspan="7"><div class="plan-detail__body"><p>${esc(l.note || "")}</p>${devices}</div></td></tr>`;
         }).join("")}`).join("");
     const acc = c.plan.accuracy;
-    return `<div class="lc-table-scroll plan-scroll"><table class="lc-table plan-table">
+    return `<div class="lc-table-scroll"><table class="lc-table plan-table">
         <thead><tr><th>Item</th>${YEARS.map((yr, i) => `<th class="num" data-col="${i}">${yr}</th>`).join("")}<th class="num">Total</th></tr></thead>
         <tbody>${body}</tbody>
         <tfoot>
@@ -1041,6 +1041,7 @@
     $("planLegend").innerHTML = pm.cats.map((k) => `<span class="plan-legend__item" data-cat="${k.id}"><i class="legend-dot" style="background:${catColor(k.id)}"></i>${esc(k.label)}</span>`).join("")
       + `<span class="plan-legend__key"><i class="plan-key plan-key--prev"></i>${esc(c.plan.prev.label)} estimate</span><span class="plan-legend__key"><i class="plan-key plan-key--range"></i>Likely range</span>`;
     $("planGrid").innerHTML = planGrid(c, lm, pm);
+    syncExpandAll();
     enhance($("planGrid"));
   }
 
@@ -1108,7 +1109,10 @@
         <div class="lc-table-card" id="planGridCard">
           <div class="lc-table-head">
             <div class="lc-table-title">Plan by category</div>
-            <span class="lc-info" data-tip="Same layout as the spreadsheet: quantity × unit price per year. Click a row for the reasoning and the linked devices.">${ICON("info")}</span>
+            <div class="plan-grid-tools">
+              <button class="btn btn-link btn-sm" id="planExpandAll" aria-expanded="false">Expand all${ICON("chevron-down")}</button>
+              <span class="lc-info" data-tip="Same layout as the spreadsheet: quantity × unit price per year. Open a category to see its items; click an item for the reasoning and the linked devices.">${ICON("info")}</span>
+            </div>
           </div>
           <div id="planGrid"></div>
           <div class="lc-table-foot plan-note">All amounts in euros, excluding VAT. ${YEARS[0]} uses quotes and current list prices; later years are ${owner.split(" ")[0]}'s estimate of future prices, so each year gets more accurate as it gets closer.</div>
@@ -1221,16 +1225,465 @@
       tr.nextElementSibling.hidden = !open;
     }
   }
+  function syncExpandAll() {
+    const btn = $("planExpandAll");
+    if (!btn) return;
+    const cats = [...document.querySelectorAll("#planGrid .plan-cat")];
+    const allOpen = cats.length && cats.every((t) => t.getAttribute("aria-expanded") === "true");
+    btn.setAttribute("aria-expanded", String(allOpen));
+    btn.firstChild.textContent = allOpen ? "Collapse all" : "Expand all";
+  }
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("#planExpandAll");
+    if (!btn) return;
+    const open = btn.getAttribute("aria-expanded") !== "true";
+    document.querySelectorAll("#planGrid .plan-cat").forEach((t) => {
+      if ((t.getAttribute("aria-expanded") === "true") !== open) toggleGridRow(t);
+    });
+    syncExpandAll();
+  });
   document.addEventListener("click", (e) => {
     const tr = e.target.closest(".plan-cat, .plan-line");
-    if (!tr || e.target.closest(".pill")) return;
+    if (!tr || e.target.closest(".pill") || tr.closest("#page-planner")) return;
     toggleGridRow(tr);
+    syncExpandAll();
   });
   document.addEventListener("keydown", (e) => {
-    if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".plan-cat, .plan-line")) {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".plan-cat, .plan-line") && !e.target.closest("#page-planner")) {
       e.preventDefault();
       toggleGridRow(e.target);
+      syncExpandAll();
     }
+  });
+
+  /* ================= Plan editor (Conscia internal) ================= */
+  // The account director edits a draft of the client's plan and publishes it to the portal. Drafts and published plans persist in this browser only.
+  const PLAN_KEY = "lz-plans-v1";
+  const TODAY_STR = "26/5/2026";
+  const clone = (o) => JSON.parse(JSON.stringify(o));
+  const withIds = (plan) => { plan.lines.forEach((l, i) => { if (!l.id) l.id = "L" + i; }); return plan; };
+  Object.values(CLIENTS).forEach((c) => withIds(c.plan));
+  const ORIGINAL_PLANS = {};
+  Object.keys(CLIENTS).forEach((id) => (ORIGINAL_PLANS[id] = clone(CLIENTS[id].plan)));
+  let planStore = {};
+  try { planStore = JSON.parse(localStorage.getItem(PLAN_KEY)) || {}; } catch (err) { planStore = {}; }
+  Object.keys(planStore).forEach((id) => { if (CLIENTS[id] && planStore[id].published) CLIENTS[id].plan = planStore[id].published; });
+  function savePlans() { try { localStorage.setItem(PLAN_KEY, JSON.stringify(planStore)); } catch (err) { /* storage unavailable: edits last until reload */ } }
+  function draftOf(id) {
+    if (!planStore[id]) planStore[id] = {};
+    if (!planStore[id].draft) planStore[id].draft = clone(CLIENTS[id].plan);
+    return planStore[id].draft;
+  }
+  const isDirty = (id) => !!(planStore[id] && planStore[id].draft) && JSON.stringify(planStore[id].draft.lines) !== JSON.stringify(CLIENTS[id].plan.lines);
+  function commitDraft(msg) {
+    savePlans();
+    renderPlanner();
+    if (msg) toast(msg);
+  }
+  const findLine = (id) => draftOf(clientId).lines.find((l) => l.id === id);
+  const r10 = (v) => Math.round(v / 10) * 10;
+  // reference prices: today's list price (first priced year deflated at 3%/yr), last year's estimate, suggested future price
+  function refPrices(l, i) {
+    const first = l.y.findIndex((v) => v);
+    const base = first < 0 ? 0 : l.y[first][1] / Math.pow(1.03, first);
+    return { list: r10(base), prev: r10(base * Math.pow(1.03, i) * 0.96), suggested: r10(base * Math.pow(1.03, i)) };
+  }
+  const areaCat = (area) => /secur/i.test(area) ? "security" : /wi-?fi/i.test(area) ? "wifi" : /core|wan/i.test(area) ? "core" : /switch|distribution/i.test(area) ? "switching" : /server/i.test(area) ? "servers" : "workplace";
+  // budget year for an End-of-Support date: past or this year → now; first half of a year → the year before
+  function suggestYear(eos) {
+    const d = parseDate(eos);
+    if (!d || d < new Date(2027, 0, 1)) return 0;
+    return Math.min(4, Math.max(0, d.getFullYear() - (d.getMonth() < 6 ? 1 : 0) - YEARS[0]));
+  }
+  function suggestions(draft, lm) {
+    const has = (name) => draft.lines.some((l) => l.replaces === name);
+    const fromLc = lm.groups.filter((g) => !has(g.model) && !(g.software && has(g.software))).map((g) => {
+      const name = g.software || g.model;
+      const item = g.action === "upgrade" ? `Upgrade to ${(g.upgradeTo || "a supported release").split(" (")[0]}` : g.action === "renew" ? `${g.software} renewal` : (g.replaceWith || "Replacement").split(" · ")[0];
+      const type = g.action === "upgrade" ? "service" : g.action === "renew" ? "software" : "hardware";
+      const unit = g.estimate ? r10((g.estimate * 1000) / g.count) : g.action === "upgrade" ? 1200 : g.action === "renew" ? 3000 : 2000;
+      return { key: "lc:" + name, source: "Lifecycle", cat: areaCat(g.area), item, replaces: name, type, count: g.count, eos: g.dates[2], unit, what: `${g.count} × ${g.software ? `${g.software} on ${g.model}` : g.model}` };
+    });
+    const fromApi = (draft.inventory || []).filter((x) => !has(x.replaces)).map((x) => Object.assign({ key: "api:" + x.replaces, source: "Inventory API", what: `${x.count} × ${x.replaces}` }, x));
+    return fromLc.concat(fromApi).filter((s) => !(draft.dismissed || []).includes(s.key));
+  }
+
+  const peCollapsed = new Set();
+  function renderPlanner() {
+    if (!$("peRoot")) return;
+    const c = client;
+    const lm = lifecycleModel(c);
+    const draft = draftOf(clientId);
+    const pub = c.plan;
+    const dm = planModel(c, "all", draft);
+    const pmPub = planModel(c, "all", pub);
+    const cc = {};
+    dm.cats.forEach((k, i) => (cc[k.id] = `var(--chart-${i + 1})`));
+    const dirty = isDirty(clientId);
+    $("peSub").innerHTML = `<span><b>${esc(c.name)}</b> · Plan ${YEARS[0]}–${YEARS[4]}</span><span class="dot-sep"></span>
+      ${dirty ? `<span class="pill pill-orange">Unpublished changes</span>` : `<span class="pill pill-success">Same as the published plan</span>`}
+      <span class="dot-sep"></span><span>Last published ${fmtLongDay(pub.published)}</span>`;
+    $("pePublishBtn").disabled = !dirty;
+
+    // year totals (live)
+    const max = Math.max(1, ...dm.totals, ...pmPub.totals);
+    const avg = dm.grand / YEARS.length;
+    const peak = dm.totals.indexOf(Math.max(...dm.totals));
+    const years = YEARS.map((yr, i) => {
+      const d = dm.totals[i] - pmPub.totals[i];
+      return `<div class="pe-year${i === peak && dm.totals[i] > avg * 1.4 ? " is-peak" : ""}">
+          <div class="pe-year__bar"><i style="height:${((dm.totals[i] / max) * 100).toFixed(1)}%"></i><b style="bottom:${((pmPub.totals[i] / max) * 100).toFixed(1)}%" data-tip="Published: ${eurK(pmPub.totals[i])}"></b></div>
+          <div class="pe-year__label">${yr}</div>
+          <div class="pe-year__value">${eurK(dm.totals[i])}</div>
+          <div class="pe-year__delta">${Math.abs(d) < 50 ? "no change" : `<span class="${d > 0 ? "up" : "down"}">${d > 0 ? "+" : "−"}${eurK(Math.abs(d))}</span> vs published`}</div>
+        </div>`;
+    }).join("");
+    const peakHint = dm.totals[peak] > avg * 1.4
+      ? `${ICON("info", 14)}<span><b>${YEARS[peak]}</b> is ${Math.round((dm.totals[peak] / avg) * 100 - 100)}% above the yearly average of ${eurK(avg)}. Drag items to an earlier year to spread the cost.</span>`
+      : `${ICON("check-circle", 14)}<span>Spend is fairly even across the years (average ${eurK(avg)}).</span>`;
+
+    // suggestions from inventory
+    const sugg = suggestions(draft, lm);
+    const yearOpts = (sel) => YEARS.map((yr, i) => `<option value="${i}"${i === sel ? " selected" : ""}>${yr}</option>`).join("");
+    const suggCard = `<div class="card pe-sugg">
+        <div class="card__head"><div class="card__title">${ICON("sparkle", 16)}Not in the plan yet <span class="lc-count">(${sugg.length})</span></div>
+          <span class="pe-sugg__src">From the in-house app (API) and Lifecycle · refreshed ${fmtLongDay(TODAY_STR)}</span></div>
+        <div class="card__body">${sugg.length ? `<div class="pe-sugg__list">${sugg.map((x) => `
+          <div class="pe-sugg__row" data-key="${esc(x.key)}">
+            <div class="pe-sugg__main"><b>${esc(x.item)}</b><span>${esc(x.what)} · End of Support ${x.eos} · <span class="pill pill-neutral">${x.source}</span></span></div>
+            <label class="pe-field"><span>Year</span><select class="pe-sugg-year">${yearOpts(suggestYear(x.eos))}</select></label>
+            <label class="pe-field pe-field--n"><span>Qty</span><input class="pe-sugg-qty" type="number" min="0" value="${x.count}"></label>
+            <label class="pe-field pe-field--p"><span>Unit price €</span><input class="pe-sugg-price" type="number" min="0" step="10" value="${x.unit}"></label>
+            <div class="pe-sugg__actions">
+              <button class="btn btn-primary btn-sm pe-sugg-add">${ICON("plus", 14)}Add to plan</button>
+              <button class="btn btn-link btn-sm pe-sugg-dismiss" data-tip="Hide this suggestion (e.g. the client replaces it themselves)">Dismiss</button>
+            </div>
+          </div>`).join("")}</div>` : `<div class="row-empty">${ICON("check-circle", 16)}<span>Everything in the inventory that reaches End of Support before ${YEARS[4] + 1} is in the plan.</span></div>`}</div>
+      </div>`;
+
+    // editable grid
+    const linked = (l) => linkedGroup(lm, l);
+    const cell = (l, i) => {
+      const v = l.y[i];
+      return v ? `<td class="num pe-cell" data-line="${l.id}" data-i="${i}" draggable="true" tabindex="0"><b>${eurK(v[0] * v[1])}</b><span>${v[0]} × ${eur(v[1])}</span></td>`
+        : `<td class="num pe-cell pe-cell--empty" data-line="${l.id}" data-i="${i}" tabindex="0" aria-label="Add ${YEARS[i]}"><span class="pe-add">${ICON("plus", 12)}</span></td>`;
+    };
+    const body = dm.cats.map((k) => {
+      const open = !peCollapsed.has(k.id);
+      return `
+        <tr class="plan-cat pe-cat" data-cat="${k.id}" tabindex="0" aria-expanded="${open}">
+          <td><span class="plan-cat__name">${ICON("chevron-down", 14)}<i class="legend-dot" style="background:${cc[k.id]}"></i>${esc(k.label)} <span class="lc-count">(${k.lines.length})</span></span></td>
+          ${k.sub.map((v) => `<td class="num">${v ? eurK(v) : "—"}</td>`).join("")}<td class="num">${eurK(k.total)}</td><td></td>
+        </tr>${k.lines.map((l) => {
+          const g = linked(l);
+          const firstQty = (l.y.find((v) => v) || [0])[0];
+          const qtyWarn = g && firstQty && firstQty !== g.count ? `<span class="pe-warn" data-tip="The inventory has ${g.count} ${g.model} devices; this line plans ${firstQty}">${ICON("alert", 12)}Inventory: ${g.count}</span>` : g ? `<span class="pe-ok" data-tip="Quantity matches the inventory">${ICON("check-ok", 12)}${g.count} in inventory</span>` : "";
+          return `
+        <tr class="pe-line" data-cat="${k.id}" data-line="${l.id}"${open ? "" : " hidden"}>
+          <td><b class="plan-line__item">${esc(l.item)}</b><span class="plan-line__meta">${l.replaces ? `Replaces ${esc(l.replaces)} · ` : ""}${LINE_TYPES[l.type]}
+            <select class="pe-basis" data-line="${l.id}" aria-label="Price basis">${Object.keys(BASIS).map((b) => `<option value="${b}"${b === l.basis ? " selected" : ""}>${BASIS[b][0]}</option>`).join("")}</select>${qtyWarn}</span></td>
+          ${YEARS.map((_, i) => cell(l, i)).join("")}<td class="num"><b>${l.total ? eurK(l.total) : "—"}</b></td>
+          <td class="pe-actions"><button class="icon-btn pe-note-btn" data-line="${l.id}" data-tip="Reasoning shown to the client" aria-label="Edit note">${ICON("email", 15)}</button><button class="icon-btn pe-remove" data-line="${l.id}" data-tip="Remove line" aria-label="Remove line">${ICON("x", 15)}</button></td>
+        </tr>
+        <tr class="plan-detail pe-note" data-line="${l.id}" hidden><td colspan="8"><div class="plan-detail__body"><label class="pe-note__label">Reasoning shown to the client</label><textarea class="pe-note__input" data-line="${l.id}" rows="2">${esc(l.note || "")}</textarea></div></td></tr>`;
+        }).join("")}`;
+    }).join("");
+    $("peRoot").innerHTML = `
+        <div class="card pe-years-card">
+          <div class="card__head">
+            <div class="card__title">${ICON("activity", 15)}Budget per year <span class="pe-draft-tag">draft</span></div>
+            <div class="pe-years-legend"><span><i class="pe-key pe-key--draft"></i>Draft</span><span><i class="pe-key pe-key--pub"></i>Published</span><span>5-year total <b>${eurK(dm.grand)}</b></span></div>
+          </div>
+          <div class="card__body"><div class="pe-years">${years}</div><div class="pe-hint">${peakHint}</div></div>
+        </div>
+        ${suggCard}
+        <div class="lc-table-card" id="peGridCard">
+          <div class="lc-table-head">
+            <div class="lc-table-title">Plan lines</div>
+            <div class="plan-grid-tools">
+              <span class="pe-grid-help">Click a year to edit quantity and price · drag it to another year to move it</span>
+              <button class="btn btn-secondary btn-sm" id="peAddLine">${ICON("plus", 14)}Add line</button>
+            </div>
+          </div>
+          <div class="lc-table-scroll"><table class="lc-table plan-table pe-table">
+            <thead><tr><th>Item</th>${YEARS.map((yr) => `<th class="num">${yr}</th>`).join("")}<th class="num">Total</th><th></th></tr></thead>
+            <tbody>${body}</tbody>
+            <tfoot><tr class="plan-foot-total"><td>Total per year</td>${dm.totals.map((t) => `<td class="num">${t ? eurK(t) : "—"}</td>`).join("")}<td class="num">${eurK(dm.grand)}</td><td></td></tr></tfoot>
+          </table></div>
+        </div>`;
+    enhance($("peRoot"));
+  }
+
+  /* ---- cell popover: quantity × unit price, reference prices, move to another year ---- */
+  let popCell = null;
+  function closePePop() {
+    $("pePop").hidden = true;
+    if (popCell) popCell.classList.remove("is-editing");
+    popCell = null;
+  }
+  function openPePop(td) {
+    const l = findLine(td.getAttribute("data-line"));
+    const i = +td.getAttribute("data-i");
+    const v = l.y[i];
+    const near = l.y.find((x) => x);
+    const ref = refPrices(l, i);
+    const qty = v ? v[0] : near ? near[0] : 1;
+    const price = v ? v[1] : ref.suggested || 0;
+    closePePop();
+    popCell = td;
+    td.classList.add("is-editing");
+    const pop = $("pePop");
+    const refRow = (label, val, tip) => val ? `<div class="pe-ref"><span data-tip="${esc(tip)}">${label}</span><b>${eur(val)}</b><button class="btn btn-link btn-sm" data-use="${val}">Use</button></div>` : "";
+    pop.innerHTML = `
+      <div class="pe-pop__head"><div><b>${esc(l.item)}</b><span>${YEARS[i]}${v ? "" : " · not planned yet"}</span></div><button class="modal-close" id="pePopClose" aria-label="Close">${ICON("x", 14)}</button></div>
+      <div class="pe-pop__fields">
+        <label class="pe-field"><span>Quantity</span><input id="pePopQty" type="number" min="0" value="${qty}"></label>
+        <span class="pe-pop__x">×</span>
+        <label class="pe-field"><span>Unit price €</span><input id="pePopPrice" type="number" min="0" step="10" value="${price}"></label>
+      </div>
+      <div class="pe-pop__amount">Amount <b id="pePopAmount">${eur(qty * price)}</b></div>
+      <div class="pe-pop__refs">
+        <div class="pe-pop__label">Reference prices</div>
+        ${refRow(`Plan ${YEARS[0] - 1} estimate`, ref.prev, "What last year's plan assumed for this year")}
+        ${refRow("List price today", ref.list, "Current vendor list price")}
+        ${refRow(`Suggested for ${YEARS[i]}`, ref.suggested, "List price + 3% a year (typical increase)")}
+      </div>
+      <label class="pe-field pe-pop__move"><span>Year</span><select id="pePopYear">${YEARS.map((yr, j) => `<option value="${j}"${j === i ? " selected" : ""}>${yr}${j === i ? "" : " (move)"}</option>`).join("")}</select></label>
+      <div class="pe-pop__foot">
+        ${v ? `<button class="btn btn-link btn-sm pe-pop__clear" id="pePopClear">Remove from ${YEARS[i]}</button>` : "<span></span>"}
+        <button class="btn btn-primary btn-sm" id="pePopApply">Apply</button>
+      </div>`;
+    pop.hidden = false;
+    const r = td.getBoundingClientRect();
+    const w = pop.offsetWidth;
+    const h = pop.offsetHeight;
+    const left = Math.min(Math.max(12, r.left + r.width / 2 - w / 2), innerWidth - w - 12);
+    const top = r.bottom + 8 + h > innerHeight - 8 ? Math.max(8, r.top - h - 8) : r.bottom + 8;
+    pop.style.left = left + "px";
+    pop.style.top = top + "px";
+    popScrollY = scrollY;
+    $("pePopQty").focus({ preventScroll: true });
+    $("pePopQty").select();
+  }
+  function applyPePop() {
+    const l = findLine(popCell.getAttribute("data-line"));
+    const i = +popCell.getAttribute("data-i");
+    const j = +$("pePopYear").value;
+    const q = Math.max(0, Math.round(+$("pePopQty").value || 0));
+    const p = Math.max(0, Math.round(+$("pePopPrice").value || 0));
+    if (j !== i) {
+      const t = l.y[j];
+      l.y[i] = 0;
+      l.y[j] = q ? [q + (t ? t[0] : 0), p] : t;
+    } else {
+      l.y[i] = q ? [q, p] : 0;
+    }
+    closePePop();
+    commitDraft(j !== i ? `${l.item} moved from ${YEARS[i]} to ${YEARS[j]}` : "");
+  }
+  function moveCell(lineId, i, j) {
+    const l = findLine(lineId);
+    const v = l.y[i];
+    if (!v || i === j) return;
+    const t = l.y[j];
+    l.y[j] = t ? [t[0] + v[0], t[1]] : v;
+    l.y[i] = 0;
+    commitDraft(`${l.item}: ${v[0]} × moved from ${YEARS[i]} to ${YEARS[j]}`);
+  }
+
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest("#page-planner, #peModalBackdrop")) return;
+    const cellEl = e.target.closest(".pe-cell");
+    if (cellEl) { openPePop(cellEl); return; }
+    if (e.target.closest("#pePopClose")) { closePePop(); return; }
+    if (e.target.closest("#pePopApply")) { applyPePop(); return; }
+    if (e.target.closest("#pePopClear")) { $("pePopQty").value = 0; $("pePopYear").value = popCell.getAttribute("data-i"); applyPePop(); return; }
+    const use = e.target.closest("[data-use]");
+    if (use) { $("pePopPrice").value = use.getAttribute("data-use"); $("pePopPrice").dispatchEvent(new Event("input", { bubbles: true })); return; }
+    if (popCell && !e.target.closest("#pePop")) closePePop();
+    const cat = e.target.closest(".pe-cat");
+    if (cat) {
+      const id = cat.getAttribute("data-cat");
+      if (peCollapsed.has(id)) peCollapsed.delete(id); else peCollapsed.add(id);
+      renderPlanner();
+      return;
+    }
+    const note = e.target.closest(".pe-note-btn");
+    if (note) {
+      const row = document.querySelector(`.pe-note[data-line="${note.getAttribute("data-line")}"]`);
+      row.hidden = !row.hidden;
+      note.classList.toggle("active", !row.hidden);
+      if (!row.hidden) row.querySelector("textarea").focus();
+      return;
+    }
+    const rm = e.target.closest(".pe-remove");
+    if (rm) {
+      const draft = draftOf(clientId);
+      const l = findLine(rm.getAttribute("data-line"));
+      draft.lines = draft.lines.filter((x) => x !== l);
+      commitDraft(`Removed “${l.item}” from the draft`);
+      return;
+    }
+    const add = e.target.closest(".pe-sugg-add");
+    if (add) {
+      const row = add.closest(".pe-sugg__row");
+      const x = suggestions(draftOf(clientId), lifecycleModel(client)).find((s) => s.key === row.getAttribute("data-key"));
+      const yi = +row.querySelector(".pe-sugg-year").value;
+      const y = [0, 0, 0, 0, 0];
+      y[yi] = [Math.max(1, +row.querySelector(".pe-sugg-qty").value || 1), Math.max(0, +row.querySelector(".pe-sugg-price").value || 0)];
+      draftOf(clientId).lines.push({ id: "N" + Date.now(), cat: x.cat, item: x.item, replaces: x.replaces, type: x.type, basis: "list", y,
+        note: `Added from ${x.source === "Lifecycle" ? "Lifecycle" : "the inventory"}: ${x.what}, End of Support ${x.eos}.` });
+      peCollapsed.delete(x.cat);
+      commitDraft(`“${x.item}” added to ${YEARS[yi]}`);
+      return;
+    }
+    const dis = e.target.closest(".pe-sugg-dismiss");
+    if (dis) {
+      const d = draftOf(clientId);
+      d.dismissed = (d.dismissed || []).concat(dis.closest(".pe-sugg__row").getAttribute("data-key"));
+      commitDraft("Suggestion dismissed");
+      return;
+    }
+    if (e.target.closest("#peAddLine")) openAddLine();
+    if (e.target.closest("#peReset")) {
+      Object.keys(ORIGINAL_PLANS).forEach((id) => (CLIENTS[id].plan = clone(ORIGINAL_PLANS[id])));
+      planStore = {};
+      savePlans();
+      peCollapsed.clear();
+      renderPlan(client, lifecycleModel(client));
+      renderPlanner();
+      toast("Demo data reset: all drafts and published changes removed");
+    }
+    if (e.target.closest("#pePublishBtn")) openPublish();
+  });
+  document.addEventListener("input", (e) => {
+    if (e.target.matches("#pePopQty, #pePopPrice")) $("pePopAmount").textContent = eur(Math.max(0, +$("pePopQty").value || 0) * Math.max(0, +$("pePopPrice").value || 0));
+    if (e.target.matches(".pe-note__input")) {
+      findLine(e.target.getAttribute("data-line")).note = e.target.value;
+      savePlans();
+    }
+    if (e.target.matches(".pe-why")) {
+      const d = draftOf(clientId);
+      d.changes[+e.target.getAttribute("data-i")] = e.target.value;
+      savePlans();
+    }
+  });
+  document.addEventListener("change", (e) => {
+    if (!e.target.matches(".pe-basis")) return;
+    findLine(e.target.getAttribute("data-line")).basis = e.target.value;
+    commitDraft();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { closePePop(); closePeModal(); }
+    if (e.key === "Enter" && popCell && e.target.closest("#pePop") && e.target.matches("input")) applyPePop();
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".pe-cell, .pe-cat")) { e.preventDefault(); e.target.click(); }
+  });
+  let popScrollY = 0;
+  window.addEventListener("scroll", () => popCell && Math.abs(scrollY - popScrollY) > 80 && closePePop(), { passive: true });
+
+  // drag a year to another year in the same row
+  let drag = null;
+  document.addEventListener("dragstart", (e) => {
+    const td = e.target.closest && e.target.closest(".pe-cell[draggable]");
+    if (!td) return;
+    closePePop();
+    drag = { line: td.getAttribute("data-line"), i: +td.getAttribute("data-i") };
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", drag.line);
+    td.classList.add("is-dragging");
+    td.closest("tr").classList.add("is-drag-row");
+  });
+  document.addEventListener("dragover", (e) => {
+    const td = drag && e.target.closest && e.target.closest(".pe-cell");
+    document.querySelectorAll(".pe-cell.drop-ok").forEach((x) => x !== td && x.classList.remove("drop-ok"));
+    if (!td || td.getAttribute("data-line") !== drag.line || +td.getAttribute("data-i") === drag.i) return;
+    e.preventDefault();
+    td.classList.add("drop-ok");
+  });
+  document.addEventListener("drop", (e) => {
+    const td = drag && e.target.closest && e.target.closest(".pe-cell");
+    if (!td || td.getAttribute("data-line") !== drag.line) return;
+    e.preventDefault();
+    moveCell(drag.line, drag.i, +td.getAttribute("data-i"));
+  });
+  document.addEventListener("dragend", () => {
+    drag = null;
+    document.querySelectorAll(".is-dragging, .is-drag-row, .drop-ok").forEach((x) => x.classList.remove("is-dragging", "is-drag-row", "drop-ok"));
+  });
+
+  /* ---- modal: add a line, review and publish ---- */
+  const peModalBackdrop = $("peModalBackdrop");
+  function openPeModal(html) {
+    $("peModal").innerHTML = html;
+    peModalBackdrop.classList.add("open");
+  }
+  function closePeModal() { peModalBackdrop.classList.remove("open"); }
+  peModalBackdrop.addEventListener("click", (e) => {
+    if (e.target === peModalBackdrop || e.target.closest(".pe-modal-close")) closePeModal();
+  });
+  function openAddLine() {
+    openPeModal(`
+      <div class="pe-modal__head"><h3 id="peModalTitle">Add a line</h3><button class="modal-close pe-modal-close" aria-label="Close">${ICON("x", 14)}</button></div>
+      <p class="pe-modal__sub">For anything the inventory doesn't know about, such as services, projects or devices the client buys themselves.</p>
+      <form class="pe-form" id="peAddForm">
+        <label class="pe-field pe-field--wide"><span>Item</span><input name="item" required placeholder="e.g. Network assessment"></label>
+        <label class="pe-field"><span>Category</span><select name="cat">${window.PLAN_CATEGORIES.map(([id, label]) => `<option value="${id}">${label}</option>`).join("")}</select></label>
+        <label class="pe-field"><span>Type</span><select name="type">${Object.keys(LINE_TYPES).map((t) => `<option value="${t}"${t === "service" ? " selected" : ""}>${LINE_TYPES[t]}</option>`).join("")}</select></label>
+        <label class="pe-field"><span>Year</span><select name="year">${YEARS.map((yr, i) => `<option value="${i}">${yr}</option>`).join("")}</select></label>
+        <label class="pe-field"><span>Price basis</span><select name="basis">${Object.keys(BASIS).map((b) => `<option value="${b}"${b === "estimate" ? " selected" : ""}>${BASIS[b][0]}</option>`).join("")}</select></label>
+        <label class="pe-field"><span>Quantity</span><input name="qty" type="number" min="1" value="1" required></label>
+        <label class="pe-field"><span>Unit price €</span><input name="price" type="number" min="0" step="10" value="0" required></label>
+        <label class="pe-field pe-field--wide"><span>Reasoning shown to the client</span><textarea name="note" rows="2"></textarea></label>
+        <div class="pe-modal__foot pe-field--wide"><button type="button" class="btn btn-secondary pe-modal-close">Cancel</button><button type="submit" class="btn btn-primary">${ICON("plus", 14)}Add line</button></div>
+      </form>`);
+    $("peAddForm").item.focus();
+  }
+  document.addEventListener("submit", (e) => {
+    if (e.target.id !== "peAddForm") return;
+    e.preventDefault();
+    const f = e.target;
+    const y = [0, 0, 0, 0, 0];
+    y[+f.year.value] = [Math.max(1, +f.qty.value || 1), Math.max(0, +f.price.value || 0)];
+    draftOf(clientId).lines.push({ id: "N" + Date.now(), cat: f.cat.value, item: f.item.value.trim() || "New line", type: f.type.value, basis: f.basis.value, y, note: f.note.value.trim() });
+    peCollapsed.delete(f.cat.value);
+    closePeModal();
+    commitDraft(`“${f.item.value.trim()}” added to ${YEARS[+f.year.value]}`);
+  });
+  function openPublish() {
+    const c = client;
+    const draft = draftOf(clientId);
+    if (!draft.changes) draft.changes = clone(c.plan.changes);
+    const dm = planModel(c, "all", draft);
+    const pm = planModel(c, "all", c.plan);
+    const prev = draft.prev.totals;
+    const fmtD = (d) => Math.abs(d) < 50 ? `<span class="pill pill-neutral">—</span>` : `<span class="pill ${d > 0 ? "pill-orange" : "pill-success"}">${d > 0 ? "+" : "−"}${eurK(Math.abs(d))}</span>`;
+    openPeModal(`
+      <div class="pe-modal__head"><div><div class="modal-upgrade__eyebrow">${esc(c.name)}</div><h3 id="peModalTitle">Review and publish</h3></div><button class="modal-close pe-modal-close" aria-label="Close">${ICON("x", 14)}</button></div>
+      <p class="pe-modal__sub">The client sees the new numbers and your explanation per year on their 5-year plan page. Explain every year that changed against ${esc(draft.prev.label)}.</p>
+      <div class="lc-table-scroll"><table class="lc-table pe-publish">
+        <thead><tr><th>Year</th><th class="num">Published</th><th class="num">New</th><th>Change</th><th class="num">vs. ${esc(draft.prev.label)}</th><th>Why (shown to the client)</th></tr></thead>
+        <tbody>${YEARS.map((yr, i) => `<tr${Math.abs(dm.totals[i] - pm.totals[i]) >= 50 ? ' class="is-changed"' : ""}>
+          <td><b>${yr}</b></td><td class="num">${eurK(pm.totals[i])}</td><td class="num"><b>${eurK(dm.totals[i])}</b></td><td>${fmtD(dm.totals[i] - pm.totals[i])}</td>
+          <td class="num">${prev[i] == null ? "new" : fmtD(dm.totals[i] - prev[i])}</td>
+          <td><textarea class="pe-why" data-i="${i}" rows="2">${esc(draft.changes[i] || "")}</textarea></td></tr>`).join("")}</tbody>
+      </table></div>
+      <label class="pe-check"><input type="checkbox" id="peNotify" checked> Email ${esc(c.contact.name)} (${esc(c.contact.role)}) that the plan was updated</label>
+      <div class="pe-modal__foot"><button class="btn btn-secondary pe-modal-close">Keep editing</button><button class="btn btn-primary" id="peDoPublish">${ICON("send", 16)}Publish to ${esc(c.name)}'s portal</button></div>`);
+  }
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest("#peDoPublish")) return;
+    const c = client;
+    const pub = clone(draftOf(clientId));
+    pub.published = TODAY_STR;
+    delete pub.dismissed;
+    const notify = $("peNotify").checked;
+    c.plan = pub;
+    planStore[clientId] = { published: pub, draft: clone(pub) };
+    savePlans();
+    closePeModal();
+    renderPlan(c, lifecycleModel(c));
+    renderPlanner();
+    toast(`Plan published to ${c.name}'s portal${notify ? ` · ${c.contact.name} notified by email` : ""}`, { life: 3600 });
   });
 
   /* ================= Devices ================= */
@@ -1590,6 +2043,7 @@
     renderOverview(client, lm);
     renderLifecycle(client, lm);
     renderPlan(client, lm);
+    renderPlanner();
     renderDevices(client, lm);
     renderAlarms(client);
     renderCves(client);
@@ -1601,7 +2055,7 @@
   }
 
   /* ================= Routing ================= */
-  const pages = ["overview", "lifecycle", "plan", "devices", "alarms", "cves", "cases", "uptime"].reduce((acc, p) => {
+  const pages = ["overview", "lifecycle", "plan", "planner", "devices", "alarms", "cves", "cases", "uptime"].reduce((acc, p) => {
     acc[p] = $("page-" + p);
     return acc;
   }, {});
@@ -1633,6 +2087,7 @@
         refreshIndicators();
       }
       if (page === "lifecycle") animateDonut(target);
+      if (page !== "planner") closePePop();
       if (page === "plan") {
         renderPlanBody(client, lifecycleModel(client)); // the chart is drawn at its real width
         animatePlan(target);
@@ -1649,7 +2104,31 @@
     if (!keepScroll) window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
     closeMobileSidebar();
     hideTooltip();
+    syncUrl();
   }
+
+  /* ================= Shareable links: ?client=<id>#<page> ================= */
+  let urlMode = "replace"; // "replace" while starting up, then "push"; "none" while following back/forward
+  const validPage = (p) => !!(p && (pages[p] || pageMeta[p]));
+  function syncUrl() {
+    if (urlMode === "none") return;
+    const u = new URL(location.href);
+    u.searchParams.delete("r");
+    u.searchParams.set("client", clientId);
+    u.hash = currentPage === "overview" ? "" : currentPage;
+    const next = u.pathname + u.search + u.hash;
+    if (next === location.pathname + location.search + location.hash) return;
+    history[urlMode === "push" ? "pushState" : "replaceState"](null, "", next);
+  }
+  window.addEventListener("popstate", () => {
+    const id = new URLSearchParams(location.search).get("client");
+    const page = location.hash.slice(1);
+    urlMode = "none";
+    if (validPage(page) || !page) currentPage = page || "overview";
+    if (id && CLIENTS[id] && id !== clientId) setClient(id);
+    else navigate(currentPage);
+    urlMode = "push";
+  });
 
   /* ================= Mobile sidebar ================= */
   const sidebarEl = $("sidebar");
@@ -1697,7 +2176,10 @@
   if (!initial) {
     try { initial = localStorage.getItem("lz-client"); } catch (err) { initial = null; }
   }
+  const startPage = location.hash.slice(1);
+  if (validPage(startPage)) currentPage = startPage;
   setClient(initial && CLIENTS[initial] ? initial : "bernhoven");
+  urlMode = "push";
   window.addEventListener("load", refreshIndicators);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(refreshIndicators);
 })();

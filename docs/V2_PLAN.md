@@ -188,3 +188,13 @@ Contradictions inside the Figma that I propose to resolve like this (all pages u
 - **8 Oct 2026: chart palette.** The design-system "Graph/chart colors" are added as `--chart-1` to `--chart-14` (the same in light and dark mode). Use them in priority order: start at 1 and never skip.
   The 5-year plan assigns them in category order for each client, so Bernhoven's 6 categories use colours 1–6 and Noordkade's 7 use 1–7. The uptime lines use 1–5 (Core, Security, Edge, WLAN, Services).
   Status colours stay semantic and are not chart series colours: the severity donut, the sparkline tones, and the dashed "previous plan" marker.
+- **8 Oct 2026: plan editor (Conscia internal, page `planner`).** Opened from the account menu ("Plan editor · Conscia internal"); a banner says clients never see it.
+  The account director edits a **draft** of the selected client's plan. The page has four parts:
+  1. Live year totals: draft vs published, with a peak-year hint.
+  2. "Not in the plan yet": suggestions pre-filled from the inventory API (`plan.inventory`) and from Lifecycle groups that have no plan line. Each one comes with a suggested year, quantity and list price, and can be added or dismissed.
+  3. An editable grid. Clicking a year opens a popover with quantity × unit price and reference prices (last year's estimate, list price today, suggested +3%/yr), plus a "move to year" choice. You can also drag a year onto another year in the same row. Per line you can change the price basis, edit the note the client sees, or remove the line, and "Add line" covers services and projects.
+  4. "Review and publish": the per-year change against the published plan and against Plan 2025, with an editable "why" for each year, and an option to email the client contact.
+
+  Publishing replaces the client's plan on the 5-year plan page. Drafts and published plans persist in localStorage (`lz-plans-v1`), and "Reset demo data" restores the sample data.
+  Reference prices are derived from each line's own price (deflated or inflated at 3% a year) and are fictional.
+- **8 Oct 2026: shareable links.** The address bar carries the client and the page, `?client=<id>#<page>` (for example `?client=bernhoven#plan`, or `#planner` for the editor). Links open the page directly, and back/forward work. Editor changes stay local to the browser, so a shared link shows the sample plan.
