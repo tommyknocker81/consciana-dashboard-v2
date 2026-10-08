@@ -45,7 +45,7 @@ window.CLIENTS = {
         spark: { shape: "wave", tone: "danger", unit: "min average triage", top: 11, bottom: 6, decimals: 1 }, trend: { tone: "bad", icon: "up", text: "Trend is up", pill: "18.3%" } },
     ],
     lifecycle: {
-      supported: 140,
+      supported: 138,
       groups: [
         { bucket: "act", type: "Firewall", area: "Security", model: "ASA5506-X", os: "Cisco ASA", osver: "9.8(4)",
           rows: [[4102, "FWP1L0S01A1", "FGL2114A1BC", 0], [4103, "FWP1L0S01A2", "FGL2114A2CD", 0]],
@@ -60,12 +60,15 @@ window.CLIENTS = {
         { bucket: "budget", type: "Access switch", area: "Access switching", model: "Catalyst 2960-X-48FPD-L", os: "Cisco IOS", osver: "15.2(7)E8",
           gen: { count: 17, idStart: 6201, host: "SWP2L2A", hostStart: 1, digits: 3, serial: "FOC2231X" }, siteSplit: [9, 4, 4],
           dates: ["30/10/2022", "31/1/2027", "31/10/2027"] },
+        { bucket: "act", kind: "software", action: "upgrade", software: "Cisco FTD 7.0", type: "Firewall software", area: "Security", model: "FPR-2130", os: "Cisco FTD", osver: "7.0.6",
+          rows: [[4087, "FPP1L0H0", "JAD2131A0XY", 0]], dates: ["—", "31/1/2026", "31/7/2026"], upgradeTo: "FTD 7.4 (also fixes CVE-2024-20399)" },
+        { bucket: "budget", kind: "software", action: "upgrade", software: "Windows Server 2019", type: "Server OS", area: "Servers", model: "Dell PowerEdge R650", os: "Windows Server", osver: "2019",
+          rows: [[7002, "SRV-FILE02", "CN7R65002F", 1]], dates: ["—", "9/1/2024", "9/1/2029"], upgradeTo: "Windows Server 2025" },
       ],
       supportedSamples: [
         [6001, "Catalyst 9300-48P", "SWP2L1C001", "Cisco IOS XE", 0], [6002, "Catalyst 9300-48P", "SWP2L1C002", "Cisco IOS XE", 0],
         [6103, "Meraki MR46", "APP3L2W001", "Meraki", 2], [6104, "Meraki MR46", "APP3L2W002", "Meraki", 2],
-        [4087, "FPR-2130", "FPP1L0H0", "Cisco FTD", 0], [7001, "Dell PowerEdge R650", "SRV-DC01", "Windows Server 2022", 0],
-        [7002, "Dell PowerEdge R650", "SRV-FILE02", "Windows Server 2019", 1], [8231, "Dell Latitude 5440", "WKS-0231", "Windows 11", 0],
+        [7001, "Dell PowerEdge R650", "SRV-DC01", "Windows Server 2022", 0], [8231, "Dell Latitude 5440", "WKS-0231", "Windows 11", 0],
       ],
     },
     advisories: {
@@ -76,7 +79,6 @@ window.CLIENTS = {
     },
     cases: {
       incidents: 2, open: 4, awaiting: 2, atRisk: 1, resolved30: 4,
-      p12: [["Core router down", "P1 · Pending assignment…", "INC0089412", true], ["High CPU on firewall", "P2 · Assignee: John Doe", "INC0089388", false]],
       rows: [
         ["open", "INC0089412", "Core router down — RPP1L2C001H1 unreachable", "p1", "In Progress", "progress", "Network Operations", "Unassigned", "Network", "26/05/2026 14:20", "26/05/2026 14:35", "At risk · 4h left", true],
         ["open", "INC0089388", "High CPU on firewall — FPP1L0H0", "p2", "In Progress", "progress", "Security Operations", "John Doe", "Security", "26/05/2026 12:35", "26/05/2026 13:10", "1 day left", false],
@@ -140,7 +142,7 @@ window.CLIENTS = {
       alert: "2 decisions need your attention today", tone: "warn",
       intro: "Bernhoven's landing zone is operationally stable — the SOC is quiet — but your hardware lifecycle and two open approvals need decisions now.",
       sections: [
-        ["Immediate action required", "Two <b>ASA5506 firewalls</b> are 2 years 9 months past End-of-Support and carry <b>CVE-2024-20356</b> (CVSS 9.8) with no fix available. In total <b>23 devices</b> reach a lifecycle milestone within the next 3 months. Replacement lead time is 6–8 weeks, so the ASA5506 order should go out this week."],
+        ["Immediate action required", "Two <b>ASA5506 firewalls</b> are 2 years 9 months past End-of-Support and carry <b>CVE-2024-20356</b> (CVSS 9.8) with no fix available. In total <b>24 items</b> need action within the next 3 months — 23 hardware replacements and one firewall software upgrade (FTD 7.0, which also fixes CVE-2024-20399). Replacement lead time is 6–8 weeks, so the ASA5506 order should go out this week."],
         ["Plan this quarter", "The core router <b>RPP1L2C001H1</b> has been down for 14 minutes (P1 incident INC0089412, pending assignment). €84k of quoted End-of-Life replacements is not yet in your budget (plus ~€19k still to quote for the 21 Meraki MR33 access points), and <b>2 cases are awaiting you</b> in ServiceNow: the ASA5506 replacement (REQ0089301) and the capex request (REQ0089180)."],
         ["What is working well", "Threat pressure is down 67% with no open security incidents, SLA adherence is 100% and average triage is 9 minutes. Uptime is strong across all layers except Security at 97.2%, which is directly linked to the ASA5506 issue above."],
       ],
@@ -178,7 +180,7 @@ window.CLIENTS = {
         spark: { shape: "wave", tone: "danger", unit: "min average triage", top: 26, bottom: 12, tilt: "up", decimals: 1 }, trend: { tone: "bad", icon: "up", text: "Trend is up", pill: "60%" } },
     ],
     lifecycle: {
-      supported: 333,
+      supported: 330,
       groups: [
         { bucket: "act", type: "Firewall", area: "Security", model: "ASA5506-X", os: "Cisco ASA", osver: "9.8(4)",
           gen: { count: 4, idStart: 4201, host: "FWR1L0S0", hostStart: 1, digits: 2, serial: "FGL2117A" }, siteSplit: [2, 1, 1],
@@ -195,10 +197,14 @@ window.CLIENTS = {
         { bucket: "budget", type: "Access switch", area: "Access switching", model: "Catalyst 2960-X-48FPD-L", os: "Cisco IOS", osver: "15.2(7)E8",
           gen: { count: 26, idStart: 6500, host: "SWR2A", hostStart: 1, digits: 3, serial: "FOC2240X" }, siteSplit: [8, 10, 8],
           dates: ["30/10/2022", "31/1/2027", "31/10/2027"] },
+        { bucket: "act", kind: "software", action: "upgrade", software: "Windows Server 2012 R2", type: "Server OS", area: "ERP servers", model: "HPE ProLiant DL380 Gen9", os: "Windows Server", osver: "2012 R2",
+          rows: [[7201, "SRV-ERP01", "CZJ5470A1K", 0], [7202, "SRV-ERP02", "CZJ5470A2L", 1]], dates: ["—", "9/10/2018", "10/10/2023"], upgradeTo: "Windows Server 2022" },
+        { bucket: "act", kind: "software", action: "renew", software: "Threat Defense licence", type: "Firewall licence", area: "Security", model: "FPR-2140", os: "Cisco FTD", osver: "7.4.1",
+          rows: [[4301, "FWR1E0S001", "JAD2240B0QR", 0]], dates: ["—", "—", "30/6/2026"], upgradeTo: "1-year renewal" },
       ],
       supportedSamples: [
         [6601, "Catalyst 9500-24Y4C", "SWR1C0C001", "Cisco IOS XE", 0], [6602, "Catalyst 9500-24Y4C", "SWR1C0C002", "Cisco IOS XE", 1],
-        [4301, "FPR-2140", "FWR1E0S001", "Cisco FTD", 0], [7101, "HPE ProLiant DL380 Gen11", "SRV-WMS01", "Windows Server 2022", 1],
+        [7101, "HPE ProLiant DL380 Gen11", "SRV-WMS01", "Windows Server 2022", 1],
         [7102, "HPE ProLiant DL380 Gen11", "SRV-WMS02", "Windows Server 2022", 1], [7103, "Dell PowerEdge R760", "SRV-FS01", "Windows Server 2022", 0],
       ],
     },
@@ -214,7 +220,6 @@ window.CLIENTS = {
     },
     cases: {
       incidents: 7, open: 11, awaiting: 4, atRisk: 2, resolved30: 9,
-      p12: [["Ransomware alert on file server", "P1 · Assignee: M. Koerting", "INC0091207", true], ["WAN link down — DC Moerdijk", "P1 · Pending assignment…", "INC0091198", true]],
       rows: [
         ["open", "INC0091207", "Ransomware alert — encrypted-share activity on SRV-FS01", "p1", "In Progress", "progress", "Security Operations", "M. Koerting", "Security", "26/05/2026 13:58", "26/05/2026 14:30", "At risk · 2h left", true],
         ["open", "INC0091198", "WAN link down — DC Moerdijk (RTR1W0M005)", "p1", "In Progress", "progress", "Network Operations", "Unassigned", "Network", "26/05/2026 14:26", "26/05/2026 14:31", "At risk · 3h left", true],
@@ -283,7 +288,7 @@ window.CLIENTS = {
       intro: "Noordkade's landing zone is under pressure: an active security incident, two P1 outages and 9 devices without vendor support.",
       sections: [
         ["Immediate action required", "The SOC has isolated <b>SRV-FS01</b> after unusual file-encryption activity (P1 INC0091207) and needs your go-ahead to restore from backup. The <b>WAN link to DC Moerdijk</b> has been down for 6 minutes (INC0091198, pending assignment). Attack attempts are up 140% and SLA adherence has dropped to 92%."],
-        ["Lifecycle risk", "<b>9 devices are already unsupported</b> (4 × ASA5506, 5 × Catalyst 3750-X) and 32 Meraki MR33 access points lose support on 21 July — 41 devices in total need action within 3 months. Only the firewall replacement (€56k) has been quoted; ~€232k is still to quote."],
+        ["Lifecycle risk", "<b>11 items are already unsupported</b> (4 × ASA5506, 5 × Catalyst 3750-X and 2 ERP servers still on Windows Server 2012 R2), 32 Meraki MR33 access points lose support on 21 July and the firewall threat licence expires on 30 June — 44 items in total need action within 3 months. Only the firewall replacement (€56k) has been quoted; ~€232k is still to quote."],
         ["What is working well", "The Edge layer is holding at 99.2% and the Services layer at 99.6%. Your Conscia team has escalated both P1s to engineering lead Michel Koerting."],
       ],
       decisionsLabel: "The four decisions you need to make today",
@@ -320,7 +325,7 @@ window.CLIENTS = {
         spark: { shape: "wave", tone: "success", unit: "min average triage", top: 9, bottom: 5, tilt: "down", decimals: 1 }, trend: { tone: "good", icon: "down", text: "Trend is down", pill: "14%" } },
     ],
     lifecycle: {
-      supported: 311,
+      supported: 308,
       groups: [
         { bucket: "plan", type: "Router", area: "WAN routers", model: "ISR4331/K9", os: "Cisco IOS XE", osver: "17.9.5",
           gen: { count: 3, idStart: 5401, host: "RTT1W0M", hostStart: 1, digits: 3, serial: "FDO2402C" }, siteSplit: [1, 1, 1],
@@ -328,11 +333,15 @@ window.CLIENTS = {
         { bucket: "budget", type: "Access switch", area: "Access switching", model: "Catalyst 2960-X-48FPD-L", os: "Cisco IOS", osver: "15.2(7)E8",
           gen: { count: 12, idStart: 6701, host: "SWT2A", hostStart: 1, digits: 3, serial: "FOC2251X" }, siteSplit: [6, 4, 2],
           dates: ["30/10/2022", "31/1/2027", "31/10/2027"], replaceWith: "Catalyst 9200 · budget 2027", estimate: 28, quoted: false },
+        { bucket: "plan", kind: "software", action: "renew", software: "Threat Defense licence", type: "Firewall licence", area: "Security", model: "FPR-1150", os: "Cisco FTD", osver: "7.4.1",
+          rows: [[4401, "FWT1E0S001", "JAD2402C0MN", 0]], dates: ["—", "—", "15/9/2026"], upgradeTo: "1-year renewal" },
+        { bucket: "budget", kind: "software", action: "upgrade", software: "Windows Server 2016", type: "Server OS", area: "Archive servers", model: "Dell PowerEdge R740", os: "Windows Server", osver: "2016",
+          rows: [[7301, "SRV-ARCHIEF01", "CN7R74001A", 0], [7302, "SRV-ARCHIEF02", "CN7R74002B", 1]], dates: ["—", "11/1/2022", "12/1/2027"], upgradeTo: "Windows Server 2025" },
       ],
       supportedSamples: [
         [6801, "Catalyst 9300-48P", "SWT1C0C001", "Cisco IOS XE", 0], [6802, "Catalyst 9300-48P", "SWT1C0C002", "Cisco IOS XE", 1],
         [6901, "Meraki MR46", "APT3W001", "Meraki", 0], [6902, "Meraki MR46", "APT3W002", "Meraki", 2],
-        [4401, "FPR-1150", "FWT1E0S001", "Cisco FTD", 0], [7201, "Dell PowerEdge R760", "SRV-ZAAK01", "Windows Server 2022", 0],
+        [7201, "Dell PowerEdge R760", "SRV-ZAAK01", "Windows Server 2022", 0],
         [7202, "Dell PowerEdge R760", "SRV-GIS01", "Windows Server 2022", 1], [8401, "Dell Latitude 7450", "WKS-1044", "Windows 11", 0],
       ],
     },
@@ -344,7 +353,6 @@ window.CLIENTS = {
     },
     cases: {
       incidents: 0, open: 1, awaiting: 0, atRisk: 0, resolved30: 5,
-      p12: [],
       rows: [
         ["open", "REQ0077410", "New laptop images for Stadhuis — 25 devices", "p4", "In Progress", "progress", "Service Desk", "R. Jansen", "Endpoint", "22/05/2026 09:00", "26/05/2026 10:20", "4 days left", false],
         ["closed", "INC0077302", "Printer offline — Werf Culemborg", "p4", "Resolved", "resolved", "Service Desk", "R. Jansen", "Endpoint", "21/05/2026 13:10", "21/05/2026 14:05", "Met", false],

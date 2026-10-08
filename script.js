@@ -22,6 +22,7 @@
 
   /* ================= Dates & lifecycle helpers ================= */
   function parseDate(s) {
+    if (!s || s === "—") return null;
     const [d, m, y] = s.split("/").map(Number);
     return new Date(y, m - 1, d);
   }
@@ -34,6 +35,7 @@
   }
   function dateClass(s, isSupport) {
     const d = parseDate(s);
+    if (!d) return "lc-date lc-date--na";
     if (d < TODAY) return isSupport ? "lc-date lc-date--unsupported" : "lc-date lc-date--past";
     if ((d - TODAY) / 864e5 <= 183) return "lc-date lc-date--soon";
     return "lc-date";
@@ -68,10 +70,19 @@
     return rows;
   }
 
+  // What fixing it takes: Replace (hardware ends) · Upgrade (software version ends) · Renew (licence / contract ends)
+  const ACTIONS = {
+    replace: { label: "Replace", icon: "chip", tip: (g) => `Hardware support ends — replace with ${g.replaceWith ? g.replaceWith.split(" · ")[0] : "a current model"}` },
+    upgrade: { label: "Upgrade", icon: "trend-up", tip: (g) => `Software version ends — upgrade to ${g.upgradeTo || "a supported release"}; the hardware stays` },
+    renew: { label: "Renew", icon: "clock", tip: (g) => `Licence or contract ends — ${g.upgradeTo || "renew it"}` },
+  };
+  const glabel = (g) => g.software || shortModel(g.model);
+  const actionTag = (g) => `<span class="action-tag action-tag--${g.action}" data-tip="${esc(ACTIONS[g.action].tip(g))}">${ICON(ACTIONS[g.action].icon, 12)}${ACTIONS[g.action].label}</span>`;
+
   function lifecycleModel(c) {
     const groups = c.lifecycle.groups.map((g) => {
       const rows = expandGroup(g, c.sites);
-      return Object.assign({}, g, { rows, count: rows.length, unsupported: rows.filter((r) => r.unsupported).length });
+      return Object.assign({ kind: "hardware", action: "replace" }, g, { rows, count: rows.length, unsupported: rows.filter((r) => r.unsupported).length });
     });
     const by = (b) => groups.filter((g) => g.bucket === b);
     const sum = (arr, f) => arr.reduce((s, x) => s + f(x), 0);
@@ -87,7 +98,11 @@
     };
     m.soon = m.actCount - m.unsupported;
     m.total = m.actCount + m.planCount + m.budgetCount + m.supported;
-    const list = (arr) => arr.map((g) => `${g.count} × ${shortModel(g.model)}`).join(" + ");
+    const list = (arr) => arr.map((g) => `${g.count} × ${glabel(g)}`).join(" + ");
+    const needs = groups;
+    m.actions = { replace: 0, upgrade: 0, renew: 0 };
+    needs.forEach((g) => (m.actions[g.action] += g.count));
+    m.kinds = { hardware: needs.filter((g) => g.kind === "hardware").reduce((x, g) => x + g.count, 0), software: needs.filter((g) => g.kind === "software").reduce((x, g) => x + g.count, 0) };
     m.tips = {
       act: m.actCount ? `${list(act)} — ${m.unsupported ? m.unsupported + " already past End-of-Support, " : ""}the rest lose support within 3 months` : "No devices need action within 3 months",
       plan: m.planCount ? `${list(plan)} — End-of-Sale passed; decide on replacement within 3–6 months` : "No devices in this bucket",
@@ -482,6 +497,39 @@
   }
   const empty = (text) => `<div class="row-empty">${ICON("check-circle", 16)}<span>${esc(text)}</span></div>`;
 
+  /* ================= Cases helpers ================= */
+  const NOW = new Date(2026, 4, 26, 14, 32);
+  function parseDateTime(s) {
+    const [d, t] = s.split(" ");
+    const [dd, mm, yy] = d.split("/").map(Number);
+    const [h, mi] = (t || "0:0").split(":").map(Number);
+    return new Date(yy, mm - 1, dd, h, mi);
+  }
+  function ago(s) {
+    const min = Math.max(0, Math.round((NOW - parseDateTime(s)) / 60000));
+    if (min < 60) return `${min} min ago`;
+    const h = Math.round(min / 60);
+    if (h < 24) return `${h}h ago`;
+    const d = Math.round(h / 24);
+    return `${d} day${d === 1 ? "" : "s"} ago`;
+  }
+  // case row: [status, num, desc, pri, stateLabel, stateCls, group, assigned, cat, opened, updated, sla, risk]
+  function urgentCaseRows(cs) {
+    return cs.rows.filter((r) => r[0] === "open" && (r[3] === "p1" || r[3] === "p2"))
+      .sort((a, b) => a[3].localeCompare(b[3]) || parseDateTime(b[9]) - parseDateTime(a[9]));
+  }
+  function caseRow(r) {
+    const [, num, desc, pri, , , , assigned, , opened] = r;
+    const p1 = pri === "p1";
+    const short = desc.split(" — ")[0];
+    const who = assigned === "Unassigned" ? "Pending assignment…" : `Assignee: ${assigned}`;
+    return `<button class="row" data-page="cases" data-tip="${p1 ? "P1 · Critical" : "P2 · High"} — opened ${opened}">
+      <span class="row__icon ${p1 ? "danger-solid" : "danger"}">${ICON("alert")}</span>
+      <span class="row__main"><span class="row__title">${num} | ${short}</span><span class="row__meta">${p1 ? "P1 Critical" : "P2 High"} · ${esc(who)}</span></span>
+      <span class="row__right"><span class="pill ${p1 ? "pill-critical-solid" : "pill-critical"}">${ago(opened)}</span></span>
+    </button>`;
+  }
+
   /* ================= Overview ================= */
   function renderOverview(c, lm) {
     const soc = c.soc.map((s, i) => {
@@ -504,17 +552,17 @@
       // "unsupported for at least …": count from the group's most recent End-of-Support date
       const latest = g.rows.map((r) => parseDate(r.eosupport)).sort((x, y) => y - x)[0];
       return g.unsupported
-        ? row({ icon: "chip", iconTone: "disaster", title: `${shortModel(g.model)} × ${g.count}`, meta: g.area, page: "lifecycle", scroll: "lcCardAct",
-            right: `<span class="pill pill-disaster">Unsupported ${fmtAge(monthsBetween(latest, TODAY))}</span>` })
-        : row({ icon: "chip", iconTone: "danger", title: `${shortModel(g.model)} × ${g.count}`, meta: g.area, page: "lifecycle", scroll: "lcCardAct",
-            right: `<span class="pill pill-critical">Support ends in ${whenLabel(d)}</span>` });
+        ? row({ icon: "chip", iconTone: "disaster", title: `${glabel(g)} × ${g.count}`, meta: g.area, page: "lifecycle", scroll: "lcCardAct",
+            right: `${actionTag(g)}<span class="pill pill-disaster">Unsupported ${fmtAge(monthsBetween(latest, TODAY))}</span>` })
+        : row({ icon: "chip", iconTone: "danger", title: `${glabel(g)} × ${g.count}`, meta: g.area, page: "lifecycle", scroll: "lcCardAct",
+            right: `${actionTag(g)}<span class="pill pill-critical">${g.action === "renew" ? "Expires" : "Support ends"} in ${whenLabel(d)}</span>` });
     }).join("");
     if (!urgent) {
       const next = lm.plan.length ? { groups: lm.plan, when: "plan within 3–6 months", pill: "pill-high", label: "Plan now", scroll: "lcCardPlan" }
         : lm.budget.length ? { groups: lm.budget, when: "budget for next year", pill: "pill-medium", label: "Budget", scroll: "lcCardBudget" } : null;
       urgent = next
         ? row({ icon: "check-circle", iconTone: "ok", title: "Nothing urgent right now", page: "lifecycle", scroll: next.scroll,
-            meta: `Next up: ${next.groups.map((g) => `${shortModel(g.model)} × ${g.count}`).join(", ")} · ${next.when}`,
+            meta: `Next up: ${next.groups.map((g) => `${glabel(g)} × ${g.count}`).join(", ")} · ${next.when}`,
             right: `<span class="pill ${next.pill}">${next.label}</span>` })
         : empty("No lifecycle milestones coming up");
     }
@@ -523,8 +571,11 @@
     const advRows = adv.urgent.map(([t, meta, score, crit]) => row({ icon: "bug", iconTone: crit ? "danger" : "", title: t, meta, page: "cves",
       right: `<span class="score${crit ? " score--critical" : ""}">${score}</span>` })).join("") || empty("No vulnerable devices");
     const cs = c.cases;
-    const p12 = cs.p12.map(([t, meta, num, crit]) => row({ icon: "chip", iconTone: crit ? "danger" : "", title: t, meta, page: "cases",
-      right: `<span class="pill ${crit ? "pill-critical" : "pill-neutral"}">${num}</span>` })).join("") || empty("No open P1 or P2 incidents");
+    // Urgent cases = open P1 / P2 cases, P1 first, newest first (Figma 240:3642)
+    const urgentCases = urgentCaseRows(cs);
+    const urgentList = urgentCases.slice(0, 3).map((r) => caseRow(r)).join("") ||
+      `<div class="row row--static"><span class="row__icon ok">${ICON("check-ok")}</span><span class="row__main"><span class="row__title">No P1 or P2 cases</span></span></div>`;
+    const urgentMore = urgentCases.length > 3 ? `<div class="section-card__foot"><button class="btn btn-link" data-page="cases">View all ${urgentCases.length} urgent cases${ICON("arrow-up-right", 18)}</button></div>` : "";
     const al = c.alarms;
     const alRows = al.recent.map(([t, host, sev, ago, crit]) => row({ icon: "chip", iconTone: crit ? "danger" : "", title: t, meta: host, page: "alarms", stack: true,
       right: `<span class="pill ${crit ? "pill-critical" : "pill-neutral"}">${sev}</span><span class="row__time">${ago}</span>` })).join("") || empty("No recent alarms");
@@ -568,12 +619,12 @@
         <div class="section-card">
           <h2 class="section-card__title">Cases</h2>
           <div class="kpi-grid kpi-grid--3">
-            ${tile({ tone: "alert", title: "Open incidents", tip: `Open ServiceNow incidents (INC) for ${c.name}`, value: cs.incidents, label: "cases", page: "cases" })}
+            ${tile({ tone: "alert", title: "P1 or P2", tip: "Open cases with priority P1 (critical) or P2 (high)", value: urgentCases.length, label: "cases", page: "cases" })}
             ${tile({ title: "Open cases", tip: "All open incidents and requests", value: cs.open, label: "cases", page: "cases" })}
             ${tile({ title: "Awaiting you", tip: `Cases waiting on an approval or answer from ${c.name}`, value: cs.awaiting, label: "cases", page: "cases" })}
           </div>
-          <h3 class="sub-head__title sub-head__title--solo">P1 or P2 incidents</h3>
-          <div class="row-list">${p12}</div>
+          <h3 class="sub-head__title sub-head__title--solo">Urgent cases</h3>
+          <div class="row-list">${urgentList}</div>${urgentMore}
         </div>
         <div class="section-card" id="alarmsCard">
           <h2 class="section-card__title">Alarms</h2>
@@ -642,26 +693,28 @@
   const DONUT_C = 2 * Math.PI * 50;
   function lcTable(id, tbodyId, dot, title, count, flag, tip, rows, emptyText) {
     const body = rows.map((r) => `
-          <tr data-id="${r.id}"${r.unsupported ? ' class="lc-row-unsupported"' : ""}>
+          <tr data-id="${r.id}" data-kind="${r.kind}"${r.unsupported ? ' class="lc-row-unsupported"' : ""}>
             <td class="lc-th-check"><button class="lc-checkbox" aria-label="Select row"></button></td>
             <td class="lc-id">${r.id}</td><td>${esc(r.model)}</td><td>${r.host}</td><td>${esc(r.os)}</td><td>${esc(r.osver)}</td><td>${r.serial}</td>
             <td class="${dateClass(r.eosale)}">${r.eosale}</td><td class="${dateClass(r.eosw)}">${r.eosw}</td><td class="${dateClass(r.eosupport, true)}">${r.eosupport}</td>
+            <td>${r.tag}</td>
           </tr>`).join("");
     const table = rows.length ? `<div class="lc-table-scroll"><table class="lc-table"><thead><tr>
             <th class="lc-th-check"><button class="lc-checkbox" data-check-all="${tbodyId}" aria-label="Select all"></button></th>
             <th class="lc-th-sort" data-sort-table="${tbodyId}">ID${ICON("chevron-down", 12)}</th>
-            <th>Device</th><th>Hostname</th><th>OS</th><th>OS version</th><th>Serial number</th><th>End-Of-Sale</th><th>End-Of-Software</th><th>End-Of-Support</th>
+            <th>Device</th><th>Hostname</th><th>OS</th><th>OS version</th><th>Serial number</th><th>End-Of-Sale</th><th>End-Of-Software</th><th>End-Of-Support</th><th>Action</th>
           </tr></thead><tbody id="${tbodyId}">${body}</tbody></table></div>
-          <div class="lc-table-foot">Showing ${rows.length} of ${rows.length} devices</div>`
+          <div class="lc-table-foot">Showing ${rows.length} of ${rows.length} items</div>
+          <div class="lc-table-empty lc-filter-empty" hidden>${ICON("check-circle", 18)}<span></span></div>`
       : `<div class="lc-table-empty">${ICON("check-circle", 18)}<span>${esc(emptyText)}</span></div>`;
     return `<div class="lc-table-card" id="${id}" data-collapse="5">
           <div class="lc-table-head">
-            <div class="lc-table-title"><i class="legend-dot ${dot}"></i>${title} <span class="lc-count">(${count})</span>${flag}</div>
+            <div class="lc-table-title"><i class="legend-dot ${dot}"></i>${title} <span class="lc-count">(<span class="lc-count__n">${count}</span>)</span>${flag}</div>
             <span class="lc-info" data-tip="${esc(tip)}">${ICON("info")}</span>
           </div>${table}
         </div>`;
   }
-  const flatRows = (groups) => groups.flatMap((g) => g.rows.map((r) => Object.assign({ model: g.model, os: g.os, osver: g.osver }, r)))
+  const flatRows = (groups) => groups.flatMap((g) => g.rows.map((r) => Object.assign({ model: g.model, os: g.os, osver: g.osver, kind: g.kind, tag: actionTag(g) }, r)))
     .sort((a, b) => (b.unsupported - a.unsupported) || (a.id - b.id));
 
   function renderLifecycle(c, lm) {
@@ -686,6 +739,7 @@
           <i class="legend-dot ${cls}"></i>
           <span class="lc-pop__text"><b>${esc(label)}</b><span>${esc(desc)}</span></span>
           <span class="lc-pop__count">${n}</span></div>`).join("")}
+        <div class="lc-pop__foot">Needing action: <b>${lm.actions.replace}</b> replace · <b>${lm.actions.upgrade}</b> upgrade · <b>${lm.actions.renew}</b> renew</div>
       </div>`;
 
     const estGroups = lm.groups.filter((g) => g.estimate);
@@ -713,7 +767,7 @@
     $("lcRoot").innerHTML = `
         <div class="card lc-summary-card">
           <div class="card__head">
-            <div class="card__title">${ICON("layers", 15)}Hardware lifecycle</div>
+            <div class="card__title">${ICON("layers", 15)}Lifecycle</div>
             <button class="btn btn-secondary" data-toast="Generating hardware lifecycle report…">${ICON("file")}Generate report</button>
           </div>
           <div class="card__body lc-summary">
@@ -732,8 +786,16 @@
           </div>
           ${breakdown}
         </div>
+        <div class="lc-filter" data-tabs>
+          <span class="lc-filter__label">Show</span>
+          <div class="tabgroup">
+            <button class="tabgroup__tab active" data-tab="all">All (${lm.actCount + lm.planCount + lm.budgetCount})</button>
+            <button class="tabgroup__tab" data-tab="hardware">Hardware (${lm.kinds.hardware})</button>
+            <button class="tabgroup__tab" data-tab="software">Software &amp; licences (${lm.kinds.software})</button>
+          </div>
+        </div>
         ${lcTable("lcCardAct", "lcTableAct", "critical", "Act now — replace within 3 months", lm.actCount,
-          lm.unsupported ? `<span class="lc-flag"><i class="legend-dot disaster"></i>${lm.unsupported} already unsupported</span>` : "",
+          `<span class="lc-flag"${lm.unsupported ? "" : " hidden"}><i class="legend-dot disaster"></i><span class="lc-flag__n">${lm.unsupported}</span> already unsupported</span>`,
           "Devices already past End-of-Support (no security patches) or losing support within 3 months. Order replacements now — lead time is 6–8 weeks.",
           flatRows(lm.act), "Nothing needs replacing in the next 3 months.")}
         ${lcTable("lcCardPlan", "lcTablePlan", "high", "Plan now — decide within 3–6 months", lm.planCount, "",
@@ -742,7 +804,8 @@
         ${lcTable("lcCardBudget", "lcTableBudget", "medium", "Budget & Schedule — 6+ months out", lm.budgetCount, "",
           "Support ends more than 6 months from now. No risk today — put the refresh in next year's budget.",
           flatRows(lm.budget), "Nothing to budget for yet.")}`;
-    $("lcRoot").querySelectorAll(".lc-table-card[data-collapse]").forEach(setupCollapse);
+    lcKind = "all";
+    $("lcRoot").querySelectorAll(".lc-table-card[data-collapse]").forEach((card) => card.querySelector("tbody") && setupCollapse(card));
   }
 
   // donut: highlight the popover row of the hovered segment
@@ -779,31 +842,55 @@
     if (open) panel.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
   });
 
-  // lifecycle tables: show the first N rows, expand on demand
-  function applyCollapse(card) {
+  // lifecycle tables: show the first N rows (of those passing the Hardware / Software filter), expand on demand
+  function refreshCollapse(card) {
     const limit = parseInt(card.getAttribute("data-collapse"), 10);
-    const rows = [...card.querySelectorAll("tbody tr")];
+    const tbody = card.querySelector("tbody");
+    if (!tbody) return;
+    const rows = [...tbody.querySelectorAll("tr")].filter((r) => !r.classList.contains("lc-row-filtered"));
     const expanded = card.classList.contains("expanded");
+    tbody.querySelectorAll("tr").forEach((r) => r.classList.remove("lc-row-collapsed"));
     rows.forEach((r, i) => r.classList.toggle("lc-row-collapsed", !expanded && i >= limit));
-    const label = card.querySelector(".lc-table-foot__label");
-    if (label) label.textContent = `Showing ${expanded ? rows.length : Math.min(limit, rows.length)} of ${rows.length} devices`;
+    const n = rows.length;
+    card.querySelector(".lc-count__n").textContent = n;
+    const flag = card.querySelector(".lc-flag");
+    if (flag) {
+      const unsup = rows.filter((r) => r.classList.contains("lc-row-unsupported")).length;
+      flag.querySelector(".lc-flag__n").textContent = unsup;
+      flag.hidden = unsup === 0;
+    }
+    const foot = card.querySelector(".lc-table-foot");
+    const emptyEl = card.querySelector(".lc-filter-empty");
+    card.querySelector(".lc-table-scroll").hidden = n === 0;
+    foot.hidden = n === 0;
+    emptyEl.hidden = n !== 0;
+    if (n === 0) emptyEl.querySelector("span").textContent = `No ${lcKind === "software" ? "software or licence" : "hardware"} items in this bucket.`;
+    foot.innerHTML = n > limit
+      ? `<span class="lc-table-foot__label">Showing ${expanded ? n : limit} of ${n} items</span><button class="btn btn-link btn-sm lc-expand" aria-expanded="${expanded}">${expanded ? "Show less" : `Show all ${n}`}${ICON("chevron-down")}</button>`
+      : `Showing ${n} of ${n} items`;
   }
-  function setupCollapse(card) {
-    const limit = parseInt(card.getAttribute("data-collapse"), 10);
-    const total = card.querySelectorAll("tbody tr").length;
-    if (total <= limit) return;
-    card.querySelector(".lc-table-foot").innerHTML = `<span class="lc-table-foot__label"></span><button class="btn btn-link btn-sm lc-expand" aria-expanded="false">Show all ${total}${ICON("chevron-down")}</button>`;
-    applyCollapse(card);
-  }
+  function setupCollapse(card) { refreshCollapse(card); }
   document.addEventListener("click", (e) => {
     const btn = e.target.closest(".lc-expand");
     if (!btn) return;
     const card = btn.closest(".lc-table-card");
     const expanded = card.classList.toggle("expanded");
-    btn.setAttribute("aria-expanded", String(expanded));
-    btn.firstChild.textContent = expanded ? "Show less" : `Show all ${card.querySelectorAll("tbody tr").length}`;
-    applyCollapse(card);
+    refreshCollapse(card);
     if (!expanded) card.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+  });
+
+  // Hardware / Software filter on the Lifecycle tables
+  let lcKind = "all";
+  function applyKindFilter(kind) {
+    lcKind = kind;
+    document.querySelectorAll("#lcRoot .lc-table-card[data-collapse]").forEach((card) => {
+      card.querySelectorAll("tbody tr").forEach((r) => r.classList.toggle("lc-row-filtered", kind !== "all" && r.getAttribute("data-kind") !== kind));
+      if (card.querySelector("tbody")) refreshCollapse(card);
+    });
+  }
+  document.addEventListener("click", (e) => {
+    const tab = e.target.closest(".lc-filter .tabgroup__tab");
+    if (tab) applyKindFilter(tab.getAttribute("data-tab"));
   });
 
   // checkboxes + sortable ID column (Lifecycle + Devices)
@@ -830,7 +917,7 @@
     rows.forEach((r) => tbody.appendChild(r));
     th.classList.toggle("sort-desc", desc);
     const card = th.closest(".lc-table-card[data-collapse]");
-    if (card && card.querySelector(".lc-expand")) applyCollapse(card);
+    if (card) refreshCollapse(card);
   });
 
   /* ================= Devices ================= */
@@ -841,7 +928,15 @@
   let devicesShown = 0;
   function renderDevices(c, lm) {
     const rows = [];
-    lm.groups.forEach((g) => g.rows.slice(0, 2).forEach((r) => rows.push([r.id, g.model, r.host, g.os, r.site, r.unsupported ? STATUS.unsupported : STATUS[g.bucket]])));
+    const status = (g, r) => {
+      if (g.kind !== "software") return r.unsupported ? STATUS.unsupported : STATUS[g.bucket];
+      const verb = ACTIONS[g.action].label;
+      if (r.unsupported) return `<span class="pill pill-disaster">Unsupported ${g.action === "renew" ? "licence" : "OS"} · ${verb.toLowerCase()} now</span>`;
+      const tone = { act: "pill-critical", plan: "pill-high", budget: "pill-medium" }[g.bucket];
+      const when = { act: "within 3 months", plan: "within 3–6 months", budget: "next year" }[g.bucket];
+      return `<span class="pill ${tone}">${verb} ${when}</span>`;
+    };
+    lm.groups.forEach((g) => g.rows.slice(0, 2).forEach((r) => rows.push([r.id, g.model, r.host, g.kind === "software" ? `${g.os} ${g.osver}` : g.os, r.site, status(g, r)])));
     c.lifecycle.supportedSamples.forEach(([id, model, host, os, si]) => rows.push([id, model, host, os, c.sites[si], STATUS.ok]));
     devicesShown = rows.length;
     $("lcTableAll").innerHTML = rows.map(([id, model, host, os, site, status]) =>
@@ -990,7 +1085,7 @@
   function renderCases(c) {
     const cs = c.cases;
     const cards = [
-      [cs.incidents ? "al-sev-card--alert" : "", "sev-disaster", "alert-triangle", cs.incidents, "Open incidents"],
+      [urgentCaseRows(cs).length ? "al-sev-card--alert" : "", "sev-disaster", "alert-triangle", urgentCaseRows(cs).length, "P1 or P2"],
       ["", "sev-info", "ticket", cs.open, "Open cases"], ["", "sev-average", "user", cs.awaiting, "Awaiting you"],
       ["", "sev-high", "clock", cs.atRisk, "At risk (SLA)"], ["", "sev-low", "check-circle", cs.resolved30, "Resolved (30d)"],
     ];

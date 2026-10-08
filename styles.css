@@ -1709,3 +1709,44 @@ button.topbar__client { border: none; background: transparent; font-family: inhe
 }
 /* the summary card sits above the tables that follow, so the donut popover isn't covered */
 .lc-summary-card { position: relative; z-index: 5; }
+
+/* Cases card (Figma 240:3642): P1 solid red, P2 subtle red, green empty row */
+.row__icon.danger-solid { background: var(--danger); color: #fff; }
+.row__icon.danger { color: var(--danger-text); }
+.row__icon.ok { background: #d5f5e6; color: var(--success-text); }
+.pill-critical-solid { background: var(--danger); color: #fff; }
+.row.row--static { cursor: default; }
+.row.row--static:hover { transform: none; box-shadow: none; border-color: var(--divider); }
+.row.row--static:hover .row__icon { transform: none; }
+
+/* ===================== Lifecycle: action tags + hardware/software filter ===================== */
+/* outlined + neutral on purpose: the tag says WHAT to do, the severity colours already say HOW URGENT */
+.action-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px 0 6px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: #fff;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: help;
+}
+.action-tag svg { color: var(--text-muted); }
+.action-tag--upgrade svg { color: var(--brand); }
+.action-tag--renew svg { color: var(--warning-text); }
+.row__right .action-tag { margin-right: 8px; }
+
+.lc-filter { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; flex-wrap: wrap; }
+.lc-filter__label { font-size: 14px; color: var(--text-muted); }
+.lc-table tbody tr.lc-row-filtered { display: none; }
+.lc-table td.lc-date--na { color: var(--text-faint); }
+.lc-pop__foot { margin-top: 4px; padding: 8px 10px 6px; border-top: 1px solid var(--divider); font-size: 12px; color: var(--text-muted); }
+.lc-pop__foot b { color: var(--text); font-weight: 500; }
+@media (max-width: 560px) {
+  .row__right .action-tag { display: none; } /* too tight next to the severity pill on phones */
+}

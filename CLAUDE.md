@@ -43,7 +43,7 @@ Figma assets (logo, nav icons, team photos) are in `assets/`; most icons are als
   per client (seeded PRNG) for 7/30/90 days.
 
 ## Gotchas (v1 lessons still apply)
-1. **Cache busting is manual:** `styles.css?v=39`, `clients.js?v=1`, `script.js?v=29` — bump on every edit. The HTML itself can also be cached: open `/?r=N` to force it.
+1. **Cache busting is manual:** `styles.css?v=41`, `clients.js?v=3`, `script.js?v=33` — bump on every edit. The HTML itself can also be cached: open `/?r=N` to force it.
 2. Grids: always `repeat(N, minmax(0, 1fr))`. Never `overflow-x:hidden` on `body` (only `html`).
 3. Anything with an author `display` needs `[hidden]` handling — v2 has a global `[hidden]{display:none!important}`.
 4. Listeners attach at load → dynamically created elements don't get `data-tip`/`data-toast` behaviour.

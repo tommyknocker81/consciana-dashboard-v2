@@ -163,3 +163,15 @@ Contradictions inside the Figma that I propose to resolve like this (all pages u
   already unsupported first ("Unsupported 2y 9m", Disaster pill, age from the group's most recent End-of-Support date), then soonest loss of support
   ("Support ends in 8 weeks", Critical pill), max 3 rows. End-of-Sale alone is a planning signal, not urgency: when nothing is urgent the card shows
   one calm row "Nothing urgent right now · Next up: … · plan within 3–6 months" linking to the Plan now table. Designer to update the Figma card.
+- **7 Oct 2026 — Cases card follows Figma `240:3642`.** First tile = **P1 or P2** (open cases with priority P1/P2, any type), Alert state when > 0;
+  Open cases and Awaiting you stay neutral (workload). List = **Urgent cases**: open P1/P2, P1 first then newest, max 3 rows + "View all N urgent cases";
+  row = `NUMBER | short description`, meta = priority · assignee, P1 = solid red icon + pill, P2 = subtle red; pill = age since opened.
+  Empty state = green check row "No P1 or P2 cases". Cases page summary uses the same "P1 or P2" card.
+- **7 Oct 2026 — Lifecycle stays one card (no Hardware/Software split); each item gets an action tag.**
+  Lifecycle groups carry `kind` (hardware | software) and `action` (replace | upgrade | renew; default hardware/replace). Bucket = whichever
+  clock runs out first. Tags are neutral outlined pills (what to do), never severity-coloured (how urgent). Lifecycle page: "Lifecycle" title,
+  filter **All / Hardware / Software & licences** above the tables (counts, "Show all N" and the unsupported badge follow the filter),
+  Action column, donut popover footer "Needing action: n replace · n upgrade · n renew". Investment breakdown only counts Replace items.
+  New software items: Bernhoven FTD 7.0 on FPP1L0H0 (act/upgrade) + Windows Server 2019 on SRV-FILE02 (budget/upgrade) → Bernhoven tiles 24 / 4 / 18;
+  Noordkade Windows Server 2012 R2 × 2 (act/upgrade, unsupported) + FTD threat licence (act/renew) → 44 / 12 / 26;
+  Rivierland FTD threat licence (plan/renew) + Windows Server 2016 × 2 (budget/upgrade) → 0 / 4 / 14. Device totals unchanged.

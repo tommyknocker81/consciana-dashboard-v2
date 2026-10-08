@@ -3,9 +3,9 @@
 Since 6 Oct 2026 the prototype has **three clients** (switcher in the topbar; account menu on phones). All data lives in `clients.js`.
 | Client | State | Tier | Devices | Key story |
 |---|---|---|---|---|
-| **Noordkade Logistics** (Rotterdam / Moerdijk / Venlo) — contact P. de Graaf | alarming | Essential (Alarms locked) | 412 | Ransomware alert on SRV-FS01 (P1), WAN down at DC Moerdijk (P1), attacks +140%, SLA 92%; 41 act now (9 unsupported: 4 × ASA5506, 5 × Catalyst 3750-X; 32 × MR33), 12 plan (ISR4331), 26 budget (2960-X); 6 critical / 14 high CVE devices; 7 incidents / 11 open / 4 awaiting; uptime 96.4%, 2/5 layers OK; €56k quoted + ~€232k to quote |
+| **Noordkade Logistics** (Rotterdam / Moerdijk / Venlo) — contact P. de Graaf | alarming | Essential (Alarms locked) | 412 | Ransomware alert on SRV-FS01 (P1), WAN down at DC Moerdijk (P1), attacks +140%, SLA 92%; 44 act now (11 unsupported: 4 × ASA5506, 5 × Catalyst 3750-X, 2 × Windows Server 2012 R2; 32 × MR33; 1 FTD licence renewal), 12 plan (ISR4331), 26 budget (2960-X); 6 critical / 14 high CVE devices; 7 P1/P2 / 11 open / 4 awaiting; uptime 96.4%, 2/5 layers OK; €56k quoted + ~€232k to quote |
 | **Bernhoven** (Uden / Veghel / Oss) — contact S. van Dijk | mixed | Essential (Alarms locked) | 184 | The original story below |
-| **Rivierland Gemeente** (Tiel / Culemborg / Geldermalsen) — contact J. Bakker | all good | Standard (Alarms open) | 326 | SOC quiet and improving; 0 act now, 3 plan (ISR4331, €42k quoted), 12 budget (2960-X, ~€28k 2027); 0 critical / 1 high CVE (patch scheduled); 0 incidents / 1 open request; uptime 99.9%, 5/5 layers |
+| **Rivierland Gemeente** (Tiel / Culemborg / Geldermalsen) — contact J. Bakker | all good | Standard (Alarms open) | 326 | SOC quiet and improving; 0 act now, 4 plan (3 × ISR4331 €42k quoted + FTD licence renewal), 14 budget (12 × 2960-X ~€28k 2027 + 2 × Windows Server 2016 upgrade); 0 critical / 1 high CVE (patch scheduled); 0 P1/P2 / 1 open request; uptime 99.9%, 5/5 layers |
 The Conscia team (Daan, Roel, Michel, Inge, Service Desk) is the same for every client. The rest of this file details **Bernhoven**.
 
 
@@ -45,11 +45,11 @@ Core router **RPP1L2C001H1** (10.20.0.1). Layer mapping (Uptime): Core = ISR/cor
 ## Overview (Figma frame 203:4464)
 - **SOC** (security incidents, not ITSM cases): Open incidents **0** (trend unchanged) · Incident trend **12** new in 7d (**+53%**) · Threat pressure **0** attacks (**−67%**) ·
   SLA adherence **100%** (unchanged) · Average triage **9 min** (**+18.3%**). Sparklines = 30 daily points ending 26 May (`SPARK_DATA`).
-- **Lifecycle management:** Act now **23** (≤3 months) · Plan now **4** (3–6 months) · Budget & Schedule **17** (6+ months) → 44 with a milestone, 140 with none.
+- **Lifecycle management:** Act now **24** (23 hardware + FTD 7.0 upgrade on FPP1L0H0) · Plan now **4** · Budget & Schedule **18** (17 × 2960-X + Windows Server 2019 upgrade on SRV-FILE02) → 46 with a milestone, 138 with none. Items carry an action tag: Replace / Upgrade / Renew.
   CTA "Contact Sales". Most urgent devices tabs: **PastEOSupport (2)** = ASA5506 × 2 "Overdue 2y 9m" · **PastEOSale (4)** = ISR4331/K9 × 4 "Overdue 2y 7m" (EoSale 31/10/2023).
 - **Security advisories:** Critical CVEs **2 devices** (CVE-2024-20356 on both ASAs) · High CVEs **2 devices** (FPP1L0H0 via CVE-2024-20399, RTP1C0M001 via CVE-2025-20012).
   Rows: CVE-2024-20356 · ASA5506 "No fix patch" 9.8 · CVE-2024-20399 · FPR-2130 "Patch available" 7.2.
-- **Cases:** Open incidents **2** · Open cases **4** · Awaiting you **2**. P1/P2 rows: Core router down (P1, pending assignment, INC0089412) · High CPU on firewall (P2, John Doe, INC0089388).
+- **Cases:** P1 or P2 **3** (INC0089412 P1, INC0089388 P2, REQ0089301 P2) · Open cases **4** · Awaiting you **2**. Urgent cases list shows those 3, P1 first.
 - **Alarms** (locked): Critical **2** (1 acknowledged) · High **4** · Avg. resolve **2.4 h**; rows Core router down (Critical, 14 min ago) · High CPU on firewall (High, 2 h ago).
 - **Actions required:** First priority — Replace ASA5506 × 2 · Important — Acknowledge 1 critical alarm · Plan — Add €84k to capex plan · Important — Patch CVE-2024-20399.
 - **Your Conscia Team:** Primary (Daan, Roel, Michel) · Commercial (Roel, Inge Willems) · Escalation (Service Desk 24/7, Daan).
