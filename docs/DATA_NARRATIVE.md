@@ -69,6 +69,18 @@ Each table shows 5 rows, then "Show all N". Bucket = when Bernhoven has to act, 
 Tables: End of support passed (2 ASA5506) · End of Support within 3 months (21 × MR33, 2 rows shown: EoSale 14/7/2022, EoSupport 21/7/2026) ·
 End of Sale passed (4 × ISR4331/K9: EoSale 31/10/2023, EoSW 24/5/2026, EoSupport 31/10/2028).
 
+## 5-year plan (`plan` in clients.js, page `plan`)
+Published once a year by the account director (Roel Ottenheijm) as quantity × unit price per year, 2026–2030; amounts in € excl. VAT. Accuracy ±5/10/15/20/25%.
+Lines that replace a lifecycle group must use the group's `model` or `software` name in `replaces`, and match its estimate. Lifecycle groups without a line are shown as "not in the plan yet".
+
+| Client | 2026 | 2027 | 2028 | 2029 | 2030 | Total | vs. Plan 2025 (2026–29) | Not in plan |
+|---|---|---|---|---|---|---|---|---|
+| Noordkade | €184k | €297k | €134k | €148k | €158k | €920k | +€161k (firewall + 3750-X deferred from 2025 = €91k) | — |
+| Bernhoven | €72.1k | €129k | €31.5k | €118k | €226k | €576k | +€107k (server refresh moved from 2030 to 2029) | FTD 7.0 upgrade (FPR-2130) |
+| Rivierland | €120k | €89.9k | €63.9k | €185k | €160k | €619k | +€6k | — |
+
+Cross-checks: Bernhoven ASA → Firepower 1120 €19.6k + install €8.4k = €28k (2026) and ISR → Catalyst 8300 €50k + install €6k = €56k (2027), so the €84k matches REQ0089180. The Cisco DNA subscription (€1,900 per router) is a separate line, deliberately outside the router quotes. Rivierland 2960-X → 9200L €24.6k + install €3.4k ≈ €28k (2027), as in the chat.
+
 ## Alarms page (cards are totals; table is a sample)
 Cards: Disaster **2** · High **4** · Average 34 · Warning 58 · Information 42 · Unclassified 9. Active tab shows **9**, All shows 14.
 Changes vs v1: #3 Interface Gi0/1 down RTP1C0M002 is now **Disaster, DR site — Veghel, acknowledged**; #8 NTP sync lost RTP1C0M003 is **resolved** 22/05 11:40 (4 h 10 min).

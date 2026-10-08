@@ -175,3 +175,16 @@ Contradictions inside the Figma that I propose to resolve like this (all pages u
   New software items: Bernhoven FTD 7.0 on FPP1L0H0 (act/upgrade) + Windows Server 2019 on SRV-FILE02 (budget/upgrade) → Bernhoven tiles 24 / 4 / 18;
   Noordkade Windows Server 2012 R2 × 2 (act/upgrade, unsupported) + FTD threat licence (act/renew) → 44 / 12 / 26;
   Rivierland FTD threat licence (plan/renew) + Windows Server 2016 × 2 (budget/upgrade) → 0 / 4 / 14. Device totals unchanged.
+- **8 Oct 2026 — 5-year plan (Lifecycle › "5-year plan").** Feedback from a client-facing colleague (docs/NOTES_LIFECYCLE_5Y_PLAN.md): 3/6/9-month buckets are too short to budget, and clients get a yearly 5-year plan built by hand by their account manager.
+  Built as a read-only portal view of that published plan, reached through a "Current status | 5-year plan" switch on Lifecycle (the sidebar keeps Lifecycle active).
+  It has four parts:
+  1. Summary tiles: this year, 5-year total, peak year, and the change since last year's plan.
+  2. A stacked bar chart per category, with a likely-range whisker, last plan's estimate as a dashed marker, and a hover popover per year.
+  3. A grid in the spreadsheet's layout (quantity × unit price per year, collapsible categories, a row opens the reasoning and the linked Lifecycle devices).
+  4. "What changed since Plan 2025".
+
+  Filter: All costs / Hardware / Software & licences / Services. Each line carries a basis: Quoted, List price or Estimate. Lifecycle items missing from the plan are flagged. Nothing is calculated from device counts: the plan numbers are the account manager's.
+  The current-status view (buckets, Est. investment) is unchanged apart from a link to the plan. Whether to retire "Budget & Schedule" and "Est. investment" is still open.
+- **8 Oct 2026: chart palette.** The design-system "Graph/chart colors" are added as `--chart-1` to `--chart-14` (the same in light and dark mode). Use them in priority order: start at 1 and never skip.
+  The 5-year plan assigns them in category order for each client, so Bernhoven's 6 categories use colours 1–6 and Noordkade's 7 use 1–7. The uptime lines use 1–5 (Core, Security, Edge, WLAN, Services).
+  Status colours stay semantic and are not chart series colours: the severity donut, the sparkline tones, and the dashed "previous plan" marker.

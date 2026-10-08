@@ -759,7 +759,7 @@
             <tfoot><tr><td colspan="4">Total · <b>€${lm.quoted}k</b> quoted${lm.toQuote ? ` + <b>~€${lm.toQuote}k</b> still to quote` : ""}</td><td class="num">${lm.toQuote ? "~" : ""}€${lm.quoted + lm.toQuote}k</td></tr></tfoot>
           </table>
           <div class="invest__actions">
-            <span>Estimates are indicative list prices; your account director confirms the final quote.</span>
+            <span>Estimates are indicative list prices; your account director confirms the final quote. <button class="btn btn-link btn-sm invest__plan" data-page="plan">See them in the 5-year plan${ICON("arrow-up-right")}</button></span>
             ${toQuote.length ? `<button class="btn btn-primary btn-sm" data-toast="Quote request for ${listJoin(toQuote.map((g) => `${g.count} ${noun(g.type, g.count)}`))} sent to Roel Ottenheijm">${ICON("euro")}Request a quote</button>` : ""}
           </div>
         </div>` : "";
@@ -918,6 +918,319 @@
     th.classList.toggle("sort-desc", desc);
     const card = th.closest(".lc-table-card[data-collapse]");
     if (card) refreshCollapse(card);
+  });
+
+  /* ================= 5-year plan ================= */
+  // Prepared once a year by the account director (quantity × estimated unit price per year), published read-only to the portal.
+  const YEARS = [2026, 2027, 2028, 2029, 2030];
+  const LINE_TYPES = { hardware: "Hardware", software: "Software & licences", service: "Services" };
+  const BASIS = {
+    quoted: ["Quoted", "pill-success", "Price from a vendor quote"],
+    list: ["List price", "pill-neutral", "Today's vendor list price; later years include the expected yearly increase"],
+    estimate: ["Estimate", "pill-brand", "Your account director's estimate of a future price (no vendor price yet)"],
+  };
+  // design-system chart palette, in priority order: the client's categories take colours 1, 2, 3… with no gaps
+  let catColors = {};
+  const catColor = (id) => catColors[id] || "var(--chart-8)";
+  const eurK = (n) => {
+    const k = n / 1000;
+    return "€" + (k >= 1000 ? (k / 1000).toFixed(2).replace(/0$/, "") + "M" : k >= 100 ? Math.round(k) + "k" : (Math.round(k * 10) / 10) + "k");
+  };
+  const eur = (n) => "€" + n.toLocaleString("en-GB");
+  const fmtLongDay = (s) => { const d = parseDate(s); return d.getDate() + " " + d.toLocaleString("en-GB", { month: "short" }) + " " + d.getFullYear(); };
+  const linkedGroup = (lm, line) => line.replaces && lm.groups.find((g) => g.model === line.replaces || g.software === line.replaces);
+
+  function planModel(c, type) {
+    const lines = c.plan.lines.filter((l) => type === "all" || l.type === type).map((l) => {
+      const amounts = l.y.map((v) => (v ? v[0] * v[1] : 0));
+      return Object.assign({}, l, { amounts, total: amounts.reduce((a, b) => a + b, 0) });
+    });
+    const cats = window.PLAN_CATEGORIES.map(([id, label]) => {
+      const ls = lines.filter((l) => l.cat === id);
+      const sub = YEARS.map((_, i) => ls.reduce((s, l) => s + l.amounts[i], 0));
+      return { id, label, lines: ls, sub, total: sub.reduce((a, b) => a + b, 0) };
+    }).filter((x) => x.lines.length);
+    const totals = YEARS.map((_, i) => cats.reduce((s, x) => s + x.sub[i], 0));
+    const quoted = YEARS.map((_, i) => lines.filter((l) => l.basis === "quoted").reduce((s, l) => s + l.amounts[i], 0));
+    return { lines, cats, totals, quoted, grand: totals.reduce((a, b) => a + b, 0) };
+  }
+
+  function planChart(c, pm, W) {
+    const H = W < 560 ? 250 : 290, ML = 52, MR = 8, MT = 28, MB = 46, PW = W - ML - MR, PH = H - MT - MB;
+    const acc = c.plan.accuracy;
+    const prev = c.plan.prev.totals;
+    const top = Math.max(1, ...pm.totals.map((t, i) => t * (1 + acc[i] / 100)), ...prev.filter((p) => p != null));
+    const step = [10e3, 20e3, 25e3, 50e3, 100e3, 200e3, 250e3, 500e3, 1e6].find((s) => top / s <= 5) || 2e6;
+    const max = Math.ceil(top / step) * step;
+    const y = (v) => MT + PH - (v / max) * PH;
+    const slot = PW / YEARS.length;
+    const bw = Math.min(64, slot * 0.5);
+    let grid = "";
+    for (let v = 0; v <= max + 1; v += step) {
+      grid += `<line class="plan-grid" x1="${ML}" x2="${W - MR}" y1="${y(v)}" y2="${y(v)}"/><text class="plan-axis" x="${ML - 10}" y="${y(v) + 4}" text-anchor="end">${v ? eurK(v) : "€0"}</text>`;
+    }
+    const bars = YEARS.map((yr, i) => {
+      const cx = ML + slot * i + slot / 2;
+      const x = cx - bw / 2;
+      let base = 0;
+      const segs = pm.cats.filter((k) => k.sub[i] > 0).map((k) => {
+        const h = (k.sub[i] / max) * PH;
+        const r = `<rect class="plan-seg" data-cat="${k.id}" x="${x}" y="${y(base) - h}" width="${bw}" height="${Math.max(h - 1, 0.5)}" style="fill:${catColor(k.id)}"/>`;
+        base += k.sub[i];
+        return r;
+      }).join("");
+      const t = pm.totals[i];
+      const lo = y(t * (1 - acc[i] / 100));
+      const hi = y(t * (1 + acc[i] / 100));
+      const range = t ? `<g class="plan-range"><line x1="${cx}" x2="${cx}" y1="${lo}" y2="${hi}"/><line x1="${cx - 6}" x2="${cx + 6}" y1="${hi}" y2="${hi}"/><line x1="${cx - 6}" x2="${cx + 6}" y1="${lo}" y2="${lo}"/></g>` : "";
+      const p = prev[i];
+      const prevMark = p != null ? `<line class="plan-prev" x1="${x - 6}" x2="${x + bw + 6}" y1="${y(p)}" y2="${y(p)}"/>` : "";
+      return `<g class="plan-col" data-i="${i}">
+          <rect class="plan-hit" x="${ML + slot * i + 4}" y="${MT - 20}" width="${slot - 8}" height="${PH + 20}" rx="8"/>
+          <g class="plan-bar" style="transition-delay:${reduceMotion ? 0 : 120 + i * 90}ms">${segs}</g>${range}${prevMark}
+          <text class="plan-total" x="${cx}" y="${Math.min(hi, y(t)) - 8}" text-anchor="middle">${t ? eurK(t) : "—"}</text>
+          <text class="plan-year" x="${cx}" y="${H - MB + 20}" text-anchor="middle">${yr}</text>
+          <text class="plan-acc" x="${cx}" y="${H - MB + 37}" text-anchor="middle">±${acc[i]}%</text>
+        </g>`;
+    }).join("");
+    return `<svg class="plan-svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Planned budget per year, 2026 to 2030">${grid}${bars}</svg>`;
+  }
+
+  function planPop(c, pm, i) {
+    const t = pm.totals[i];
+    const a = c.plan.accuracy[i] / 100;
+    const p = c.plan.prev.totals[i];
+    const rows = pm.cats.filter((k) => k.sub[i] > 0).sort((k1, k2) => k2.sub[i] - k1.sub[i]).map((k) =>
+      `<div class="lc-pop__row" data-cat="${k.id}"><i class="legend-dot" style="background:${catColor(k.id)}"></i><span class="lc-pop__text"><b>${esc(k.label)}</b><span>${k.lines.filter((l) => l.amounts[i]).map((l) => esc(l.item)).slice(0, 2).join(" · ")}</span></span><span class="lc-pop__count">${eurK(k.sub[i])}</span></div>`).join("");
+    return `<div class="lc-pop__head">${YEARS[i]} · ${t ? `${eurK(t)} <span class="plan-pop__range">(range ${eurK(t * (1 - a))}–${eurK(t * (1 + a))})</span>` : "nothing planned"}</div>${rows}
+      <div class="lc-pop__foot">${pm.quoted[i] ? `<b>${eurK(pm.quoted[i])}</b> quoted · ` : ""}${p != null ? `${esc(c.plan.prev.label)} estimate: <b>${eurK(p)}</b>` : `New year in this plan`}</div>`;
+  }
+
+  function planGrid(c, lm, pm) {
+    if (!pm.lines.length) return `<div class="lc-table-empty">${ICON("check-circle", 18)}<span>No items of this type in the plan.</span></div>`;
+    const cell = (l, i) => l.y[i] ? `<td class="num" data-col="${i}"><b>${eurK(l.amounts[i])}</b><span>${l.y[i][0]} × ${eur(l.y[i][1])}</span></td>` : `<td class="num plan-empty" data-col="${i}">—</td>`;
+    const body = pm.cats.map((k) => `
+        <tr class="plan-cat" data-cat="${k.id}" tabindex="0" aria-expanded="true">
+          <td><span class="plan-cat__name">${ICON("chevron-down", 14)}<i class="legend-dot" style="background:${catColor(k.id)}"></i>${esc(k.label)} <span class="lc-count">(${k.lines.length})</span></span></td>
+          ${k.sub.map((v, i) => `<td class="num" data-col="${i}">${v ? eurK(v) : "—"}</td>`).join("")}<td class="num">${eurK(k.total)}</td>
+        </tr>${k.lines.map((l) => {
+          const g = linkedGroup(lm, l);
+          const devices = g ? `<p><b>Linked to ${g.count} ${g.count === 1 ? "device" : "devices"} in Lifecycle:</b> ${esc(g.rows.slice(0, 4).map((r) => r.host).join(", "))}${g.count > 4 ? ` and ${g.count - 4} more` : ""} · <button class="btn btn-link btn-sm" data-page="lifecycle" data-scroll="${{ act: "lcCardAct", plan: "lcCardPlan", budget: "lcCardBudget" }[g.bucket]}">Show in Lifecycle${ICON("arrow-up-right")}</button></p>` : "";
+          return `
+        <tr class="plan-line" data-cat="${k.id}" tabindex="0" aria-expanded="false">
+          <td><b class="plan-line__item">${esc(l.item)}</b><span class="plan-line__meta">${l.replaces ? `Replaces ${esc(l.replaces)} · ` : ""}${LINE_TYPES[l.type]} <span class="pill ${BASIS[l.basis][1]}" data-tip="${esc(BASIS[l.basis][2])}">${BASIS[l.basis][0]}</span></span></td>
+          ${YEARS.map((_, i) => cell(l, i)).join("")}<td class="num"><b>${eurK(l.total)}</b></td>
+        </tr>
+        <tr class="plan-detail" data-cat="${k.id}" hidden><td colspan="7"><p>${esc(l.note || "")}</p>${devices}</td></tr>`;
+        }).join("")}`).join("");
+    const acc = c.plan.accuracy;
+    return `<div class="lc-table-scroll plan-scroll"><table class="lc-table plan-table">
+        <thead><tr><th>Item</th>${YEARS.map((yr, i) => `<th class="num" data-col="${i}">${yr}</th>`).join("")}<th class="num">Total</th></tr></thead>
+        <tbody>${body}</tbody>
+        <tfoot>
+          <tr class="plan-foot-total"><td>Total per year</td>${pm.totals.map((t, i) => `<td class="num" data-col="${i}">${t ? eurK(t) : "—"}</td>`).join("")}<td class="num">${eurK(pm.grand)}</td></tr>
+          <tr class="plan-foot-range"><td>Likely range</td>${pm.totals.map((t, i) => `<td class="num" data-col="${i}">${t ? `${eurK(t * (1 - acc[i] / 100))}–${eurK(t * (1 + acc[i] / 100))}` : "—"}</td>`).join("")}<td></td></tr>
+        </tfoot></table></div>`;
+  }
+
+  let planType = "all";
+  function renderPlanBody(c, lm) {
+    const pm = planModel(c, planType);
+    $("planChart").innerHTML = planChart(c, pm, Math.max(300, $("planChart").clientWidth || 800)) + `<div class="lc-pop plan-pop" id="planPop" role="tooltip"></div>`;
+    $("planChart").dataset.type = planType;
+    $("planLegend").innerHTML = pm.cats.map((k) => `<span class="plan-legend__item" data-cat="${k.id}"><i class="legend-dot" style="background:${catColor(k.id)}"></i>${esc(k.label)}</span>`).join("")
+      + `<span class="plan-legend__key"><i class="plan-key plan-key--prev"></i>${esc(c.plan.prev.label)} estimate</span><span class="plan-legend__key"><i class="plan-key plan-key--range"></i>Likely range</span>`;
+    $("planGrid").innerHTML = planGrid(c, lm, pm);
+    enhance($("planGrid"));
+  }
+
+  function renderPlan(c, lm) {
+    const pl = c.plan;
+    const pm = planModel(c, "all");
+    catColors = {};
+    pm.cats.forEach((k, i) => (catColors[k.id] = `var(--chart-${i + 1})`));
+    const prevSum = pl.prev.totals.reduce((s, p) => s + (p || 0), 0);
+    const nowSum = pm.totals.reduce((s, t, i) => s + (pl.prev.totals[i] != null ? t : 0), 0);
+    const diff = nowSum - prevSum;
+    const peak = pm.totals.indexOf(Math.max(...pm.totals));
+    const drift = lm.groups.filter((g) => !pl.lines.some((l) => l.replaces && (l.replaces === g.model || l.replaces === g.software)));
+    const owner = "Roel Ottenheijm";
+    $("planSub").innerHTML = `<span class="page-head__live">${ICON("user", 14)}Prepared by ${owner}, account director</span><span class="dot-sep"></span><span>Published ${fmtLongDay(pl.published)}</span><span class="dot-sep"></span><span>Next review ${esc(pl.nextReview)}</span>`;
+    const changeRows = YEARS.map((yr, i) => {
+      const p = pl.prev.totals[i];
+      const d = p == null ? null : pm.totals[i] - p;
+      const pill = d == null ? `<span class="pill pill-brand">New</span>` : Math.abs(d) < 50 ? `<span class="pill pill-neutral">No change</span>`
+        : `<span class="pill ${d > 0 ? "pill-orange" : "pill-success"}">${d > 0 ? "+" : "−"}${eurK(Math.abs(d))}</span>`;
+      return `<tr><td><b>${yr}</b></td><td class="num">${p == null ? "—" : eurK(p)}</td><td class="num"><b>${eurK(pm.totals[i])}</b></td><td>${pill}</td><td class="plan-why">${esc(pl.changes[i])}</td></tr>`;
+    }).join("");
+    $("planRoot").innerHTML = `
+        <div class="card plan-summary">
+          <div class="card__head">
+            <div class="card__title">${ICON("euro", 16)}Budget plan ${YEARS[0]}–${YEARS[YEARS.length - 1]}</div>
+            <div class="plan-summary__actions">
+              <button class="btn btn-secondary" data-toast="Plan ${YEARS[0]} exported for Finance: ${esc(c.name.replace(/\s+/g, "_"))}_5-year-plan.xlsx">${ICON("file")}Download for Finance</button>
+              <button class="btn btn-secondary" data-toast="Meeting request sent to ${owner} to discuss the 5-year plan">${ICON("email", 16)}Discuss with ${owner.split(" ")[0]}</button>
+            </div>
+          </div>
+          <div class="card__body">
+            <div class="kpi-grid kpi-grid--4 plan-tiles">
+              ${tile({ title: `This year (${YEARS[0]})`, value: Math.round(pm.totals[0] / 1000), prefix: "€", suffix: "k", scroll: "planGridCard",
+                label: `<b>${eurK(pm.quoted[0])}</b> quoted · ±${pl.accuracy[0]}%`, tileTip: "The amount to budget this year. Most of it is quoted or at today's list price." })}
+              ${tile({ title: "5-year total", value: Math.round(pm.grand / 1000), prefix: "€", suffix: "k", scroll: "planGridCard",
+                label: `${YEARS[0]}–${YEARS[YEARS.length - 1]} · all costs`, tileTip: "Hardware, software and licences, and services across the five years" })}
+              ${tile({ title: "Peak year", value: Math.round(pm.totals[peak] / 1000), prefix: "€", suffix: "k", scroll: "planChartCard",
+                label: `in <b>${YEARS[peak]}</b> · ±${pl.accuracy[peak]}%`, tileTip: "The most expensive year. Consider bringing items forward to spread the cost." })}
+              ${tile({ title: `vs. ${pl.prev.label}`, value: Math.round(Math.abs(diff) / 1000), prefix: (diff >= 0 ? "+" : "−") + "€", suffix: "k", scroll: "planChanges",
+                label: `on ${YEARS[0]}–${YEARS[3]} · <b>${diff >= 0 ? "+" : "−"}${Math.abs(Math.round((diff / prevSum) * 100))}%</b>`, tileTip: "How much the years covered by both plans changed since last year's plan" })}
+            </div>
+          </div>
+        </div>
+        ${drift.length ? `<div class="plan-drift">${ICON("alert", 18)}<div><b>${drift.length} ${drift.length === 1 ? "item" : "items"} from Lifecycle ${drift.length === 1 ? "isn't" : "aren't"} in this plan yet</b>
+            <span>${drift.map((g) => `${esc(glabel(g))} on ${esc(g.model)} (${ACTIONS[g.action].label.toLowerCase()}, support ends ${g.dates[2]})`).join(" · ")}. Added after the plan was published; ${owner.split(" ")[0]} will price it at the next review.</span></div>
+            <button class="btn btn-secondary btn-sm" data-toast="Asked ${owner} to add ${esc(drift.map((g) => glabel(g)).join(", "))} to the plan">Ask to add it</button></div>` : ""}
+        <div class="card" id="planChartCard">
+          <div class="card__head">
+            <div class="card__title">${ICON("activity", 15)}Budget per year</div>
+            <div class="plan-filter" data-tabs>
+              <div class="tabgroup">
+                <button class="tabgroup__tab active" data-tab="all">All costs</button>
+                <button class="tabgroup__tab" data-tab="hardware">Hardware</button>
+                <button class="tabgroup__tab" data-tab="software">Software &amp; licences</button>
+                <button class="tabgroup__tab" data-tab="service">Services</button>
+              </div>
+            </div>
+          </div>
+          <div class="card__body">
+            <div class="plan-chart" id="planChart"></div>
+            <div class="plan-legend" id="planLegend"></div>
+          </div>
+        </div>
+        <div class="lc-table-card" id="planGridCard">
+          <div class="lc-table-head">
+            <div class="lc-table-title">Plan by category</div>
+            <span class="lc-info" data-tip="Same layout as the spreadsheet: quantity × unit price per year. Click a row for the reasoning and the linked devices.">${ICON("info")}</span>
+          </div>
+          <div id="planGrid"></div>
+          <div class="lc-table-foot plan-note">All amounts in euros, excluding VAT. ${YEARS[0]} uses quotes and current list prices; later years are ${owner.split(" ")[0]}'s estimate of future prices, so each year gets more accurate as it gets closer.</div>
+        </div>
+        <div class="lc-table-card" id="planChanges">
+          <div class="lc-table-head">
+            <div class="lc-table-title">What changed since ${esc(pl.prev.label)}</div>
+            <span class="lc-info" data-tip="Each year's estimate is revised at every yearly review. This shows how and why.">${ICON("info")}</span>
+          </div>
+          <div class="lc-table-scroll"><table class="lc-table plan-changes">
+            <thead><tr><th>Year</th><th class="num">${esc(pl.prev.label)}</th><th class="num">This plan</th><th>Change</th><th>Why</th></tr></thead>
+            <tbody>${changeRows}</tbody>
+          </table></div>
+        </div>`;
+    planType = "all";
+    renderPlanBody(c, lm);
+  }
+
+  function animatePlan(root) {
+    const chart = root.querySelector(".plan-chart");
+    if (!chart) return;
+    chart.classList.remove("drawn");
+    void chart.getBoundingClientRect();
+    requestAnimationFrame(() => chart.classList.add("drawn"));
+  }
+
+  // redraw the chart at its new width
+  let planResizeTimer;
+  window.addEventListener("resize", () => {
+    if (currentPage !== "plan") return;
+    clearTimeout(planResizeTimer);
+    planResizeTimer = setTimeout(() => {
+      renderPlanBody(client, lifecycleModel(client));
+      $("planChart").classList.add("drawn");
+    }, 150);
+  });
+  // filter: All / Hardware / Software & licences / Services (chart + grid)
+  document.addEventListener("click", (e) => {
+    const tab = e.target.closest(".plan-filter .tabgroup__tab");
+    if (!tab) return;
+    planType = tab.getAttribute("data-tab");
+    renderPlanBody(client, lifecycleModel(client));
+    animatePlan($("planRoot"));
+  });
+  // chart hover: popover per year; legend hover: highlight one category
+  document.addEventListener("mouseover", (e) => {
+    const col = e.target.closest(".plan-col");
+    const chart = e.target.closest(".plan-chart");
+    if (chart) {
+      const pop = $("planPop");
+      chart.querySelectorAll(".plan-col").forEach((g) => g.classList.toggle("is-active", g === col));
+      chart.classList.toggle("has-active", !!col);
+      if (!col) { pop.classList.remove("show"); return; }
+      const i = +col.getAttribute("data-i");
+      pop.innerHTML = planPop(client, planModel(client, planType), i);
+      const seg = e.target.closest(".plan-seg");
+      pop.querySelectorAll(".lc-pop__row").forEach((r) => r.classList.toggle("is-active", !!seg && r.getAttribute("data-cat") === seg.getAttribute("data-cat")));
+      pop.classList.toggle("has-active", !!seg);
+      const cw = chart.clientWidth;
+      const x = 52 + ((i + 0.5) / YEARS.length) * (cw - 60);
+      pop.classList.toggle("left", x > cw * 0.6);
+      pop.style.left = x + "px";
+      pop.classList.add("show");
+    }
+    const leg = e.target.closest(".plan-legend__item");
+    const legend = e.target.closest(".plan-legend");
+    if (legend) {
+      const cat = leg ? leg.getAttribute("data-cat") : "";
+      const ch = $("planChart");
+      ch.classList.toggle("has-cat", !!cat);
+      ch.querySelectorAll(".plan-seg").forEach((s) => s.classList.toggle("is-hl", s.getAttribute("data-cat") === cat));
+    }
+  });
+  document.addEventListener("mouseout", (e) => {
+    const chart = e.target.closest(".plan-chart");
+    if (chart && !chart.contains(e.relatedTarget)) {
+      chart.classList.remove("has-active");
+      chart.querySelectorAll(".plan-col").forEach((g) => g.classList.remove("is-active"));
+      $("planPop").classList.remove("show");
+    }
+    const legend = e.target.closest(".plan-legend");
+    if (legend && !legend.contains(e.relatedTarget)) $("planChart").classList.remove("has-cat");
+  });
+  // click a year: jump to that column in the grid
+  document.addEventListener("click", (e) => {
+    const col = e.target.closest(".plan-col");
+    if (!col) return;
+    const i = col.getAttribute("data-i");
+    scrollToSection("planGridCard");
+    document.querySelectorAll(`#planGrid [data-col="${i}"]`).forEach((td) => {
+      td.classList.remove("col-flash");
+      void td.offsetWidth;
+      td.classList.add("col-flash");
+    });
+  });
+  // grid: collapse a category, open a line's reasoning
+  function toggleGridRow(tr) {
+    if (tr.classList.contains("plan-cat")) {
+      const open = tr.getAttribute("aria-expanded") !== "true";
+      tr.setAttribute("aria-expanded", String(open));
+      let n = tr.nextElementSibling;
+      while (n && !n.classList.contains("plan-cat")) {
+        if (n.classList.contains("plan-line")) { n.hidden = !open; if (!open) n.setAttribute("aria-expanded", "false"); }
+        else n.hidden = true;
+        n = n.nextElementSibling;
+      }
+    } else {
+      const open = tr.getAttribute("aria-expanded") !== "true";
+      tr.setAttribute("aria-expanded", String(open));
+      tr.nextElementSibling.hidden = !open;
+    }
+  }
+  document.addEventListener("click", (e) => {
+    const tr = e.target.closest(".plan-cat, .plan-line");
+    if (!tr || e.target.closest(".pill")) return;
+    toggleGridRow(tr);
+  });
+  document.addEventListener("keydown", (e) => {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".plan-cat, .plan-line")) {
+      e.preventDefault();
+      toggleGridRow(e.target);
+    }
   });
 
   /* ================= Devices ================= */
@@ -1276,6 +1589,7 @@
     renderShell(client, lm);
     renderOverview(client, lm);
     renderLifecycle(client, lm);
+    renderPlan(client, lm);
     renderDevices(client, lm);
     renderAlarms(client);
     renderCves(client);
@@ -1287,7 +1601,7 @@
   }
 
   /* ================= Routing ================= */
-  const pages = ["overview", "lifecycle", "devices", "alarms", "cves", "cases", "uptime"].reduce((acc, p) => {
+  const pages = ["overview", "lifecycle", "plan", "devices", "alarms", "cves", "cases", "uptime"].reduce((acc, p) => {
     acc[p] = $("page-" + p);
     return acc;
   }, {});
@@ -1303,9 +1617,10 @@
       el.style.animationDelay = reduceMotion ? "0ms" : Math.min(i, 8) * 50 + "ms";
     });
   }
+  const PARENT_PAGE = { plan: "lifecycle" }; // sub-views keep their sidebar item highlighted
   function navigate(page, keepScroll) {
     currentPage = page;
-    document.querySelectorAll(".sidebar__item[data-page]").forEach((b) => b.classList.toggle("active", b.dataset.page === page));
+    document.querySelectorAll(".sidebar__item[data-page]").forEach((b) => b.classList.toggle("active", b.dataset.page === (PARENT_PAGE[page] || page)));
     Object.values(pages).forEach((p) => (p.style.display = "none"));
     $("page-generic").style.display = "none";
     const target = pages[page];
@@ -1318,6 +1633,11 @@
         refreshIndicators();
       }
       if (page === "lifecycle") animateDonut(target);
+      if (page === "plan") {
+        renderPlanBody(client, lifecycleModel(client)); // the chart is drawn at its real width
+        animatePlan(target);
+        refreshIndicators();
+      }
       if (page === "uptime") animateBars(target);
     } else {
       $("page-generic").style.display = "";
