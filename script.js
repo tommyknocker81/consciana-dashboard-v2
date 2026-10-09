@@ -403,8 +403,19 @@
     closeMobileSidebar();
   });
 
+  // upsell copy on the locked Alarms card/page. Without Standard, Conscia does NOT monitor the network, so the copy never claims live
+  // alarms; it only uses what we do know (the inventory and its lifecycle status) and offers monitoring as something to add.
+  function alarmUpsell(c) {
+    const lm = lifecycleModel(c);
+    return `<div class="locked-overlay__title">Know about outages before your users do</div>
+      <p>We don't monitor your network yet. With <b>Conscia Standard</b>, our engineers watch all ${lm.total} of your devices 24/7 and alert you the moment something goes down.</p>
+      <div class="locked-overlay__actions">
+        <button class="btn btn-primary" data-toast="Roel Ottenheijm, your account manager, will contact you about Conscia Standard">${ICON("email", 18)}Talk to your account manager</button>
+      </div>`;
+  }
   function applyAlarmLock(animate) {
     const open = client.tier !== "Essential" || unlockedAlarms.has(clientId);
+    ["alarmsCardOverlay", "alarmsOverlayPage"].forEach((id) => { if (!open) $(id).innerHTML = alarmUpsell(client); });
     [["alarmsCardBody", "alarmsCardOverlay"], ["alarmsBody", "alarmsOverlayPage"]].forEach(([bodyId, overlayId]) => {
       const body = $(bodyId);
       body.classList.toggle("blurred", !open);
@@ -734,10 +745,7 @@
               <h3 class="sub-head__title sub-head__title--solo">Most recent alarms</h3>
               <div class="row-list">${alRows}</div>
             </div>
-            <div class="locked-overlay" id="alarmsCardOverlay">
-              <p>Your current tier does not grant access to Alarms.</p>
-              <button class="btn btn-primary" data-open-modal="upgradeModal">${ICON("upgrade", 18)}Upgrade tier</button>
-            </div>
+            <div class="locked-overlay" id="alarmsCardOverlay"></div>
           </div>
         </div>
       </div>
@@ -1987,8 +1995,12 @@
         else toast(`Copied "${hostname}" to clipboard`);
       });
     });
-    $("upgradeWarning").textContent = al.upgradeWarning || "";
-    $("upgradeWarning").parentElement.hidden = !al.upgradeWarning;
+    // the modal can only state what we know without monitoring: the inventory and its lifecycle status
+    const lm = lifecycleModel(c);
+    const unsup = lm.unsupported;
+    const warn = c.tier === "Essential" ? `Today nobody alerts you when one of your ${lm.total} devices goes down${unsup ? `, including ${unsup} ${unsup === 1 ? "device that is" : "devices that are"} already out of support` : ""}.` : "";
+    $("upgradeWarning").textContent = warn;
+    $("upgradeWarning").parentElement.hidden = !warn;
     applyAlarmFilters();
   }
   function applyAlarmFilters() {

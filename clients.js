@@ -171,7 +171,6 @@ window.CLIENTS = {
         ["warning", "resolved", false, "HQ — Uden", "10/05/2026 06:00", "Disk space warning cleared after cleanup", "SRV-DC01", "10.20.2.10", "29511", "2 h 40 min", "10/05/2026 08:40", "Consciana Monitor"],
         ["information", "resolved", false, "HQ — Uden", "05/05/2026 09:00", "Firmware update completed", "FWP1L0S01A2", "10.20.0.3", "29400", "45 min", "05/05/2026 09:45", "Manual"],
       ],
-      upgradeWarning: "A critical alarm is active on your core router right now (RPP1L2C001H1, 14 min). Upgrading gives your team live visibility and lets you acknowledge it here.",
     },
     actions: [
       ["first", "First priority", "Replace ASA5506 × 2", "Past EoSupport · Security layer degraded"],
@@ -379,7 +378,6 @@ window.CLIENTS = {
         ["high", "resolved", false, "HQ — Rotterdam", "16/05/2026 07:40", "Core switch high CPU", "SWR1C0C001", "10.30.0.10", "40610", "5 h 40 min", "16/05/2026 13:20", "Consciana Monitor"],
         ["average", "resolved", false, "Hub — Venlo", "12/05/2026 03:10", "Power supply redundancy lost", "SWR2A021", "10.50.1.21", "40480", "9 h 40 min", "12/05/2026 12:50", "SNMP Trap"],
       ],
-      upgradeWarning: "5 critical alarms are active right now, including a WAN link down at DC Moerdijk (6 min). Upgrading gives your team live visibility and lets you acknowledge them here.",
     },
     actions: [
       ["first", "First priority", "Contain ransomware alert on SRV-FS01", "SOC P1 · host isolated, waiting for your go-ahead"],
@@ -540,7 +538,6 @@ window.CLIENTS = {
         ["warning", "resolved", false, "Bibliotheek — Geldermalsen", "20/05/2026 14:00", "Access point rebooted", "APT3W002", "10.60.3.22", "50890", "12 min", "20/05/2026 14:12", "Consciana Monitor"],
         ["average", "resolved", false, "Stadhuis — Tiel", "14/05/2026 09:20", "UPS on battery", "UPS-STH01", "10.60.0.50", "50770", "38 min", "14/05/2026 09:58", "SNMP Trap"],
       ],
-      upgradeWarning: "",
     },
     actions: [
       ["plan", "Plan", "Approve €42k router replacement", "3 × ISR4331 past End of Sale · quote ready"],

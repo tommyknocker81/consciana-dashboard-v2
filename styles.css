@@ -2130,3 +2130,16 @@ button.topbar__client { border: none; background: transparent; font-family: inhe
 .lc-table th.num, .lc-table td.num, .lc-table td.lc-id { text-align: right; }
 .lc-table th.lc-th-sort.num { padding-right: 24px; }
 .lc-table td.lc-id { padding-right: 24px; }
+/* locked Alarms: upsell copy */
+.locked-overlay { gap: 12px; }
+.locked-overlay__title { font-size: 20px; font-weight: 500; line-height: 1.25; letter-spacing: -0.2px; max-width: 320px; }
+.locked-overlay p, .lock-wrap--page .locked-overlay p { max-width: 340px; font-size: 14px; line-height: 1.45; color: var(--text-muted); }
+.locked-overlay p b { color: var(--text); font-weight: 500; }
+.locked-teaser { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 999px; background: var(--danger-tint); color: var(--danger-text); font-size: 13px; font-weight: 500; }
+.locked-teaser i { width: 8px; height: 8px; border-radius: 50%; background: var(--danger); animation: teaser-pulse 1.8s ease-in-out infinite; }
+@keyframes teaser-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.locked-overlay__actions { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 4px; }
+.locked-overlay__actions .btn-link { font-size: 14px; }
+@media (prefers-reduced-motion: reduce) { .locked-teaser i { animation: none; } }
+.locked-teaser { background: var(--warning-tint); color: var(--warning-text); }
+.locked-teaser svg { flex-shrink: 0; }

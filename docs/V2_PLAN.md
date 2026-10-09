@@ -258,3 +258,7 @@ Contradictions inside the Figma that I propose to resolve like this (all pages u
   - **Still overdue** (real vendor dates): only the ASA5506s, and at Noordkade also the 3750-X switches and Windows Server 2012 R2.
   - **Overdue counts:** Bernhoven 2 of 27 Act now, Noordkade 11 of 52, Rivierland 0.
 - **9 Oct 2026: Recommendations removed from the sidebar** (it was a placeholder page).
+- **9 Oct 2026: upsell copy on locked Alarms** (Overview card and Alarms page, built by `alarmUpsell(c)`): headline "Spot outages before your users do", the Conscia Standard benefit, a pulsing teaser with the number of critical alarms active right now, a primary "Unlock live alarms" button (opens the tier modal) and a "Talk to your account director" link.
+  - **Corrected the same day:** Essential-tier clients aren't monitored, so the copy must not claim live alarms. New copy: "Know about outages before your users do" / "We don't monitor your network yet. With Conscia Standard, our engineers watch all N of your devices 24/7…".
+    The teaser now uses what we do know: "N of your devices are already out of support".
+    The upgrade dialog's warning is generated the same way ("Today nobody alerts you when one of your N devices goes down, including …"); the `upgradeWarning` texts were removed from clients.js.
