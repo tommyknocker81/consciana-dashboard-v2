@@ -198,3 +198,35 @@ Contradictions inside the Figma that I propose to resolve like this (all pages u
   Publishing replaces the client's plan on the 5-year plan page. Drafts and published plans persist in localStorage (`lz-plans-v1`), and "Reset demo data" restores the sample data.
   Reference prices are derived from each line's own price (deflated or inflated at 3% a year) and are fictional.
 - **8 Oct 2026: shareable links.** The address bar carries the client and the page, `?client=<id>#<page>` (for example `?client=bernhoven#plan`, or `#planner` for the editor). Links open the page directly, and back/forward work. Editor changes stay local to the browser, so a shared link shows the sample plan.
+- **9 Oct 2026: time-based lifecycle buckets and a 5-year plan tile (default).** Buckets are now computed from the earliest End-of-Support date in a group:
+  - **Act now**: overdue, or less than 3 months away; the tile shows "incl. N overdue".
+  - **Plan now**: 3 to 6 months away.
+  - **Later**: more than 6 months away, shown as scheduled in the 5-year plan in brand tint (`planned`), not on the severity scale.
+
+  "Budget & Schedule" and the "Contact Sales" strip are gone. Overview shows Act now, Plan now and a **5-year plan** tile: this year's amount, 5 mini bars and the 5-year total, linking to the plan. It turns to warning when an Act-now item has no plan line.
+  Urgent device rows show "✓ Budgeted 2026 · €x" or "⚠ Not in the 5-year plan". The Lifecycle page uses the same buckets; its third table is "Later — scheduled in the 5-year plan".
+  Counts (Act / Plan / Later): Noordkade 44 / 0 / 38, Bernhoven 24 / 0 / 22, Rivierland 0 / 1 / 17. Plan now is empty for two clients because the data has no support dates 3–6 months out.
+  **Revert:** `?lc=classic` shows the previous card and buckets (from `bucket` in clients.js). The git tag `lifecycle-card-v1` marks the commit before this change.
+- **9 Oct 2026: Est. investment retired (default model).** It was the calculated sum of the `estimate` values per lifecycle group, which conflicted with the 5-year plan tile next to it (Rivierland: €42k vs €120k).
+  The Lifecycle card is now the donut plus Act now, Plan now and 5-year plan. Quote requests moved to the 5-year plan:
+  - **Request quotes (N)** in the plan header covers every non-quoted line in the current and next year.
+  - **Request quote** appears on each List price or Estimate line.
+
+  Both buttons switch to "Quote requested" after a click. `?lc=classic` still shows Est. investment with its breakdown.
+- **9 Oct 2026: simpler plan rows.** Each row shows only the item name and "Replaces …" (when it replaces a device). The cost type and price-type pills and the per-row Request quote link moved into the row's detail panel.
+  How firm an amount is now shows as a tilde: "~€7.6k" means indicative (list price or estimate); plain amounts are quoted. Category subtotals and year totals get the tilde when they include any indicative amount. A key sits under the table.
+- **9 Oct 2026: plan item side panel and budget check.** Clicking an item in "Plan by category" opens a non-modal side panel from the right (full screen on phones). On wide screens the page makes room so the table stays visible.
+  The panel shows:
+  - the lifecycle dates (End of Sale, End of Software and End of Support with "passed" or "in …"), from the linked Lifecycle group or the inventory item;
+  - a budget check;
+  - the cost per year with the price type and Request quote;
+  - the reasoning ("Why");
+  - the devices, with a link to Lifecycle.
+
+  Arrow keys or ‹ › step through the items; Esc closes the panel.
+  **Budget check**, also shown as an icon on the row: ✓ budgeted in a year before End of Support · ⚠ budgeted in the same year · ✕ budgeted after it, or already out of support. Lines without vendor dates (estimates, services) get no icon.
+  Bernhoven: ✕ ASA→Firepower, ⚠ MR33→MR36 and 2960-X→9200L, ✓ ISR→Catalyst 8300 and Windows Server.
+- **9 Oct 2026: Budget plan in the main menu; row checkboxes removed.** The 5-year plan left the Lifecycle tabs and got its own sidebar item, **Budget plan** (between Lifecycle and Advisories, bar-chart icon `i-budget`, page `#plan`).
+  It's a separate item because the plan covers more than lifecycle (laptops, licences, services), is read by Finance, is an advisor-published document rather than live data, and is a visible Conscia service. The "Current status | 5-year plan" switch is gone.
+  The page heading is "Budget plan" and the card is "5-year plan 2026–2030". The plan editor keeps Budget plan highlighted. Cross-links remain: the Overview and Lifecycle tiles, the "Later" table link, and the side panel's "Show in Lifecycle".
+  The checkbox column in the Lifecycle and Devices tables was removed: it came with the v1 table design but no action used the selection. Bring it back only together with an action bar that appears once rows are selected.

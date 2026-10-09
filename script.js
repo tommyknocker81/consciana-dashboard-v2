@@ -79,10 +79,31 @@
   const glabel = (g) => g.software || shortModel(g.model);
   const actionTag = (g) => `<span class="action-tag action-tag--${g.action}" data-tip="${esc(ACTIONS[g.action].tip(g))}">${ICON(ACTIONS[g.action].icon, 12)}${ACTIONS[g.action].label}</span>`;
 
+  // Lifecycle model. Default: buckets by End-of-Support date: Act now (overdue or < 3 months), Plan now (3–6 months), Later (6+ months, covered by the 5-year plan).
+  // ?lc=classic restores the previous model (buckets from clients.js: Act now / Plan now = past End of Sale / Budget & Schedule) and the previous Overview card.
+  const LC_CLASSIC = new URLSearchParams(location.search).get("lc") === "classic";
+  const LC = LC_CLASSIC ? {
+    laterTone: "medium", laterTitle: "Budget & Schedule", laterLabel: "within <b>6+ months</b>", laterSeg: ["Budget & schedule", "Support ends in 6+ months · budget it"],
+    planLabel: "within <b>3-6 months</b>", planSeg: ["Plan now", "End of Sale passed · decide in 3–6 months"],
+    planTable: "Plan now — decide within 3–6 months", planTip: "End-of-Sale has passed and software maintenance is ending (no more bug fixes). Hardware is still supported — plan the replacement this half-year.",
+    laterTable: "Budget & Schedule — 6+ months out", laterTip: "Support ends more than 6 months from now. No risk today — put the refresh in next year's budget.", laterEmpty: "Nothing to budget for yet.",
+  } : {
+    laterTone: "planned", laterTitle: "Later", laterLabel: "after <b>6 months</b>", laterSeg: ["Later · in the 5-year plan", "Support ends in 6+ months · scheduled in the plan"],
+    planLabel: "in <b>3–6 months</b>", planSeg: ["Plan now", "Support ends in 3–6 months · decide now"],
+    planTable: "Plan now — support ends in 3–6 months", planTip: "Support ends in 3 to 6 months. Decide on the replacement now so it can be ordered and installed in time.",
+    laterTable: "Later — scheduled in the 5-year plan", laterTip: "Support ends more than 6 months from now. No risk today; these devices are budgeted per year in your 5-year plan.", laterEmpty: "Nothing beyond the next 6 months.",
+  };
+  function timeBucket(rows) {
+    const first = rows.map((r) => parseDate(r.eosupport)).filter(Boolean).sort((x, y) => x - y)[0];
+    if (!first) return "budget";
+    const days = (first - TODAY) / 864e5;
+    return days <= 92 ? "act" : days <= 183 ? "plan" : "budget";
+  }
   function lifecycleModel(c) {
     const groups = c.lifecycle.groups.map((g) => {
       const rows = expandGroup(g, c.sites);
-      return Object.assign({ kind: "hardware", action: "replace" }, g, { rows, count: rows.length, unsupported: rows.filter((r) => r.unsupported).length });
+      return Object.assign({ kind: "hardware", action: "replace" }, g, { rows, count: rows.length, unsupported: rows.filter((r) => r.unsupported).length,
+        bucket: LC_CLASSIC ? g.bucket : timeBucket(rows) });
     });
     const by = (b) => groups.filter((g) => g.bucket === b);
     const sum = (arr, f) => arr.reduce((s, x) => s + f(x), 0);
@@ -105,8 +126,8 @@
     m.kinds = { hardware: needs.filter((g) => g.kind === "hardware").reduce((x, g) => x + g.count, 0), software: needs.filter((g) => g.kind === "software").reduce((x, g) => x + g.count, 0) };
     m.tips = {
       act: m.actCount ? `${list(act)} — ${m.unsupported ? m.unsupported + " already past End-of-Support, " : ""}the rest lose support within 3 months` : "No devices need action within 3 months",
-      plan: m.planCount ? `${list(plan)} — End-of-Sale passed; decide on replacement within 3–6 months` : "No devices in this bucket",
-      budget: m.budgetCount ? `${list(budget)} — support ends more than 6 months out; budget the refresh now` : "No devices in this bucket",
+      plan: !m.planCount ? "No devices in this bucket" : LC_CLASSIC ? `${list(plan)} — End-of-Sale passed; decide on replacement within 3–6 months` : `${list(plan)} — support ends in 3–6 months; decide on the replacement now`,
+      budget: !m.budgetCount ? "No devices in this bucket" : LC_CLASSIC ? `${list(budget)} — support ends more than 6 months out; budget the refresh now` : `${list(budget)} — support ends after 6 months; scheduled in the 5-year plan`,
     };
     return m;
   }
@@ -491,7 +512,7 @@
     const attrs = [o.page ? `data-page="${o.page}"` : "", o.scroll ? `data-scroll="${o.scroll}"` : "", o.toast ? `data-toast="${esc(o.toast)}"` : ""].join(" ");
     return `<button class="row" ${attrs}>
       <span class="row__icon${o.iconTone ? " " + o.iconTone : ""}">${ICON(o.icon, 14)}</span>
-      <span class="row__main"><span class="row__title">${esc(o.title)}</span><span class="row__meta">${esc(o.meta)}</span></span>
+      <span class="row__main"><span class="row__title">${esc(o.title)}</span><span class="row__meta">${o.metaHtml || esc(o.meta)}</span></span>
       <span class="row__right${o.stack ? " row__right--stack" : ""}">${o.right}</span>
     </button>`;
   }
@@ -531,6 +552,32 @@
   }
 
   /* ================= Overview ================= */
+  // previous Overview card (?lc=classic): three bucket tiles + "Contact Sales" strip
+  function lcOverviewClassic(lm) {
+    return `<div class="kpi-grid kpi-grid--3">
+            ${tile({ tone: "critical", title: "Act now", tip: lm.tips.act, value: lm.actCount, label: "within <b>3 months</b>", page: "lifecycle", scroll: "lcCardAct" })}
+            ${tile({ tone: "high", title: "Plan now", tip: lm.tips.plan, value: lm.planCount, label: "within <b>3-6 months</b>", page: "lifecycle", scroll: "lcCardPlan" })}
+            ${tile({ tone: "medium", title: "Budget & Schedule", tip: lm.tips.budget, value: lm.budgetCount, label: "within <b>6+ months</b>", page: "lifecycle", scroll: "lcCardBudget" })}
+          </div>
+          <div class="cta-strip">
+            <span>Contact us to get estimated investment for replacement plan</span>
+            <button class="btn btn-primary" data-toast="Your Conscia account director will contact you about a replacement quote">${ICON("euro", 18)}Contact Sales</button>
+          </div>`;
+  }
+  // plan lines that replace a lifecycle group (matched on model or software name)
+  const planLinesFor = (c, g) => c.plan.lines.filter((l) => l.replaces && (l.replaces === g.model || l.replaces === g.software));
+  // the 5-year plan as one tile: this year's amount, a bar per year, the 5-year total; warns when an Act-now item has no plan line
+  function planTile(c, lm) {
+    const pm = planModel(c, "all");
+    const max = Math.max(1, ...pm.totals);
+    const missing = lm.act.filter((g) => !planLinesFor(c, g).length);
+    const bars = `<div class="mini-bars" aria-hidden="true">${pm.totals.map((t, i) =>
+      `<span class="mini-bars__col${i === 0 ? " is-now" : ""}"><i style="height:${Math.max(8, (t / max) * 100).toFixed(0)}%"></i><em>${String(YEARS[i]).slice(2)}</em></span>`).join("")}</div>`;
+    return tile({ tone: missing.length ? "plan" : "", title: "5-year plan", value: Math.round(pm.totals[0] / 1000), prefix: "€", suffix: "k", page: "plan",
+      tip: `Budget per year from the plan your account director publishes (${pm.totals.map((t, i) => `${YEARS[i]}: ${eurK(t)}`).join(" · ")})`,
+      tileTip: missing.length ? `Not in the plan yet: ${missing.map((g) => `${glabel(g)} × ${g.count}`).join(", ")}` : "",
+      label: missing.length ? `<b>${missing.length} urgent</b> not in plan` : `in <b>${YEARS[0]}</b> · ${eurK(pm.grand)} total`, extra: bars });
+  }
   function renderOverview(c, lm) {
     const soc = c.soc.map((s, i) => {
       const trendCls = s.trend.tone === "bad" ? " kpi-tile__trend--danger" : s.trend.tone === "good" ? " kpi-tile__trend--success" : "";
@@ -547,19 +594,31 @@
       const days = Math.round((d - TODAY) / 864e5);
       return days < 14 ? `${days} days` : days < 70 ? `${Math.round(days / 7)} weeks` : `${Math.round(days / 30)} months`;
     };
+    // is this device paid for? link to the 5-year plan line that replaces it
+    const budgetMeta = (g) => {
+      if (LC_CLASSIC) return undefined;
+      const lines = planLinesFor(c, g);
+      const yi = lines.length ? Math.min(...lines.map((l) => l.y.findIndex((v) => v)).filter((i) => i >= 0)) : -1;
+      if (yi < 0) return `${esc(g.area)} <span class="budget-tag budget-tag--miss" data-tip="Not in your 5-year plan yet. Your account director adds it at the next review, or ask on the Budget plan page.">Not budgeted</span>`;
+      const amount = lines.reduce((s, l) => s + (l.y[yi] ? l.y[yi][0] * l.y[yi][1] : 0), 0);
+      const quoted = lines.every((l) => l.basis === "quoted");
+      const tip = `In your 5-year plan: ${lines.map((l) => l.item).join(" + ")} · ${YEARS[yi]} · ${quoted ? "" : "~"}${eurK(amount)} (${quoted ? "quoted" : "not quoted yet"})`;
+      return `${esc(g.area)} <span class="budget-tag" data-tip="${esc(tip)}">Budget ${YEARS[yi]}</span>`;
+    };
     let urgent = urgentGroups.slice(0, 3).map((g) => {
       const d = supportDate(g);
       // "unsupported for at least …": count from the group's most recent End-of-Support date
       const latest = g.rows.map((r) => parseDate(r.eosupport)).sort((x, y) => y - x)[0];
       return g.unsupported
-        ? row({ icon: "chip", iconTone: "disaster", title: `${glabel(g)} × ${g.count}`, meta: g.area, page: "lifecycle", scroll: "lcCardAct",
+        ? row({ icon: "chip", iconTone: "disaster", title: `${glabel(g)} × ${g.count}`, meta: g.area, metaHtml: budgetMeta(g), page: "lifecycle", scroll: "lcCardAct",
             right: `${actionTag(g)}<span class="pill pill-disaster">Unsupported ${fmtAge(monthsBetween(latest, TODAY))}</span>` })
-        : row({ icon: "chip", iconTone: "danger", title: `${glabel(g)} × ${g.count}`, meta: g.area, page: "lifecycle", scroll: "lcCardAct",
+        : row({ icon: "chip", iconTone: "danger", title: `${glabel(g)} × ${g.count}`, meta: g.area, metaHtml: budgetMeta(g), page: "lifecycle", scroll: "lcCardAct",
             right: `${actionTag(g)}<span class="pill pill-critical">${g.action === "renew" ? "Expires" : "Support ends"} in ${whenLabel(d)}</span>` });
     }).join("");
     if (!urgent) {
-      const next = lm.plan.length ? { groups: lm.plan, when: "plan within 3–6 months", pill: "pill-high", label: "Plan now", scroll: "lcCardPlan" }
-        : lm.budget.length ? { groups: lm.budget, when: "budget for next year", pill: "pill-medium", label: "Budget", scroll: "lcCardBudget" } : null;
+      const next = lm.plan.length ? { groups: lm.plan, when: LC_CLASSIC ? "plan within 3–6 months" : "support ends in 3–6 months", pill: "pill-high", label: "Plan now", scroll: "lcCardPlan" }
+        : lm.budget.length ? (LC_CLASSIC ? { groups: lm.budget, when: "budget for next year", pill: "pill-medium", label: "Budget", scroll: "lcCardBudget" }
+          : { groups: lm.budget, when: "scheduled in the 5-year plan", pill: "pill-planned", label: "Later", scroll: "lcCardBudget" }) : null;
       urgent = next
         ? row({ icon: "check-circle", iconTone: "ok", title: "Nothing urgent right now", page: "lifecycle", scroll: next.scroll,
             meta: `Next up: ${next.groups.map((g) => `${glabel(g)} × ${g.count}`).join(", ")} · ${next.when}`,
@@ -592,15 +651,12 @@
       <div class="grid grid-2">
         <div class="section-card">
           <h2 class="section-card__title">Lifecycle management</h2>
-          <div class="kpi-grid kpi-grid--3">
-            ${tile({ tone: "critical", title: "Act now", tip: lm.tips.act, value: lm.actCount, label: "within <b>3 months</b>", page: "lifecycle", scroll: "lcCardAct" })}
-            ${tile({ tone: "high", title: "Plan now", tip: lm.tips.plan, value: lm.planCount, label: "within <b>3-6 months</b>", page: "lifecycle", scroll: "lcCardPlan" })}
-            ${tile({ tone: "medium", title: "Budget & Schedule", tip: lm.tips.budget, value: lm.budgetCount, label: "within <b>6+ months</b>", page: "lifecycle", scroll: "lcCardBudget" })}
-          </div>
-          <div class="cta-strip">
-            <span>Contact us to get estimated investment for replacement plan</span>
-            <button class="btn btn-primary" data-toast="Your Conscia account director will contact you about a replacement quote">${ICON("euro", 18)}Contact Sales</button>
-          </div>
+          ${LC_CLASSIC ? lcOverviewClassic(lm) : `<div class="kpi-grid kpi-grid--3">
+            ${tile({ tone: "critical", title: "Act now", tip: lm.tips.act, value: lm.actCount, page: "lifecycle", scroll: "lcCardAct",
+              label: lm.unsupported ? `incl. <b>${lm.unsupported} overdue</b>` : "within <b>3 months</b>" })}
+            ${tile({ tone: "high", title: "Plan now", tip: lm.tips.plan, value: lm.planCount, label: LC.planLabel, page: "lifecycle", scroll: "lcCardPlan" })}
+            ${planTile(c, lm)}
+          </div>`}
           <h3 class="sub-head__title sub-head__title--solo">Most urgent devices</h3>
           <div class="row-list">${urgent}</div>
           <div class="section-card__foot"><button class="btn btn-link" data-page="devices">See all${ICON("arrow-up-right", 18)}</button></div>
@@ -694,13 +750,11 @@
   function lcTable(id, tbodyId, dot, title, count, flag, tip, rows, emptyText) {
     const body = rows.map((r) => `
           <tr data-id="${r.id}" data-kind="${r.kind}"${r.unsupported ? ' class="lc-row-unsupported"' : ""}>
-            <td class="lc-th-check"><button class="lc-checkbox" aria-label="Select row"></button></td>
             <td class="lc-id">${r.id}</td><td>${esc(r.model)}</td><td>${r.host}</td><td>${esc(r.os)}</td><td>${esc(r.osver)}</td><td>${r.serial}</td>
             <td class="${dateClass(r.eosale)}">${r.eosale}</td><td class="${dateClass(r.eosw)}">${r.eosw}</td><td class="${dateClass(r.eosupport, true)}">${r.eosupport}</td>
             <td>${r.tag}</td>
           </tr>`).join("");
     const table = rows.length ? `<div class="lc-table-scroll"><table class="lc-table"><thead><tr>
-            <th class="lc-th-check"><button class="lc-checkbox" data-check-all="${tbodyId}" aria-label="Select all"></button></th>
             <th class="lc-th-sort" data-sort-table="${tbodyId}">ID${ICON("chevron-down", 12)}</th>
             <th>Device</th><th>Hostname</th><th>OS</th><th>OS version</th><th>Serial number</th><th>End-Of-Sale</th><th>End-Of-Software</th><th>End-Of-Support</th><th>Action</th>
           </tr></thead><tbody id="${tbodyId}">${body}</tbody></table></div>
@@ -721,8 +775,8 @@
     const segs = [
       ["disaster", lm.unsupported, "Already unsupported", "No security patches or vendor support"],
       ["critical", lm.soon, "Support ends < 3 months", "Act now — order replacements"],
-      ["high", lm.planCount, "Plan now", "End of Sale passed · decide in 3–6 months"],
-      ["medium", lm.budgetCount, "Budget & schedule", "Support ends in 6+ months · budget it"],
+      ["high", lm.planCount, ...LC.planSeg],
+      [LC.laterTone, lm.budgetCount, ...LC.laterSeg],
       ["low", lm.supported, "Fully supported", "No action needed"],
     ];
     let off = 0;
@@ -745,7 +799,8 @@
     const estGroups = lm.groups.filter((g) => g.estimate);
     const why = (g) => g.unsupported ? `<span class="pill pill-disaster">Past End of Support</span>`
       : g.bucket === "act" ? `<span class="pill pill-critical">End of Support ${g.dates[2]}</span>`
-      : g.bucket === "plan" ? `<span class="pill pill-orange">Past End of Sale</span>` : `<span class="pill pill-medium">End of Support ${g.dates[2]}</span>`;
+      : g.bucket === "plan" ? (LC_CLASSIC ? `<span class="pill pill-orange">Past End of Sale</span>` : `<span class="pill pill-high">End of Support ${g.dates[2]}</span>`)
+      : `<span class="pill ${LC_CLASSIC ? "pill-medium" : "pill-planned"}">End of Support ${g.dates[2]}</span>`;
     const hosts = (g) => g.rows.length <= 2 ? g.rows.map((r) => r.host).join(", ") : `${g.rows[0].host}–${g.rows[g.rows.length - 1].host.slice(-3)}`;
     const toQuote = estGroups.filter((g) => !g.quoted);
     const breakdown = estGroups.length ? `<div class="invest" id="investBreakdown" hidden>
@@ -776,15 +831,16 @@
               <div class="lc-donut__center"><b>${lm.total}</b><span>devices</span></div>
               ${pop}
             </div>
-            <div class="kpi-grid kpi-grid--4 lc-tiles">
-              ${tile({ tone: "critical", title: "Act now", value: lm.actCount, label: "within <b>3 months</b>", scroll: "lcCardAct", tileTip: lm.tips.act })}
-              ${tile({ tone: "high", title: "Plan now", value: lm.planCount, label: "within <b>3-6 months</b>", scroll: "lcCardPlan", tileTip: lm.tips.plan })}
-              ${tile({ tone: "medium", title: "Budget & Schedule", value: lm.budgetCount, label: "within <b>6+ months</b>", scroll: "lcCardBudget", tileTip: lm.tips.budget })}
-              ${tile({ tone: "cta", title: "Est. investment", value: lm.quoted, prefix: "€", suffix: "k",
-                label: estGroups.length ? `<button class="btn btn-link kpi-tile__btn" id="investToggle" aria-expanded="false" aria-controls="investBreakdown">View breakdown${ICON("chevron-down")}</button>` : "nothing to replace" })}
+            <div class="kpi-grid ${LC_CLASSIC ? "kpi-grid--4" : "kpi-grid--3"} lc-tiles">
+              ${tile({ tone: "critical", title: "Act now", value: lm.actCount, scroll: "lcCardAct", tileTip: lm.tips.act,
+                label: !LC_CLASSIC && lm.unsupported ? `incl. <b>${lm.unsupported} overdue</b>` : "within <b>3 months</b>" })}
+              ${tile({ tone: "high", title: "Plan now", value: lm.planCount, label: LC.planLabel, scroll: "lcCardPlan", tileTip: lm.tips.plan })}
+              ${LC_CLASSIC ? tile({ tone: "medium", title: "Budget & Schedule", value: lm.budgetCount, label: "within <b>6+ months</b>", scroll: "lcCardBudget", tileTip: lm.tips.budget }) : planTile(c, lm)}
+              ${LC_CLASSIC ? tile({ tone: "cta", title: "Est. investment", value: lm.quoted, prefix: "€", suffix: "k",
+                label: estGroups.length ? `<button class="btn btn-link kpi-tile__btn" id="investToggle" aria-expanded="false" aria-controls="investBreakdown">View breakdown${ICON("chevron-down")}</button>` : "nothing to replace" }) : ""}
             </div>
           </div>
-          ${breakdown}
+          ${LC_CLASSIC ? breakdown : ""}
         </div>
         <div class="lc-filter" data-tabs>
           <span class="lc-filter__label">Show</span>
@@ -798,12 +854,10 @@
           `<span class="lc-flag"${lm.unsupported ? "" : " hidden"}><i class="legend-dot disaster"></i><span class="lc-flag__n">${lm.unsupported}</span> already unsupported</span>`,
           "Devices already past End-of-Support (no security patches) or losing support within 3 months. Order replacements now — lead time is 6–8 weeks.",
           flatRows(lm.act), "Nothing needs replacing in the next 3 months.")}
-        ${lcTable("lcCardPlan", "lcTablePlan", "high", "Plan now — decide within 3–6 months", lm.planCount, "",
-          "End-of-Sale has passed and software maintenance is ending (no more bug fixes). Hardware is still supported — plan the replacement this half-year.",
-          flatRows(lm.plan), "No devices to plan for.")}
-        ${lcTable("lcCardBudget", "lcTableBudget", "medium", "Budget & Schedule — 6+ months out", lm.budgetCount, "",
-          "Support ends more than 6 months from now. No risk today — put the refresh in next year's budget.",
-          flatRows(lm.budget), "Nothing to budget for yet.")}`;
+        ${lcTable("lcCardPlan", "lcTablePlan", "high", LC.planTable, lm.planCount, "", LC.planTip, flatRows(lm.plan), "No devices to plan for.")}
+        ${lcTable("lcCardBudget", "lcTableBudget", LC.laterTone, LC.laterTable, lm.budgetCount,
+          LC_CLASSIC ? "" : `<button class="btn btn-link btn-sm lc-plan-link" data-page="plan">Open the 5-year plan${ICON("arrow-up-right")}</button>`,
+          LC.laterTip, flatRows(lm.budget), LC.laterEmpty)}`;
     lcKind = "all";
     $("lcRoot").querySelectorAll(".lc-table-card[data-collapse]").forEach((card) => card.querySelector("tbody") && setupCollapse(card));
   }
@@ -893,21 +947,8 @@
     if (tab) applyKindFilter(tab.getAttribute("data-tab"));
   });
 
-  // checkboxes + sortable ID column (Lifecycle + Devices)
+  // sortable ID column (Lifecycle + Devices)
   document.addEventListener("click", (e) => {
-    const cb = e.target.closest(".lc-checkbox");
-    if (cb) {
-      e.stopPropagation();
-      const all = cb.getAttribute("data-check-all");
-      if (all) {
-        const willCheck = !cb.classList.contains("checked");
-        cb.classList.toggle("checked", willCheck);
-        $(all).querySelectorAll(".lc-checkbox").forEach((x) => x.classList.toggle("checked", willCheck));
-      } else {
-        cb.classList.toggle("checked");
-      }
-      return;
-    }
     const th = e.target.closest(".lc-th-sort");
     if (!th) return;
     const tbody = $(th.getAttribute("data-sort-table"));
@@ -1008,27 +1049,30 @@
 
   function planGrid(c, lm, pm) {
     if (!pm.lines.length) return `<div class="lc-table-empty">${ICON("check-circle", 18)}<span>No items of this type in the plan.</span></div>`;
-    const cell = (l, i) => l.y[i] ? `<td class="num" data-col="${i}"><b>${eurK(l.amounts[i])}</b><span>${l.y[i][0]} × ${eur(l.y[i][1])}</span></td>` : `<td class="num plan-empty" data-col="${i}">—</td>`;
+    // "~" marks an indicative amount (list price or estimate); plain amounts are quoted
+    const ind = (l) => l.basis !== "quoted";
+    const money = (v, approx) => (approx ? `<span class="plan-ind">~${eurK(v)}</span>` : eurK(v));
+    const anyInd = (lines, i) => lines.some((l) => ind(l) && (i == null ? l.total : l.amounts[i]));
+    const cell = (l, i) => l.y[i] ? `<td class="num" data-col="${i}"><b>${money(l.amounts[i], ind(l))}</b><span>${l.y[i][0]} × ${eur(l.y[i][1])}</span></td>` : `<td class="num plan-empty" data-col="${i}">—</td>`;
+
     const body = pm.cats.map((k) => `
         <tr class="plan-cat" data-cat="${k.id}" tabindex="0" aria-expanded="false">
           <td><span class="plan-cat__name">${ICON("chevron-down", 14)}<i class="legend-dot" style="background:${catColor(k.id)}"></i>${esc(k.label)} <span class="lc-count">(${k.lines.length})</span></span></td>
-          ${k.sub.map((v, i) => `<td class="num" data-col="${i}">${v ? eurK(v) : "—"}</td>`).join("")}<td class="num">${eurK(k.total)}</td>
+          ${k.sub.map((v, i) => `<td class="num" data-col="${i}">${v ? money(v, anyInd(k.lines, i)) : "—"}</td>`).join("")}<td class="num">${money(k.total, anyInd(k.lines))}</td>
         </tr>${k.lines.map((l) => {
-          const g = linkedGroup(lm, l);
-          const devices = g ? `<p><b>Linked to ${g.count} ${g.count === 1 ? "device" : "devices"} in Lifecycle:</b> ${esc(g.rows.slice(0, 4).map((r) => r.host).join(", "))}${g.count > 4 ? ` and ${g.count - 4} more` : ""} · <button class="btn btn-link btn-sm" data-page="lifecycle" data-scroll="${{ act: "lcCardAct", plan: "lcCardPlan", budget: "lcCardBudget" }[g.bucket]}">Show in Lifecycle${ICON("arrow-up-right")}</button></p>` : "";
+          const chk = budgetCheck(c, lm, l);
           return `
-        <tr class="plan-line" data-cat="${k.id}" tabindex="0" aria-expanded="false" hidden>
-          <td><b class="plan-line__item">${esc(l.item)}</b><span class="plan-line__meta">${l.replaces ? `Replaces ${esc(l.replaces)} · ` : ""}${LINE_TYPES[l.type]} <span class="pill ${BASIS[l.basis][1]}" data-tip="${esc(BASIS[l.basis][2])}">${BASIS[l.basis][0]}</span></span></td>
-          ${YEARS.map((_, i) => cell(l, i)).join("")}<td class="num"><b>${eurK(l.total)}</b></td>
-        </tr>
-        <tr class="plan-detail" data-cat="${k.id}" hidden><td colspan="7"><div class="plan-detail__body"><p>${esc(l.note || "")}</p>${devices}</div></td></tr>`;
+        <tr class="plan-line" data-cat="${k.id}" data-line="${l.id}" tabindex="0" hidden>
+          <td><b class="plan-line__item">${esc(l.item)}${chk ? `<span class="plan-check plan-check--${chk.tone}" data-tip="${esc(chk.text)}">${ICON(chk.icon, 14)}</span>` : ""}</b>${l.replaces ? `<span class="plan-line__meta">Replaces ${esc(l.replaces)}</span>` : ""}</td>
+          ${YEARS.map((_, i) => cell(l, i)).join("")}<td class="num"><b>${money(l.total, ind(l))}</b></td>
+        </tr>`;
         }).join("")}`).join("");
     const acc = c.plan.accuracy;
     return `<div class="lc-table-scroll"><table class="lc-table plan-table">
         <thead><tr><th>Item</th>${YEARS.map((yr, i) => `<th class="num" data-col="${i}">${yr}</th>`).join("")}<th class="num">Total</th></tr></thead>
         <tbody>${body}</tbody>
         <tfoot>
-          <tr class="plan-foot-total"><td>Total per year</td>${pm.totals.map((t, i) => `<td class="num" data-col="${i}">${t ? eurK(t) : "—"}</td>`).join("")}<td class="num">${eurK(pm.grand)}</td></tr>
+          <tr class="plan-foot-total"><td>Total per year</td>${pm.totals.map((t, i) => `<td class="num" data-col="${i}">${t ? money(t, anyInd(pm.lines, i)) : "—"}</td>`).join("")}<td class="num">${money(pm.grand, anyInd(pm.lines))}</td></tr>
           <tr class="plan-foot-range"><td>Likely range</td>${pm.totals.map((t, i) => `<td class="num" data-col="${i}">${t ? `${eurK(t * (1 - acc[i] / 100))}–${eurK(t * (1 + acc[i] / 100))}` : "—"}</td>`).join("")}<td></td></tr>
         </tfoot></table></div>`;
   }
@@ -1042,6 +1086,10 @@
       + `<span class="plan-legend__key"><i class="plan-key plan-key--prev"></i>${esc(c.plan.prev.label)} estimate</span><span class="plan-legend__key"><i class="plan-key plan-key--range"></i>Likely range</span>`;
     $("planGrid").innerHTML = planGrid(c, lm, pm);
     syncExpandAll();
+    if (panelLineId) {
+      const tr = document.querySelector(`#planGrid .plan-line[data-line="${panelLineId}"]`);
+      if (tr) tr.classList.add("is-selected"); else closePlanPanel();
+    }
     enhance($("planGrid"));
   }
 
@@ -1056,6 +1104,9 @@
     const peak = pm.totals.indexOf(Math.max(...pm.totals));
     const drift = lm.groups.filter((g) => !pl.lines.some((l) => l.replaces && (l.replaces === g.model || l.replaces === g.software)));
     const owner = "Roel Ottenheijm";
+    // lines in this year and next that have no vendor quote yet
+    const toQuote = pm.lines.filter((l) => l.basis !== "quoted" && (l.amounts[0] || l.amounts[1]));
+    const toQuoteSum = toQuote.reduce((sum, l) => sum + l.amounts[0] + l.amounts[1], 0);
     $("planSub").innerHTML = `<span class="page-head__live">${ICON("user", 14)}Prepared by ${owner}, account director</span><span class="dot-sep"></span><span>Published ${fmtLongDay(pl.published)}</span><span class="dot-sep"></span><span>Next review ${esc(pl.nextReview)}</span>`;
     const changeRows = YEARS.map((yr, i) => {
       const p = pl.prev.totals[i];
@@ -1067,10 +1118,12 @@
     $("planRoot").innerHTML = `
         <div class="card plan-summary">
           <div class="card__head">
-            <div class="card__title">${ICON("euro", 16)}Budget plan ${YEARS[0]}–${YEARS[YEARS.length - 1]}</div>
+            <div class="card__title">${ICON("euro", 16)}5-year plan ${YEARS[0]}–${YEARS[YEARS.length - 1]}</div>
             <div class="plan-summary__actions">
               <button class="btn btn-secondary" data-toast="Plan ${YEARS[0]} exported for Finance: ${esc(c.name.replace(/\s+/g, "_"))}_5-year-plan.xlsx">${ICON("file")}Download for Finance</button>
               <button class="btn btn-secondary" data-toast="Meeting request sent to ${owner} to discuss the 5-year plan">${ICON("email", 16)}Discuss with ${owner.split(" ")[0]}</button>
+              ${toQuote.length ? `<button class="btn btn-primary plan-quote-all" data-tip="${esc(toQuote.map((l) => l.item).join(" · "))}"
+                data-toast="Quote request for ${toQuote.length} items in ${YEARS[0]}–${YEARS[1]} (about ${eurK(toQuoteSum)}) sent to ${owner}">${ICON("euro", 16)}Request quotes (${toQuote.length})</button>` : ""}
             </div>
           </div>
           <div class="card__body">
@@ -1115,7 +1168,7 @@
             </div>
           </div>
           <div id="planGrid"></div>
-          <div class="lc-table-foot plan-note">All amounts in euros, excluding VAT. ${YEARS[0]} uses quotes and current list prices; later years are ${owner.split(" ")[0]}'s estimate of future prices, so each year gets more accurate as it gets closer.</div>
+          <div class="lc-table-foot plan-note"><b class="plan-ind">~</b> = indicative (list price or estimate); amounts without it are quoted. All amounts in euros, excluding VAT. ${YEARS[0]} uses quotes and current list prices; later years are ${owner.split(" ")[0]}'s estimate of future prices, so each year gets more accurate as it gets closer.</div>
         </div>
         <div class="lc-table-card" id="planChanges">
           <div class="lc-table-head">
@@ -1128,6 +1181,7 @@
           </table></div>
         </div>`;
     planType = "all";
+    closePlanPanel();
     renderPlanBody(c, lm);
   }
 
@@ -1148,6 +1202,17 @@
       renderPlanBody(client, lifecycleModel(client));
       $("planChart").classList.add("drawn");
     }, 150);
+  });
+  // quote requests: the button confirms once clicked (the toast comes from data-toast)
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest(".plan-quote, .plan-quote-all");
+    if (!b) return;
+    setTimeout(() => {
+      b.disabled = true;
+      b.removeAttribute("data-toast");
+      b.innerHTML = `${ICON("check-ok", 13)}Quote requested`;
+      if (b.classList.contains("plan-quote-all")) document.querySelectorAll("#planGrid .plan-quote").forEach((x) => { x.disabled = true; x.removeAttribute("data-toast"); x.innerHTML = `${ICON("check-ok", 13)}Quote requested`; });
+    }, 0);
   });
   // filter: All / Hardware / Software & licences / Services (chart + grid)
   document.addEventListener("click", (e) => {
@@ -1215,14 +1280,11 @@
       tr.setAttribute("aria-expanded", String(open));
       let n = tr.nextElementSibling;
       while (n && !n.classList.contains("plan-cat")) {
-        if (n.classList.contains("plan-line")) { n.hidden = !open; if (!open) n.setAttribute("aria-expanded", "false"); }
-        else n.hidden = true;
+        if (n.classList.contains("plan-line")) n.hidden = !open;
         n = n.nextElementSibling;
       }
     } else {
-      const open = tr.getAttribute("aria-expanded") !== "true";
-      tr.setAttribute("aria-expanded", String(open));
-      tr.nextElementSibling.hidden = !open;
+      openPlanPanel(tr.getAttribute("data-line"));
     }
   }
   function syncExpandAll() {
@@ -1244,7 +1306,7 @@
   });
   document.addEventListener("click", (e) => {
     const tr = e.target.closest(".plan-cat, .plan-line");
-    if (!tr || e.target.closest(".pill") || tr.closest("#page-planner")) return;
+    if (!tr || e.target.closest(".pill, button") || tr.closest("#page-planner")) return;
     toggleGridRow(tr);
     syncExpandAll();
   });
@@ -1253,6 +1315,110 @@
       e.preventDefault();
       toggleGridRow(e.target);
       syncExpandAll();
+    }
+  });
+
+  /* ---- plan line: budget year vs End of Support, and the side panel ---- */
+  const BASIS_TEXT = { quoted: "Quoted price", list: "List price, not quoted yet", estimate: "Estimate, no vendor price yet" };
+  const fmtMonth = (d) => d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
+  // support dates of what a line replaces: its lifecycle group, else the inventory item from the API
+  function lineDates(c, lm, l) {
+    const g = linkedGroup(lm, l);
+    if (g) {
+      const eos = g.rows.map((r) => parseDate(r.eosupport)).filter(Boolean).sort((a, b) => a - b)[0];
+      return { g, sale: g.dates[0], sw: g.dates[1], support: g.dates[2], eos, label: g.software ? `${g.software} on ${g.model}` : g.model };
+    }
+    const inv = l.replaces && (c.plan.inventory || []).find((x) => x.replaces === l.replaces);
+    return inv ? { support: inv.eos, eos: parseDate(inv.eos), label: inv.replaces } : null;
+  }
+  // is the money planned before support ends? ok = an earlier year · tight = the same year · late = after it, or already unsupported
+  function budgetCheck(c, lm, l) {
+    const d = lineDates(c, lm, l);
+    const yi = l.y.findIndex((v) => v);
+    if (!d || !d.eos || yi < 0) return null;
+    const y = YEARS[yi];
+    const ey = d.eos.getFullYear();
+    if (d.eos < TODAY) return { tone: "late", icon: "x-circle", text: `Out of support since ${fmtMonth(d.eos)}; budgeted ${y}. Replace as soon as possible.` };
+    if (y < ey) return { tone: "ok", icon: "check-circle", text: `Budgeted in ${y}, ${ey - y === 1 ? "about 1 year" : `about ${ey - y} years`} before support ends (${fmtMonth(d.eos)})` };
+    if (y === ey) return { tone: "tight", icon: "alert", text: `Budgeted in ${y}, the same year support ends (${fmtMonth(d.eos)}). Order early.` };
+    return { tone: "late", icon: "x-circle", text: `Budgeted in ${y}, after support ends (${fmtMonth(d.eos)})` };
+  }
+
+  let panelLineId = null;
+  function openPlanPanel(id) {
+    const c = client;
+    const lm = lifecycleModel(c);
+    const l = c.plan.lines.find((x) => x.id === id);
+    if (!l) return;
+    panelLineId = id;
+    document.querySelectorAll("#planGrid .plan-line").forEach((tr) => tr.classList.toggle("is-selected", tr.getAttribute("data-line") === id));
+    const d = lineDates(c, lm, l);
+    const chk = budgetCheck(c, lm, l);
+    const ind = l.basis !== "quoted";
+    const cat = (window.PLAN_CATEGORIES.find(([k]) => k === l.cat) || ["", ""])[1];
+    const dateRow = (label, str, isSupport) => {
+      const dt = parseDate(str);
+      return `<div class="pp-date"><span>${label}</span><b class="${dateClass(str, isSupport)}">${str || "—"}</b><em>${!dt ? "" : dt < TODAY ? "passed" : "in " + fmtAge(monthsBetween(TODAY, dt))}</em></div>`;
+    };
+    const dates = !d ? `<p class="pp-muted">${l.type === "service" ? "A service; it has no device dates." : "No vendor dates yet. The year is your account director's estimate, based on a typical lifetime."}</p>`
+      : (d.g ? dateRow("End of Sale", d.sale) + dateRow("End of Software", d.sw) : "") + dateRow("End of Support", d.support, true);
+    const total = l.y.reduce((s2, v) => s2 + (v ? v[0] * v[1] : 0), 0);
+    const cost = l.y.map((v, i) => v ? `<div class="pp-cost"><span>${YEARS[i]}</span><span>${v[0]} × ${eur(v[1])}</span><b>${ind ? "~" : ""}${eurK(v[0] * v[1])}</b></div>` : "").join("");
+    const g = d && d.g;
+    const panel = $("planPanel");
+    $("planPanelBody").innerHTML = `
+      <div class="pp-head">
+        <div class="pp-head__main"><div class="pp-eyebrow">${esc(cat)}</div><h3 id="planPanelTitle">${esc(l.item)}</h3>
+          <div class="pp-meta">${l.replaces ? `Replaces ${esc(l.replaces)} · ` : ""}${LINE_TYPES[l.type]}</div></div>
+        <div class="pp-nav">
+          <button class="icon-btn" data-pp="prev" aria-label="Previous item" data-tip="Previous (↑)">${ICON("chevron-down", 16)}</button>
+          <button class="icon-btn" data-pp="next" aria-label="Next item" data-tip="Next (↓)">${ICON("chevron-down", 16)}</button>
+          <button class="modal-close" data-pp="close" aria-label="Close">${ICON("x", 14)}</button>
+        </div>
+      </div>
+      <div class="pp-body">
+        <section><h4>Lifecycle dates${d ? ` <span>${esc(d.label)}</span>` : ""}</h4>${dates}
+          ${chk ? `<div class="pp-check pp-check--${chk.tone}">${ICON(chk.icon, 16)}<span>${esc(chk.text)}</span></div>` : ""}</section>
+        <section><h4>Cost</h4>${cost}<div class="pp-cost pp-cost--total"><span>Total</span><span></span><b>${ind ? "~" : ""}${eurK(total)}</b></div>
+          <p class="pp-basis">${BASIS_TEXT[l.basis]}${ind ? `<button class="btn btn-link btn-sm plan-quote" data-toast="Quote request for ${esc(l.item)} sent to Roel Ottenheijm">${ICON("euro", 13)}Request quote</button>` : ""}</p></section>
+        ${l.note ? `<section><h4>Why</h4><p>${esc(l.note)}</p></section>` : ""}
+        ${g ? `<section><h4>Devices <span>${g.count}</span></h4><ul class="pp-devices">${g.rows.slice(0, 6).map((r) => `<li><b>${r.host}</b><span>${esc(r.site)}</span></li>`).join("")}</ul>
+          ${g.count > 6 ? `<p class="pp-muted">and ${g.count - 6} more</p>` : ""}
+          <button class="btn btn-link btn-sm" data-page="lifecycle" data-scroll="${{ act: "lcCardAct", plan: "lcCardPlan", budget: "lcCardBudget" }[g.bucket]}">Show in Lifecycle${ICON("arrow-up-right")}</button></section>` : ""}
+      </div>`;
+    panel.hidden = false;
+    requestAnimationFrame(() => panel.classList.add("open"));
+    document.body.classList.add("pp-open");
+  }
+  function closePlanPanel() {
+    panelLineId = null;
+    const panel = $("planPanel");
+    if (!panel) return;
+    panel.classList.remove("open");
+    panel.hidden = true;
+    document.body.classList.remove("pp-open");
+    document.querySelectorAll("#planGrid .plan-line.is-selected").forEach((tr) => tr.classList.remove("is-selected"));
+  }
+  function stepPlanPanel(dir) {
+    const rows = [...document.querySelectorAll("#planGrid .plan-line:not([hidden])")];
+    const i = rows.findIndex((tr) => tr.getAttribute("data-line") === panelLineId);
+    const next = rows[i + dir];
+    if (!next) return;
+    openPlanPanel(next.getAttribute("data-line"));
+    next.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-pp]");
+    if (!b) return;
+    const a = b.getAttribute("data-pp");
+    if (a === "close") closePlanPanel(); else stepPlanPanel(a === "next" ? 1 : -1);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (!panelLineId) return;
+    if (e.key === "Escape") closePlanPanel();
+    if ((e.key === "ArrowDown" || e.key === "ArrowUp") && !(e.target.matches && e.target.matches("input, textarea, select"))) {
+      e.preventDefault();
+      stepPlanPanel(e.key === "ArrowDown" ? 1 : -1);
     }
   });
 
@@ -1689,7 +1855,8 @@
   /* ================= Devices ================= */
   const STATUS = {
     unsupported: '<span class="pill pill-disaster">Unsupported · replace now</span>', act: '<span class="pill pill-critical">Replace within 3 months</span>',
-    plan: '<span class="pill pill-high">Plan replacement</span>', budget: '<span class="pill pill-medium">Budget &amp; schedule</span>', ok: '<span class="pill pill-low">Supported</span>',
+    plan: '<span class="pill pill-high">Plan replacement</span>',
+    budget: LC_CLASSIC ? '<span class="pill pill-medium">Budget &amp; schedule</span>' : '<span class="pill pill-planned">In the 5-year plan</span>', ok: '<span class="pill pill-low">Supported</span>',
   };
   let devicesShown = 0;
   function renderDevices(c, lm) {
@@ -1698,15 +1865,15 @@
       if (g.kind !== "software") return r.unsupported ? STATUS.unsupported : STATUS[g.bucket];
       const verb = ACTIONS[g.action].label;
       if (r.unsupported) return `<span class="pill pill-disaster">Unsupported ${g.action === "renew" ? "licence" : "OS"} · ${verb.toLowerCase()} now</span>`;
-      const tone = { act: "pill-critical", plan: "pill-high", budget: "pill-medium" }[g.bucket];
-      const when = { act: "within 3 months", plan: "within 3–6 months", budget: "next year" }[g.bucket];
+      const tone = { act: "pill-critical", plan: "pill-high", budget: LC_CLASSIC ? "pill-medium" : "pill-planned" }[g.bucket];
+      const when = { act: "within 3 months", plan: "within 3–6 months", budget: LC_CLASSIC ? "next year" : "later · in the plan" }[g.bucket];
       return `<span class="pill ${tone}">${verb} ${when}</span>`;
     };
     lm.groups.forEach((g) => g.rows.slice(0, 2).forEach((r) => rows.push([r.id, g.model, r.host, g.kind === "software" ? `${g.os} ${g.osver}` : g.os, r.site, status(g, r)])));
     c.lifecycle.supportedSamples.forEach(([id, model, host, os, si]) => rows.push([id, model, host, os, c.sites[si], STATUS.ok]));
     devicesShown = rows.length;
     $("lcTableAll").innerHTML = rows.map(([id, model, host, os, site, status]) =>
-      `<tr data-id="${id}"><td class="lc-th-check"><button class="lc-checkbox" aria-label="Select row"></button></td><td class="lc-id">${id}</td><td>${esc(model)}</td><td>${host}</td><td>${esc(os)}</td><td>${esc(site)}</td><td>${status}</td></tr>`).join("");
+      `<tr data-id="${id}"><td class="lc-id">${id}</td><td>${esc(model)}</td><td>${host}</td><td>${esc(os)}</td><td>${esc(site)}</td><td>${status}</td></tr>`).join("");
     $("devCount").textContent = `Showing 1–${rows.length} of ${lm.total} devices`;
   }
   document.querySelectorAll(".lc-page-btn[data-lc-page]").forEach((btn) => {
@@ -2071,7 +2238,7 @@
       el.style.animationDelay = reduceMotion ? "0ms" : Math.min(i, 8) * 50 + "ms";
     });
   }
-  const PARENT_PAGE = { plan: "lifecycle" }; // sub-views keep their sidebar item highlighted
+  const PARENT_PAGE = { planner: "plan" }; // sub-pages keep their sidebar item highlighted
   function navigate(page, keepScroll) {
     currentPage = page;
     document.querySelectorAll(".sidebar__item[data-page]").forEach((b) => b.classList.toggle("active", b.dataset.page === (PARENT_PAGE[page] || page)));
@@ -2088,6 +2255,7 @@
       }
       if (page === "lifecycle") animateDonut(target);
       if (page !== "planner") closePePop();
+      if (page !== "plan") closePlanPanel();
       if (page === "plan") {
         renderPlanBody(client, lifecycleModel(client)); // the chart is drawn at its real width
         animatePlan(target);

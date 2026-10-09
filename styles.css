@@ -1997,3 +1997,97 @@ button.topbar__client { border: none; background: transparent; font-family: inhe
   .pe-form { grid-template-columns: minmax(0, 1fr); }
   .pe-sugg__actions { width: 100%; }
 }
+
+/* ===================== Lifecycle: time-based buckets + 5-year plan tile ===================== */
+/* "Later · in the 5-year plan" is scheduled, not a severity: brand tint instead of the severity scale */
+.lc-donut__seg.planned { stroke: var(--chart-2); }
+.legend-dot.planned { background: var(--chart-2); }
+.pill-planned { background: var(--brand-tint); color: var(--brand); }
+.lc-plan-link { height: auto; padding: 1px 6px; margin-left: 8px; font-size: 13px; gap: 4px; font-weight: 500; }
+.mini-bars { display: flex; align-items: flex-end; justify-content: center; gap: 6px; height: 34px; padding: 0 12px 12px; margin-top: -4px; }
+.mini-bars__col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 2px; width: 18px; height: 100%; }
+.mini-bars__col i { display: block; width: 12px; border-radius: 2px 2px 0 0; background: var(--chart-2); transition: background var(--dur-fast); }
+.mini-bars__col.is-now i { background: var(--chart-1); }
+.mini-bars__col em { font-style: normal; font-size: 9px; line-height: 1; color: var(--text-faint); }
+.kpi-tile:hover .mini-bars__col i { background: var(--chart-1); }
+.kpi-tile:hover .mini-bars__col:not(.is-now) i { opacity: 0.55; }
+.kpi-tile--plan .kpi-tile__label b { color: var(--warning-text); }
+.budget-ok, .budget-miss { display: inline-flex; align-items: center; gap: 3px; font-weight: 500; }
+.budget-ok { color: var(--success-text); }
+.budget-miss { color: var(--high-text); }
+.lc-tiles .mini-bars { margin-top: -18px; padding-bottom: 14px; }
+/* keep numbers and labels on one line across a row that contains the plan tile */
+@media (min-width: 561px) {
+  .kpi-grid:has(.mini-bars) .kpi-tile:not(:has(.mini-bars)) .kpi-tile__label { padding-bottom: 44px; }
+  .lc-tiles.kpi-grid:has(.mini-bars) .kpi-tile:not(:has(.mini-bars)) .kpi-tile__label { padding-bottom: 26px; }
+}
+/* request a quote from the 5-year plan (replaces the Est. investment tile) */
+.plan-quote { height: auto; padding: 1px 6px; font-size: 12px; gap: 3px; }
+.plan-quote:disabled, .plan-quote-all:disabled { color: var(--success-text); background: transparent; cursor: default; opacity: 1; }
+.plan-quote-all:disabled { background: var(--success-tint); }
+/* indicative amounts (list price or estimate) carry a tilde and are slightly muted */
+.plan-ind { color: #4a4650; }
+.plan-table b .plan-ind, .plan-table td.num > .plan-ind { font-weight: inherit; }
+.plan-note .plan-ind { font-weight: 600; color: var(--text); }
+.plan-detail__facts { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 6px; }
+.plan-detail__facts .plan-quote { font-size: 13px; }
+
+/* ===================== 5-year plan: budget check icon + item side panel ===================== */
+.plan-line__item { display: inline-flex; align-items: center; gap: 6px; }
+.plan-check { display: inline-flex; flex-shrink: 0; cursor: help; }
+.plan-check--ok { color: var(--success); }
+.plan-check--tight { color: var(--warning); }
+.plan-check--late { color: var(--sev-critical); }
+.plan-table tbody tr.plan-line.is-selected, .plan-table tbody tr.plan-line.is-selected > td:first-child { background: var(--brand-tint); }
+.plan-table tbody tr.plan-line.is-selected > td:first-child { box-shadow: inset 3px 0 0 var(--brand), inset -1px 0 0 var(--stroke); }
+
+.plan-panel { position: fixed; top: 50px; right: 0; bottom: 0; width: 420px; max-width: 100vw; z-index: 700; background: #fff; border-left: 1px solid var(--stroke);
+  box-shadow: -12px 0 32px rgba(14, 8, 15, 0.08); transform: translateX(100%); transition: transform 0.35s var(--ease); display: flex; flex-direction: column; }
+.plan-panel.open { transform: none; }
+.plan-panel__inner { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+@media (min-width: 1100px) { body.pp-open .main { padding-right: 444px; transition: padding-right 0.35s var(--ease); } }
+.pp-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 20px 20px 16px; border-bottom: 1px solid var(--divider); }
+.pp-head__main { min-width: 0; }
+.pp-eyebrow { font-size: 12px; font-weight: 500; color: var(--brand); margin-bottom: 4px; }
+.pp-head h3 { margin: 0; font-size: 20px; font-weight: 500; line-height: 1.25; }
+.pp-meta { margin-top: 4px; font-size: 13px; color: var(--text-muted); }
+.pp-nav { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.pp-nav .icon-btn { width: 30px; height: 30px; color: var(--text-muted); }
+.pp-nav .icon-btn:hover { color: var(--text); background: var(--subtle-bg); }
+.pp-nav [data-pp="prev"] svg { transform: rotate(180deg); }
+.pp-body { flex: 1; overflow-y: auto; padding: 4px 20px 24px; }
+.pp-body section { padding: 16px 0; border-bottom: 1px solid var(--divider); }
+.pp-body section:last-child { border-bottom: 0; }
+.pp-body h4 { margin: 0 0 10px; font-size: 14px; font-weight: 500; display: flex; align-items: baseline; gap: 8px; }
+.pp-body h4 span { font-size: 12px; font-weight: 400; color: var(--text-muted); }
+.pp-body p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--text); }
+.pp-muted, .pp-body p.pp-muted { color: var(--text-muted); font-size: 13px; }
+.pp-date { display: grid; grid-template-columns: 120px auto 1fr; align-items: baseline; gap: 8px; padding: 4px 0; font-size: 14px; }
+.pp-date span { color: var(--text-muted); }
+.pp-date b { font-weight: 500; }
+.pp-date b.lc-date--past { color: var(--danger-text); }
+.pp-date b.lc-date--unsupported { color: var(--sev-disaster); }
+.pp-date b.lc-date--soon { color: var(--warning-text); }
+.pp-date em { font-style: normal; font-size: 12px; color: var(--text-muted); text-align: right; }
+.pp-check { display: flex; align-items: flex-start; gap: 8px; margin-top: 12px; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 13px; line-height: 1.4; }
+.pp-check svg { flex-shrink: 0; margin-top: 1px; }
+.pp-check--ok { background: var(--success-tint); color: var(--success-text); }
+.pp-check--tight { background: var(--warning-tint); color: var(--warning-text); }
+.pp-check--late { background: var(--danger-tint); color: var(--danger-text); }
+.pp-cost { display: grid; grid-template-columns: 60px 1fr auto; gap: 8px; padding: 5px 0; font-size: 14px; }
+.pp-cost span:nth-child(2) { color: var(--text-muted); }
+.pp-cost b { font-weight: 500; text-align: right; }
+.pp-cost--total { border-top: 1px solid var(--divider); margin-top: 4px; padding-top: 8px; }
+.pp-basis { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px !important; font-size: 13px !important; color: var(--text-muted) !important; }
+.pp-devices { list-style: none; margin: 0 0 8px; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; }
+.pp-devices li { display: flex; flex-direction: column; font-size: 13px; }
+.pp-devices li b { font-weight: 500; }
+.pp-devices li span { color: var(--text-muted); font-size: 12px; }
+.pp-body .btn-sm { height: auto; padding: 2px 6px; font-size: 13px; gap: 4px; }
+@media (max-width: 760px) {
+  .plan-panel { width: 100vw; border-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .plan-panel { transition: none; } }
+/* urgent devices: small budget tag, details on hover */
+.budget-tag { display: inline-flex; align-items: center; margin-left: 6px; padding: 1px 7px; border-radius: 999px; font-size: 12px; font-weight: 500; line-height: 1.4; background: var(--brand-tint); color: var(--brand); cursor: help; vertical-align: 1px; }
+.budget-tag--miss { background: var(--warning-tint); color: var(--warning-text); }

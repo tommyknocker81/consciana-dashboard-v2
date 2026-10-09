@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Conscia Landing Zone — Overview</title>
-<link rel="stylesheet" href="styles.css?v=54" />
+<link rel="stylesheet" href="styles.css?v=61" />
 </head>
 <body>
 
@@ -13,6 +13,7 @@
 <defs>
 <symbol id="i-home" viewBox="0 0 24 24" fill="none"><path d="M15 21V13C15 12.7348 14.8946 12.4804 14.7071 12.2929C14.5196 12.1054 14.2652 12 14 12H10C9.73478 12 9.48043 12.1054 9.29289 12.2929C9.10536 12.4804 9 12.7348 9 13V21M3 9.99997C2.99993 9.70904 3.06333 9.42159 3.18579 9.15768C3.30824 8.89378 3.4868 8.65976 3.709 8.47197L10.709 2.47297C11.07 2.16788 11.5274 2.00049 12 2.00049C12.4726 2.00049 12.93 2.16788 13.291 2.47297L20.291 8.47197C20.5132 8.65976 20.6918 8.89378 20.8142 9.15768C20.9367 9.42159 21.0001 9.70904 21 9.99997V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V9.99997Z" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-lifecycle" viewBox="0 0 24 24" fill="none"><path d="M21 12H13M21 6H8M21 18H13M3 6V10M3 10C3 11.1 3.9 12 5 12H8M3 10V16C3 17.1 3.9 18 5 18H8" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-budget" viewBox="0 0 24 24" fill="none"><path d="M3 21H21M6 17V13M10 17V9M14 17V11M18 17V5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-eye" viewBox="0 0 24 24" fill="none"><path d="M2.062 12.3481C1.97866 12.1236 1.97866 11.8766 2.062 11.6521C2.8737 9.68397 4.25152 8.00116 6.02077 6.81701C7.79003 5.63287 9.87105 5.00073 12 5.00073C14.129 5.00073 16.21 5.63287 17.9792 6.81701C19.7485 8.00116 21.1263 9.68397 21.938 11.6521C22.0213 11.8766 22.0213 12.1236 21.938 12.3481C21.1263 14.3163 19.7485 15.9991 17.9792 17.1832C16.21 18.3674 14.129 18.9995 12 18.9995C9.87105 18.9995 7.79003 18.3674 6.02077 17.1832C4.25152 15.9991 2.8737 14.3163 2.062 12.3481Z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-table" viewBox="0 0 24 24" fill="none"><path d="M3 9H21M3 15H21M9 3V21M15 3V21M5 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3Z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-checks" viewBox="0 0 24 24" fill="none"><path d="M18 6L7 17L2 12M22 10L14.5 17.5L13 16" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -139,6 +140,7 @@
       <div class="sidebar__top">
         <button class="sidebar__item active" data-page="overview"><svg width="24" height="24"><use href="#i-home"/></svg><span>Overview</span></button>
         <button class="sidebar__item" data-page="lifecycle"><svg width="24" height="24"><use href="#i-lifecycle"/></svg><span>Lifecycle</span></button>
+        <button class="sidebar__item" data-page="plan"><svg width="24" height="24"><use href="#i-budget"/></svg><span>Budget plan</span></button>
         <button class="sidebar__item" data-page="cves"><svg width="24" height="24"><use href="#i-eye"/></svg><span>Advisories</span></button>
         <button class="sidebar__item" data-page="cases"><svg width="24" height="24"><use href="#i-table"/></svg><span>Cases</span></button>
         <button class="sidebar__item" data-page="recommendations" title="Recommendations"><svg width="24" height="24"><use href="#i-checks"/></svg><span>Recommendations</span></button>
@@ -175,29 +177,17 @@
               <span><span data-bind="devices">184</span> managed devices</span>
             </div>
           </div>
-          <div class="page-head__actions">
-            <div class="view-switch" role="tablist" aria-label="Lifecycle view">
-              <button class="view-switch__btn active" role="tab" aria-selected="true">Current status</button>
-              <button class="view-switch__btn" role="tab" aria-selected="false" data-page="plan">5-year plan</button>
-            </div>
-          </div>
         </div>
 
         <div class="lc-panel" id="lcRoot"></div>
       </section>
 
-      <!-- ---------- 5-YEAR PLAN (budget plan prepared yearly by the account director) ---------- -->
+      <!-- ---------- BUDGET PLAN: the 5-year plan prepared yearly by the account director ---------- -->
       <section id="page-plan" style="display:none">
         <div class="page-head">
           <div>
-            <h1>5-year plan</h1>
+            <h1>Budget plan</h1>
             <div class="page-head__sub" id="planSub"></div>
-          </div>
-          <div class="page-head__actions">
-            <div class="view-switch" role="tablist" aria-label="Lifecycle view">
-              <button class="view-switch__btn" role="tab" aria-selected="false" data-page="lifecycle">Current status</button>
-              <button class="view-switch__btn active" role="tab" aria-selected="true">5-year plan</button>
-            </div>
           </div>
         </div>
 
@@ -247,7 +237,6 @@
               <table class="lc-table">
                 <thead>
                   <tr>
-                    <th class="lc-th-check"><button class="lc-checkbox" data-check-all="lcTableAll" aria-label="Select all"></button></th>
                     <th class="lc-th-sort" data-sort-table="lcTableAll">ID<svg width="12" height="12"><use href="#i-chevron-down"/></svg></th>
                     <th>Device</th>
                     <th>Hostname</th>
@@ -639,6 +628,8 @@
 <div class="tooltip" id="tooltip"></div>
 
 <!-- Upgrade SLA tier modal -->
+<!-- 5-year plan: item details (non-modal side panel) -->
+<aside class="plan-panel" id="planPanel" role="dialog" aria-labelledby="planPanelTitle" hidden><div class="plan-panel__inner" id="planPanelBody"></div></aside>
 <div class="modal-backdrop" id="peModalBackdrop">
   <div class="modal pe-modal" role="dialog" aria-modal="true" aria-labelledby="peModalTitle" id="peModal"></div>
 </div>
@@ -743,6 +734,6 @@
 </div>
 
 <script src="clients.js?v=5"></script>
-<script src="script.js?v=44"></script>
+<script src="script.js?v=53"></script>
 </body>
 </html>

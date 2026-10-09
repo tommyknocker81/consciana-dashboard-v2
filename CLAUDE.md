@@ -32,11 +32,11 @@ Figma assets (logo, nav icons, team photos) are in `assets/`; most icons are als
 ## Architecture
 - **Multi-client, data-driven.** `setClient(id)` renders shell (client menu, account, notifications, summary drawer, chat), Overview, Lifecycle, Devices,
   Alarms, Advisories, Cases and Uptime from `CLIENTS[id]`. Choice persists in `localStorage` (`lz-client`) and can be forced with `?client=noordkade|bernhoven|rivierland`; the page is in the hash (`#plan`, `#planner`, `#cases`…), kept in sync by `syncUrl()` (shareable links, back/forward).
-  Lifecycle numbers are **computed** from `lifecycle.groups` (buckets act/plan/budget, unsupported = End-of-Support < 26 May 2026, date colours, investment totals).
-  The **5-year plan** (page `plan`, Lifecycle sub-view) renders `client.plan` (account-director lines: quantity × unit price per year 2026–2030); see DATA_NARRATIVE.
+  Lifecycle numbers are **computed** from `lifecycle.groups` (buckets act/plan/budget = Act now < 3 months or overdue / Plan now 3–6 months / Later, derived from End-of-Support dates; `?lc=classic` uses the old `bucket` field, the old Overview card, and git tag `lifecycle-card-v1`; unsupported = End-of-Support < 26 May 2026, date colours, investment totals).
+  The **Budget plan** (page `plan`, own sidebar item; the 5-year plan) renders `client.plan` (account-director lines: quantity × unit price per year 2026–2030); see DATA_NARRATIVE.
   The **plan editor** (page `planner`, Conscia internal, from the account menu) edits a draft and publishes it into `client.plan`; drafts and published plans persist in `localStorage` (`lz-plans-v1`).
   Zero-valued alert/bucket tiles render neutral. Alarms unlock is per client (`unlockedAlarms`), tier "Standard" = unlocked by default.
-- **SPA without a router.** `navigate(page)`. Sidebar (Figma IA): Overview · Lifecycle · Advisories (`cves`) · Cases · Recommendations · Admin · Help.
+- **SPA without a router.** `navigate(page)`. Sidebar (Figma IA + Budget plan): Overview · Lifecycle · Budget plan (`plan`) · Advisories (`cves`) · Cases · Recommendations · Admin · Help.
   Devices, Alarms, Uptime are reached from in-page links. Recommendations/Admin = generic placeholder.
 - **Event delegation** on `document` for `data-page`, `data-toast`, `data-scroll`, `data-open-modal`, `data-tip` (+`data-tip-follow` = tooltip follows the cursor, used by the
   donut), tab groups (`data-tabs`/`data-tab`/`data-tab-panel`), table expand/sort/checkboxes. `enhance(root)` adds `tabindex`/`role` + tab indicators after each render.
@@ -45,7 +45,7 @@ Figma assets (logo, nav icons, team photos) are in `assets/`; most icons are als
   per client (seeded PRNG) for 7/30/90 days.
 
 ## Gotchas (v1 lessons still apply)
-1. **Cache busting is manual:** `styles.css?v=54`, `clients.js?v=5`, `script.js?v=44` — bump on every edit. The HTML itself can also be cached: open `/?r=N` to force it.
+1. **Cache busting is manual:** `styles.css?v=61`, `clients.js?v=5`, `script.js?v=53` — bump on every edit. The HTML itself can also be cached: open `/?r=N` to force it.
 2. Grids: always `repeat(N, minmax(0, 1fr))`. Never `overflow-x:hidden` on `body` (only `html`).
 3. Anything with an author `display` needs `[hidden]` handling — v2 has a global `[hidden]{display:none!important}`.
 4. Listeners attach at load → dynamically created elements don't get `data-tip`/`data-toast` behaviour.
