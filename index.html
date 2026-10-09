@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Conscia Landing Zone — Overview</title>
-<link rel="stylesheet" href="styles.css?v=61" />
+<link rel="stylesheet" href="styles.css?v=68" />
 </head>
 <body>
 
@@ -143,7 +143,6 @@
         <button class="sidebar__item" data-page="plan"><svg width="24" height="24"><use href="#i-budget"/></svg><span>Budget plan</span></button>
         <button class="sidebar__item" data-page="cves"><svg width="24" height="24"><use href="#i-eye"/></svg><span>Advisories</span></button>
         <button class="sidebar__item" data-page="cases"><svg width="24" height="24"><use href="#i-table"/></svg><span>Cases</span></button>
-        <button class="sidebar__item" data-page="recommendations" title="Recommendations"><svg width="24" height="24"><use href="#i-checks"/></svg><span>Recommendations</span></button>
         <button class="sidebar__item" data-page="admin"><svg width="24" height="24"><use href="#i-admin"/></svg><span>Admin</span></button>
       </div>
       <div class="sidebar__bottom">
@@ -237,7 +236,7 @@
               <table class="lc-table">
                 <thead>
                   <tr>
-                    <th class="lc-th-sort" data-sort-table="lcTableAll">ID<svg width="12" height="12"><use href="#i-chevron-down"/></svg></th>
+                    <th class="lc-th-sort num" data-sort-table="lcTableAll">ID<svg width="12" height="12"><use href="#i-chevron-down"/></svg></th>
                     <th>Device</th>
                     <th>Hostname</th>
                     <th>OS</th>
@@ -334,8 +333,8 @@
                   <th>Problem</th>
                   <th>Hostname</th>
                   <th>Host IP</th>
-                  <th>Incident</th>
-                  <th>Duration</th>
+                  <th class="num">Incident</th>
+                  <th class="num">Duration</th>
                   <th>Resolved At</th>
                   <th>Source</th>
                   <th></th>
@@ -402,13 +401,13 @@
                       <th>Advisory title</th>
                       <th>CVEs</th>
                       <th>Severity</th>
-                      <th>Version</th>
+                      <th class="num">Version</th>
                       <th>Vendor</th>
                       <th>Last updated</th>
-                      <th>Related devices</th>
-                      <th>Vulnerable</th>
-                      <th>Not vulnerable</th>
-                      <th>Not checked</th>
+                      <th class="num">Related devices</th>
+                      <th class="num">Vulnerable</th>
+                      <th class="num">Not vulnerable</th>
+                      <th class="num">Not checked</th>
                     </tr>
                   </thead>
                   <tbody id="cvesTableBody">
@@ -733,7 +732,7 @@
   </aside>
 </div>
 
-<script src="clients.js?v=5"></script>
-<script src="script.js?v=53"></script>
+<script src="clients.js?v=8"></script>
+<script src="script.js?v=62"></script>
 </body>
 </html>

@@ -230,3 +230,31 @@ Contradictions inside the Figma that I propose to resolve like this (all pages u
   It's a separate item because the plan covers more than lifecycle (laptops, licences, services), is read by Finance, is an advisor-published document rather than live data, and is a visible Conscia service. The "Current status | 5-year plan" switch is gone.
   The page heading is "Budget plan" and the card is "5-year plan 2026–2030". The plan editor keeps Budget plan highlighted. Cross-links remain: the Overview and Lifecycle tiles, the "Later" table link, and the side panel's "Show in Lifecycle".
   The checkbox column in the Lifecycle and Devices tables was removed: it came with the v1 table design but no action used the selection. Bring it back only together with an action bar that appears once rows are selected.
+- **9 Oct 2026: devices per year on the Budget plan.** The count covers hardware lines and excludes Workplace (laptops). It's shown under each year in the "Plan by category" header, on the "This year" tile ("23 devices · €28k quoted") and in the chart hover. There's no separate row.
+  Bernhoven 23 / 21 / 0 / 6 / 54 devices (2026–2030).
+- **9 Oct 2026: tables follow the Conscia UI 2 design system** (Figma `pnMrx8mfVme8f3ckRK42Vf`, node `61:45382`). Applies to every `.lc-table`.
+  - **Head:** white background, 52px high, Saans Medium 14px in the default text colour, with a `#7f7c87` rule above and below. It replaces the grey head with 12px muted labels.
+  - **Rows:** white, 44px, 14px regular, `#e4e4e5` divider, 8px cell padding (20px at the card edges). IDs are in the default text colour.
+  - **Badges and action tags in tables:** 26px high with 10px side padding.
+- **9 Oct 2026: the Budget plan shows hardware only, with no filter tabs** (`PLAN_SCOPE = "hardware"` in script.js). Licence and service lines stay in `clients.js` but aren't shown or counted.
+  `prev.totals` and `changes` were rewritten for hardware; the all-cost versions are kept as `prev.totalsAll` / `changesAll`.
+  Software lifecycle groups (FTD, Windows Server, licences) get no budget tag, don't trigger "not in plan" warnings and aren't suggested in the editor. The editor's "Add line" always adds hardware.
+  Hardware totals 2026–2030:
+  - Bernhoven €59.1k / 111k / 25.3k / 113k / 226k (5 years €534k);
+  - Noordkade €130k / 242k / 127k / 131k / 150k (€780k);
+  - Rivierland €93.8k / 82.7k / 59.9k / 180k / 156k (€573k).
+- **9 Oct 2026: "today" is live, and date colours follow risk.**
+  - **Today** is the viewer's real date (`NOW`/`TODAY` in script.js).
+  - **Shifted timestamps:** demo timestamps written for 26 May 2026 14:32 (`dd/mm/yyyy hh:mm`, `dd.mm.yyyy hh:mm`: alarms, cases, outages, advisories) move by the same amount at load, as do the "Live · Updated …" labels and the summary date. Their relative story stays, e.g. "Core router down, 12 min ago".
+  - **Not shifted:** vendor End-of-Life dates, plan dates and inventory End-of-Support dates are real calendar dates, so lifecycle results change over time. On 9 Oct 2026 every Act-now device is already overdue, and Rivierland's licence (15/9/2026) is past.
+  - **Date colours:** End of Support passed = dark red, under 3 months = red, 3–6 months = amber; End of Software passed = amber; End of Sale = muted (information only).
+- **9 Oct 2026: demo dates that don't age.** Fictional lifecycle dates can be written as `today+N` (days from the viewer's today) and are resolved at load.
+  - **Bernhoven:** 3 × ISR1111-8P branch routers (support ends today+55; Act now; deliberately **not** in the plan, so it shows "1 urgent not in plan" and the plan-page notice) and 2 × Meraki MX67 (today+130; Plan now; budgeted as Meraki MX75 in 2026).
+  - **Noordkade:** 8 × IE-4000 industrial switches (today+45; Act now; budgeted as Catalyst IE3400 in 2026, flagged ⚠ same year) and 2 × AIR-CT3504 wireless controllers (today+150; Plan now; not in the plan yet).
+  - **Rivierland:** the firewall licence renewal is now today+100 (Plan now), so the "all good" client has nothing overdue.
+  - Supported counts were lowered so totals stay 184 / 412 / 326. Counts today: Act now / Plan now = Noordkade 52 (44 overdue) / 2, Bernhoven 27 (24 overdue) / 2, Rivierland 0 / 3.
+- **9 Oct 2026: less urgent demo data.**
+  - **Moved to relative dates:** the Meraki MR33 groups (Bernhoven today+40, Noordkade today+35), Bernhoven's FTD 7.0 (today+60) and Noordkade's Threat Defense licence (today+25). They are now "losing support soon" instead of overdue.
+  - **Still overdue** (real vendor dates): only the ASA5506s, and at Noordkade also the 3750-X switches and Windows Server 2012 R2.
+  - **Overdue counts:** Bernhoven 2 of 27 Act now, Noordkade 11 of 52, Rivierland 0.
+- **9 Oct 2026: Recommendations removed from the sidebar** (it was a placeholder page).

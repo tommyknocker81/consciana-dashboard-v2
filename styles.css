@@ -1826,7 +1826,7 @@ button.topbar__client { border: none; background: transparent; font-family: inhe
 .plan-table th:first-child { width: 340px; }
 .plan-table tbody tr, .plan-table tfoot tr { background: #fff; }
 .plan-table td.num b { display: block; font-weight: 500; }
-.plan-table td.num span { display: block; font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.plan-table td.num > span:not(.plan-ind) { display: block; font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 .plan-table td.plan-empty { color: var(--text-faint); }
 .plan-cat { cursor: pointer; }
 .plan-table tbody tr.plan-cat { background: var(--subtle-bg); }
@@ -2091,3 +2091,42 @@ button.topbar__client { border: none; background: transparent; font-family: inhe
 /* urgent devices: small budget tag, details on hover */
 .budget-tag { display: inline-flex; align-items: center; margin-left: 6px; padding: 1px 7px; border-radius: 999px; font-size: 12px; font-weight: 500; line-height: 1.4; background: var(--brand-tint); color: var(--brand); cursor: help; vertical-align: 1px; }
 .budget-tag--miss { background: var(--warning-tint); color: var(--warning-text); }
+/* device count under each year in the plan table header */
+.plan-table thead th .plan-th-devices { display: block; margin-top: 2px; font-size: 11px; font-weight: 400; color: var(--text-muted); cursor: help; white-space: nowrap; }
+
+/* ===================== Tables: Conscia UI 2 design system (Figma pnMrx8mfVme8f3ckRK42Vf, node 61:45382) =====================
+   head: white, 52px, Saans Medium 14px default text, darker rule above and below (#7f7c87)
+   rows: white, 44px, 14px regular default text, divider #e4e4e5 · badges 26px high, 10px side padding */
+:root { --table-head-rule: #7f7c87; }
+.lc-table th, .plan-table thead th:first-child {
+  height: 52px; padding: 8px 8px; font-size: 14px; font-weight: 500; color: var(--text); background: #fff;
+  border-top: 1px solid var(--table-head-rule); border-bottom: 1px solid var(--table-head-rule); vertical-align: middle;
+}
+.lc-table td { height: 44px; padding: 8px 8px; border-bottom: 1px solid var(--divider); vertical-align: middle; }
+.lc-table th:first-child, .lc-table td:first-child { padding-left: 20px; }
+.lc-table th:last-child, .lc-table td:last-child { padding-right: 20px; }
+.lc-table td.lc-id { color: var(--text); }
+.lc-table .pill, .lc-table .action-tag { min-height: 26px; padding-top: 0; padding-bottom: 0; padding-left: 10px; padding-right: 10px; }
+.lc-table .lc-th-sort svg { color: var(--text-muted); }
+.plan-table thead th .plan-th-devices { font-weight: 400; }
+.plan-table thead th:first-child { box-shadow: inset -1px 0 0 var(--stroke); }
+.plan-table tbody tr.plan-cat td { height: 44px; }
+.lc-table-head + .lc-table-scroll, .lc-table-head + div > .lc-table-scroll { margin-top: 0; }
+.lc-table .action-tag { height: 26px; }
+
+/* amounts look the same whether quoted or indicative; only the "~" tells them apart */
+.plan-ind { color: inherit; font-size: inherit; }
+/* keyboard focus on plan rows: tint the row (a ring on <tr> renders as a stray line under the head) */
+.plan-table tr:focus-visible { box-shadow: none; }
+.plan-table tr:focus-visible > td { background: var(--brand-tint); }
+/* filtered plan table: say so next to the title, and show the all-costs totals under the filtered ones */
+.plan-filter-note { display: inline-flex; align-items: center; gap: 4px; margin-left: 10px; padding: 2px 4px 2px 10px; border-radius: 999px; background: var(--warning-tint); color: var(--warning-text); font-size: 12px; font-weight: 500; }
+.plan-filter-note .btn { height: auto; padding: 1px 6px; font-size: 12px; }
+.plan-foot-all td { font-weight: 500; color: var(--text-muted); }
+/* lifecycle date colours (see dateClass): End of Support < 3 months = red like Act now; End of Sale is information only */
+.lc-table td.lc-date--act, .pp-date b.lc-date--act { color: var(--danger-text); font-weight: 500; }
+.lc-table td.lc-date--info, .pp-date b.lc-date--info { color: var(--text-muted); font-weight: 400; }
+/* numbers right-aligned in every table (IDs, counts, versions, durations, amounts) */
+.lc-table th.num, .lc-table td.num, .lc-table td.lc-id { text-align: right; }
+.lc-table th.lc-th-sort.num { padding-right: 24px; }
+.lc-table td.lc-id { padding-right: 24px; }

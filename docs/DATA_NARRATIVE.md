@@ -70,6 +70,8 @@ Tables: End of support passed (2 ASA5506) · End of Support within 3 months (21 
 End of Sale passed (4 × ISR4331/K9: EoSale 31/10/2023, EoSW 24/5/2026, EoSupport 31/10/2028).
 
 ## 5-year plan (`plan` in clients.js, page `plan`)
+> Since 9 Oct 2026 the portal shows **hardware lines only** (see V2_PLAN). The table below lists the all-cost totals; for hardware-only totals see the V2_PLAN decision log. `prev.totals`/`changes` are hardware, `prev.totalsAll`/`changesAll` are all costs.
+
 Published once a year by the account director (Roel Ottenheijm) as quantity × unit price per year, 2026–2030; amounts in € excl. VAT. Accuracy ±5/10/15/20/25%.
 Lines that replace a lifecycle group must use the group's `model` or `software` name in `replaces`, and match its estimate. Lifecycle groups without a line are shown as "not in the plan yet".
 

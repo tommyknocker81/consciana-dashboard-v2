@@ -10,7 +10,41 @@
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const CLIENTS = window.CLIENTS;
-  const TODAY = new Date(2026, 4, 26);
+  // "Today" is the viewer's real date. The demo data was written for 26 May 2026, 14:32: every timestamp in it ("dd/mm/yyyy hh:mm" or
+  // "dd.mm.yyyy hh:mm") moves by the same amount, so "14 min ago", case ages and outages keep telling the same story.
+  // Vendor End-of-Life dates and plan dates are real calendar dates (no time part) and stay as they are.
+  const DATA_NOW = new Date(2026, 4, 26, 14, 32);
+  const NOW = new Date();
+  const SHIFT = NOW - DATA_NOW;
+  const TODAY = new Date(NOW.getFullYear(), NOW.getMonth(), NOW.getDate());
+  const p2 = (n) => String(n).padStart(2, "0");
+  (function shiftTimestamps(o) {
+    Object.keys(o).forEach((k) => {
+      const v = o[k];
+      if (v && typeof v === "object") shiftTimestamps(v);
+      else if (typeof v === "string") {
+        const m = v.match(/^(\d{2})([./])(\d{2})\2(\d{4}) (\d{2}):(\d{2})$/);
+        if (!m) return;
+        const d = new Date(new Date(+m[4], +m[3] - 1, +m[1], +m[5], +m[6]).getTime() + SHIFT);
+        o[k] = `${p2(d.getDate())}${m[2]}${p2(d.getMonth() + 1)}${m[2]}${d.getFullYear()} ${p2(d.getHours())}:${p2(d.getMinutes())}`;
+      }
+    });
+  })({ clients: window.CLIENTS, advisories: window.ADVISORIES });
+  // fictional lifecycle dates may be written as "today+N" (days from the viewer's today) so the demo story doesn't age
+  (function resolveRelativeDates(o) {
+    Object.keys(o).forEach((k) => {
+      const v = o[k];
+      if (v && typeof v === "object") resolveRelativeDates(v);
+      else if (typeof v === "string" && /^today[+-]\d+$/.test(v)) {
+        const d = new Date(TODAY);
+        d.setDate(d.getDate() + parseInt(v.slice(5), 10));
+        o[k] = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+      }
+    });
+  })(window.CLIENTS);
+  const NOW_LABEL = `${p2(NOW.getHours())}:${p2(NOW.getMinutes())} · ${NOW.getDate()} ${NOW.toLocaleString("en-GB", { month: "short" })} ${NOW.getFullYear()}`;
+  document.querySelectorAll(".page-head__live").forEach((el) => el.lastChild && (el.lastChild.textContent = el.lastChild.textContent.replace(/Updated .*$/, `Updated ${NOW_LABEL}`)));
+  if (document.getElementById("reportDrawerDate")) document.getElementById("reportDrawerDate").textContent = NOW_LABEL.replace(" · ", ", ").replace(/^(\S+), (.*)$/, "$2, $1");
   const $ = (id) => document.getElementById(id);
   const esc = (v) => String(v).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]);
   const fmtDay = (d) => d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
@@ -33,11 +67,18 @@
     const y = Math.floor(months / 12);
     return (y ? `${y}y ` : "") + `${months % 12}m`;
   }
-  function dateClass(s, isSupport) {
+  // date colours follow the risk, not just "passed or not":
+  // End of Support: passed = dark red · < 3 months = red (Act now) · 3–6 months = amber (Plan now)
+  // End of Software: passed = amber (no more bug fixes, still supported) · End of Sale: information only (muted)
+  function dateClass(s, kind) {
     const d = parseDate(s);
     if (!d) return "lc-date lc-date--na";
-    if (d < TODAY) return isSupport ? "lc-date lc-date--unsupported" : "lc-date lc-date--past";
-    if ((d - TODAY) / 864e5 <= 183) return "lc-date lc-date--soon";
+    const days = (d - TODAY) / 864e5;
+    if (kind === "sale") return "lc-date lc-date--info";
+    if (kind === "sw") return days < 0 ? "lc-date lc-date--soon" : "lc-date";
+    if (days < 0) return "lc-date lc-date--unsupported";
+    if (days <= 92) return "lc-date lc-date--act";
+    if (days <= 183) return "lc-date lc-date--soon";
     return "lc-date";
   }
   const pad = (n, digits) => String(n).padStart(digits, "0");
@@ -519,7 +560,6 @@
   const empty = (text) => `<div class="row-empty">${ICON("check-circle", 16)}<span>${esc(text)}</span></div>`;
 
   /* ================= Cases helpers ================= */
-  const NOW = new Date(2026, 4, 26, 14, 32);
   function parseDateTime(s) {
     const [d, t] = s.split(" ");
     const [dd, mm, yy] = d.split("/").map(Number);
@@ -570,11 +610,11 @@
   function planTile(c, lm) {
     const pm = planModel(c, "all");
     const max = Math.max(1, ...pm.totals);
-    const missing = lm.act.filter((g) => !planLinesFor(c, g).length);
+    const missing = lm.act.filter((g) => g.kind !== "software" && !planLinesFor(c, g).length);
     const bars = `<div class="mini-bars" aria-hidden="true">${pm.totals.map((t, i) =>
       `<span class="mini-bars__col${i === 0 ? " is-now" : ""}"><i style="height:${Math.max(8, (t / max) * 100).toFixed(0)}%"></i><em>${String(YEARS[i]).slice(2)}</em></span>`).join("")}</div>`;
     return tile({ tone: missing.length ? "plan" : "", title: "5-year plan", value: Math.round(pm.totals[0] / 1000), prefix: "€", suffix: "k", page: "plan",
-      tip: `Budget per year from the plan your account director publishes (${pm.totals.map((t, i) => `${YEARS[i]}: ${eurK(t)}`).join(" · ")})`,
+      tip: `Budget per year from the plan your account director publishes (${pm.totals.map((t, i) => `${YEARS[i]}: ${eurK(t)}, ${devicesLabel(deviceCounts(c.plan)[i])}`).join(" · ")}; laptops not counted as devices)`,
       tileTip: missing.length ? `Not in the plan yet: ${missing.map((g) => `${glabel(g)} × ${g.count}`).join(", ")}` : "",
       label: missing.length ? `<b>${missing.length} urgent</b> not in plan` : `in <b>${YEARS[0]}</b> · ${eurK(pm.grand)} total`, extra: bars });
   }
@@ -596,7 +636,7 @@
     };
     // is this device paid for? link to the 5-year plan line that replaces it
     const budgetMeta = (g) => {
-      if (LC_CLASSIC) return undefined;
+      if (LC_CLASSIC || g.kind === "software") return undefined;
       const lines = planLinesFor(c, g);
       const yi = lines.length ? Math.min(...lines.map((l) => l.y.findIndex((v) => v)).filter((i) => i >= 0)) : -1;
       if (yi < 0) return `${esc(g.area)} <span class="budget-tag budget-tag--miss" data-tip="Not in your 5-year plan yet. Your account director adds it at the next review, or ask on the Budget plan page.">Not budgeted</span>`;
@@ -751,11 +791,11 @@
     const body = rows.map((r) => `
           <tr data-id="${r.id}" data-kind="${r.kind}"${r.unsupported ? ' class="lc-row-unsupported"' : ""}>
             <td class="lc-id">${r.id}</td><td>${esc(r.model)}</td><td>${r.host}</td><td>${esc(r.os)}</td><td>${esc(r.osver)}</td><td>${r.serial}</td>
-            <td class="${dateClass(r.eosale)}">${r.eosale}</td><td class="${dateClass(r.eosw)}">${r.eosw}</td><td class="${dateClass(r.eosupport, true)}">${r.eosupport}</td>
+            <td class="${dateClass(r.eosale, "sale")}">${r.eosale}</td><td class="${dateClass(r.eosw, "sw")}">${r.eosw}</td><td class="${dateClass(r.eosupport, "support")}">${r.eosupport}</td>
             <td>${r.tag}</td>
           </tr>`).join("");
     const table = rows.length ? `<div class="lc-table-scroll"><table class="lc-table"><thead><tr>
-            <th class="lc-th-sort" data-sort-table="${tbodyId}">ID${ICON("chevron-down", 12)}</th>
+            <th class="lc-th-sort num" data-sort-table="${tbodyId}">ID${ICON("chevron-down", 12)}</th>
             <th>Device</th><th>Hostname</th><th>OS</th><th>OS version</th><th>Serial number</th><th>End-Of-Sale</th><th>End-Of-Software</th><th>End-Of-Support</th><th>Action</th>
           </tr></thead><tbody id="${tbodyId}">${body}</tbody></table></div>
           <div class="lc-table-foot">Showing ${rows.length} of ${rows.length} items</div>
@@ -981,8 +1021,14 @@
   const fmtLongDay = (s) => { const d = parseDate(s); return d.getDate() + " " + d.toLocaleString("en-GB", { month: "short" }) + " " + d.getFullYear(); };
   const linkedGroup = (lm, line) => line.replaces && lm.groups.find((g) => g.model === line.replaces || g.software === line.replaces);
 
+  // devices to replace per year: hardware lines, excluding the workplace category (laptops)
+  const deviceCounts = (plan) => YEARS.map((_, i) => plan.lines.filter((l) => l.type === "hardware" && l.cat !== "workplace").reduce((s2, l) => s2 + (l.y[i] ? l.y[i][0] : 0), 0));
+  const devicesLabel = (n) => `${n} ${n === 1 ? "device" : "devices"}`;
+  // The portal shows the hardware that needs budgeting; licence and service lines stay in the data but aren't shown (for now).
+  const PLAN_SCOPE = "hardware";
   function planModel(c, type, plan = c.plan) {
-    const lines = plan.lines.filter((l) => type === "all" || l.type === type).map((l) => {
+    const want = type === "all" ? PLAN_SCOPE : type;
+    const lines = plan.lines.filter((l) => l.type === want).map((l) => {
       const amounts = l.y.map((v) => (v ? v[0] * v[1] : 0));
       return Object.assign({}, l, { amounts, total: amounts.reduce((a, b) => a + b, 0) });
     });
@@ -1043,7 +1089,8 @@
     const p = c.plan.prev.totals[i];
     const rows = pm.cats.filter((k) => k.sub[i] > 0).sort((k1, k2) => k2.sub[i] - k1.sub[i]).map((k) =>
       `<div class="lc-pop__row" data-cat="${k.id}"><i class="legend-dot" style="background:${catColor(k.id)}"></i><span class="lc-pop__text"><b>${esc(k.label)}</b><span>${k.lines.filter((l) => l.amounts[i]).map((l) => esc(l.item)).slice(0, 2).join(" · ")}</span></span><span class="lc-pop__count">${eurK(k.sub[i])}</span></div>`).join("");
-    return `<div class="lc-pop__head">${YEARS[i]} · ${t ? `${eurK(t)} <span class="plan-pop__range">(range ${eurK(t * (1 - a))}–${eurK(t * (1 + a))})</span>` : "nothing planned"}</div>${rows}
+    const nDev = deviceCounts(c.plan)[i];
+    return `<div class="lc-pop__head">${YEARS[i]} · ${t ? `${eurK(t)}${nDev ? ` · ${devicesLabel(nDev)}` : ""} <span class="plan-pop__range">(range ${eurK(t * (1 - a))}–${eurK(t * (1 + a))})</span>` : "nothing planned"}</div>${rows}
       <div class="lc-pop__foot">${pm.quoted[i] ? `<b>${eurK(pm.quoted[i])}</b> quoted · ` : ""}${p != null ? `${esc(c.plan.prev.label)} estimate: <b>${eurK(p)}</b>` : `New year in this plan`}</div>`;
   }
 
@@ -1068,11 +1115,13 @@
         </tr>`;
         }).join("")}`).join("");
     const acc = c.plan.accuracy;
+    const devs = deviceCounts(c.plan);
     return `<div class="lc-table-scroll"><table class="lc-table plan-table">
-        <thead><tr><th>Item</th>${YEARS.map((yr, i) => `<th class="num" data-col="${i}">${yr}</th>`).join("")}<th class="num">Total</th></tr></thead>
+        <thead><tr><th>Item</th>${YEARS.map((yr, i) => `<th class="num" data-col="${i}">${yr}${devs[i] ? `<span class="plan-th-devices" data-tip="Network, security and server devices replaced in ${yr} (laptops not counted)">${devicesLabel(devs[i])}</span>` : ""}</th>`).join("")}<th class="num">Total</th></tr></thead>
         <tbody>${body}</tbody>
         <tfoot>
-          <tr class="plan-foot-total"><td>Total per year</td>${pm.totals.map((t, i) => `<td class="num" data-col="${i}">${t ? money(t, anyInd(pm.lines, i)) : "—"}</td>`).join("")}<td class="num">${money(pm.grand, anyInd(pm.lines))}</td></tr>
+          <tr class="plan-foot-total"><td>${planType === "all" ? "Total per year" : `Total per year · ${LINE_TYPES[planType].toLowerCase()} only`}</td>${pm.totals.map((t, i) => `<td class="num" data-col="${i}">${t ? money(t, anyInd(pm.lines, i)) : "—"}</td>`).join("")}<td class="num">${money(pm.grand, anyInd(pm.lines))}</td></tr>
+          ${planType === "all" ? "" : (() => { const all = planModel(c, "all"); return `<tr class="plan-foot-all"><td>All costs per year</td>${all.totals.map((t, i) => `<td class="num" data-col="${i}">${t ? money(t, anyInd(all.lines, i)) : "—"}</td>`).join("")}<td class="num">${money(all.grand, anyInd(all.lines))}</td></tr>`; })()}
           <tr class="plan-foot-range"><td>Likely range</td>${pm.totals.map((t, i) => `<td class="num" data-col="${i}">${t ? `${eurK(t * (1 - acc[i] / 100))}–${eurK(t * (1 + acc[i] / 100))}` : "—"}</td>`).join("")}<td></td></tr>
         </tfoot></table></div>`;
   }
@@ -1085,6 +1134,9 @@
     $("planLegend").innerHTML = pm.cats.map((k) => `<span class="plan-legend__item" data-cat="${k.id}"><i class="legend-dot" style="background:${catColor(k.id)}"></i>${esc(k.label)}</span>`).join("")
       + `<span class="plan-legend__key"><i class="plan-key plan-key--prev"></i>${esc(c.plan.prev.label)} estimate</span><span class="plan-legend__key"><i class="plan-key plan-key--range"></i>Likely range</span>`;
     $("planGrid").innerHTML = planGrid(c, lm, pm);
+    const note = $("planFilterNote");
+    note.hidden = planType === "all";
+    note.innerHTML = planType === "all" ? "" : `Showing ${LINE_TYPES[planType].toLowerCase()} only <button class="btn btn-link btn-sm" id="planShowAll">Show all costs</button>`;
     syncExpandAll();
     if (panelLineId) {
       const tr = document.querySelector(`#planGrid .plan-line[data-line="${panelLineId}"]`);
@@ -1102,7 +1154,7 @@
     const nowSum = pm.totals.reduce((s, t, i) => s + (pl.prev.totals[i] != null ? t : 0), 0);
     const diff = nowSum - prevSum;
     const peak = pm.totals.indexOf(Math.max(...pm.totals));
-    const drift = lm.groups.filter((g) => !pl.lines.some((l) => l.replaces && (l.replaces === g.model || l.replaces === g.software)));
+    const drift = lm.groups.filter((g) => g.kind !== "software" && !pl.lines.some((l) => l.replaces && (l.replaces === g.model || l.replaces === g.software)));
     const owner = "Roel Ottenheijm";
     // lines in this year and next that have no vendor quote yet
     const toQuote = pm.lines.filter((l) => l.basis !== "quoted" && (l.amounts[0] || l.amounts[1]));
@@ -1129,9 +1181,9 @@
           <div class="card__body">
             <div class="kpi-grid kpi-grid--4 plan-tiles">
               ${tile({ title: `This year (${YEARS[0]})`, value: Math.round(pm.totals[0] / 1000), prefix: "€", suffix: "k", scroll: "planGridCard",
-                label: `<b>${eurK(pm.quoted[0])}</b> quoted · ±${pl.accuracy[0]}%`, tileTip: "The amount to budget this year. Most of it is quoted or at today's list price." })}
+                label: `<b>${devicesLabel(deviceCounts(pl)[0])}</b> · ${eurK(pm.quoted[0])} quoted`, tileTip: `The amount to budget this year (±${pl.accuracy[0]}%). Devices = network, security and server devices replaced this year; laptops not counted.` })}
               ${tile({ title: "5-year total", value: Math.round(pm.grand / 1000), prefix: "€", suffix: "k", scroll: "planGridCard",
-                label: `${YEARS[0]}–${YEARS[YEARS.length - 1]} · all costs`, tileTip: "Hardware, software and licences, and services across the five years" })}
+                label: `${YEARS[0]}–${YEARS[YEARS.length - 1]} · hardware`, tileTip: "All hardware to replace across the five years" })}
               ${tile({ title: "Peak year", value: Math.round(pm.totals[peak] / 1000), prefix: "€", suffix: "k", scroll: "planChartCard",
                 label: `in <b>${YEARS[peak]}</b> · ±${pl.accuracy[peak]}%`, tileTip: "The most expensive year. Consider bringing items forward to spread the cost." })}
               ${tile({ title: `vs. ${pl.prev.label}`, value: Math.round(Math.abs(diff) / 1000), prefix: (diff >= 0 ? "+" : "−") + "€", suffix: "k", scroll: "planChanges",
@@ -1140,19 +1192,11 @@
           </div>
         </div>
         ${drift.length ? `<div class="plan-drift">${ICON("alert", 18)}<div><b>${drift.length} ${drift.length === 1 ? "item" : "items"} from Lifecycle ${drift.length === 1 ? "isn't" : "aren't"} in this plan yet</b>
-            <span>${drift.map((g) => `${esc(glabel(g))} on ${esc(g.model)} (${ACTIONS[g.action].label.toLowerCase()}, support ends ${g.dates[2]})`).join(" · ")}. Added after the plan was published; ${owner.split(" ")[0]} will price it at the next review.</span></div>
+            <span>${drift.map((g) => `${g.count} × ${esc(g.software ? `${g.software} on ${g.model}` : g.model)} (${ACTIONS[g.action].label.toLowerCase()}, support ends ${g.dates[2]})`).join(" · ")}. Added after the plan was published; ${owner.split(" ")[0]} will price it at the next review.</span></div>
             <button class="btn btn-secondary btn-sm" data-toast="Asked ${owner} to add ${esc(drift.map((g) => glabel(g)).join(", "))} to the plan">Ask to add it</button></div>` : ""}
         <div class="card" id="planChartCard">
           <div class="card__head">
             <div class="card__title">${ICON("activity", 15)}Budget per year</div>
-            <div class="plan-filter" data-tabs>
-              <div class="tabgroup">
-                <button class="tabgroup__tab active" data-tab="all">All costs</button>
-                <button class="tabgroup__tab" data-tab="hardware">Hardware</button>
-                <button class="tabgroup__tab" data-tab="software">Software &amp; licences</button>
-                <button class="tabgroup__tab" data-tab="service">Services</button>
-              </div>
-            </div>
           </div>
           <div class="card__body">
             <div class="plan-chart" id="planChart"></div>
@@ -1161,14 +1205,14 @@
         </div>
         <div class="lc-table-card" id="planGridCard">
           <div class="lc-table-head">
-            <div class="lc-table-title">Plan by category</div>
+            <div class="lc-table-title">Plan by category <span class="plan-filter-note" id="planFilterNote" hidden></span></div>
             <div class="plan-grid-tools">
               <button class="btn btn-link btn-sm" id="planExpandAll" aria-expanded="false">Expand all${ICON("chevron-down")}</button>
               <span class="lc-info" data-tip="Same layout as the spreadsheet: quantity × unit price per year. Open a category to see its items; click an item for the reasoning and the linked devices.">${ICON("info")}</span>
             </div>
           </div>
           <div id="planGrid"></div>
-          <div class="lc-table-foot plan-note"><b class="plan-ind">~</b> = indicative (list price or estimate); amounts without it are quoted. All amounts in euros, excluding VAT. ${YEARS[0]} uses quotes and current list prices; later years are ${owner.split(" ")[0]}'s estimate of future prices, so each year gets more accurate as it gets closer.</div>
+          <div class="lc-table-foot plan-note">Hardware to replace; licences and services are quoted separately. <b class="plan-ind">~</b> = indicative (list price or estimate); amounts without it are quoted. All amounts in euros, excluding VAT. ${YEARS[0]} uses quotes and current list prices; later years are ${owner.split(" ")[0]}'s estimate of future prices, so each year gets more accurate as it gets closer.</div>
         </div>
         <div class="lc-table-card" id="planChanges">
           <div class="lc-table-head">
@@ -1213,6 +1257,11 @@
       b.innerHTML = `${ICON("check-ok", 13)}Quote requested`;
       if (b.classList.contains("plan-quote-all")) document.querySelectorAll("#planGrid .plan-quote").forEach((x) => { x.disabled = true; x.removeAttribute("data-toast"); x.innerHTML = `${ICON("check-ok", 13)}Quote requested`; });
     }, 0);
+  });
+  // "Show all costs" next to the table resets the filter
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest("#planShowAll")) return;
+    document.querySelector('.plan-filter .tabgroup__tab[data-tab="all"]').click();
   });
   // filter: All / Hardware / Software & licences / Services (chart + grid)
   document.addEventListener("click", (e) => {
@@ -1356,12 +1405,12 @@
     const chk = budgetCheck(c, lm, l);
     const ind = l.basis !== "quoted";
     const cat = (window.PLAN_CATEGORIES.find(([k]) => k === l.cat) || ["", ""])[1];
-    const dateRow = (label, str, isSupport) => {
+    const dateRow = (label, str, kind) => {
       const dt = parseDate(str);
-      return `<div class="pp-date"><span>${label}</span><b class="${dateClass(str, isSupport)}">${str || "—"}</b><em>${!dt ? "" : dt < TODAY ? "passed" : "in " + fmtAge(monthsBetween(TODAY, dt))}</em></div>`;
+      return `<div class="pp-date"><span>${label}</span><b class="${dateClass(str, kind)}">${str || "—"}</b><em>${!dt ? "" : dt < TODAY ? "passed" : "in " + fmtAge(monthsBetween(TODAY, dt))}</em></div>`;
     };
     const dates = !d ? `<p class="pp-muted">${l.type === "service" ? "A service; it has no device dates." : "No vendor dates yet. The year is your account director's estimate, based on a typical lifetime."}</p>`
-      : (d.g ? dateRow("End of Sale", d.sale) + dateRow("End of Software", d.sw) : "") + dateRow("End of Support", d.support, true);
+      : (d.g ? dateRow("End of Sale", d.sale, "sale") + dateRow("End of Software", d.sw, "sw") : "") + dateRow("End of Support", d.support, "support");
     const total = l.y.reduce((s2, v) => s2 + (v ? v[0] * v[1] : 0), 0);
     const cost = l.y.map((v, i) => v ? `<div class="pp-cost"><span>${YEARS[i]}</span><span>${v[0]} × ${eur(v[1])}</span><b>${ind ? "~" : ""}${eurK(v[0] * v[1])}</b></div>` : "").join("");
     const g = d && d.g;
@@ -1425,7 +1474,7 @@
   /* ================= Plan editor (Conscia internal) ================= */
   // The account director edits a draft of the client's plan and publishes it to the portal. Drafts and published plans persist in this browser only.
   const PLAN_KEY = "lz-plans-v1";
-  const TODAY_STR = "26/5/2026";
+  const TODAY_STR = `${TODAY.getDate()}/${TODAY.getMonth() + 1}/${TODAY.getFullYear()}`;
   const clone = (o) => JSON.parse(JSON.stringify(o));
   const withIds = (plan) => { plan.lines.forEach((l, i) => { if (!l.id) l.id = "L" + i; }); return plan; };
   Object.values(CLIENTS).forEach((c) => withIds(c.plan));
@@ -1471,7 +1520,7 @@
       return { key: "lc:" + name, source: "Lifecycle", cat: areaCat(g.area), item, replaces: name, type, count: g.count, eos: g.dates[2], unit, what: `${g.count} × ${g.software ? `${g.software} on ${g.model}` : g.model}` };
     });
     const fromApi = (draft.inventory || []).filter((x) => !has(x.replaces)).map((x) => Object.assign({ key: "api:" + x.replaces, source: "Inventory API", what: `${x.count} × ${x.replaces}` }, x));
-    return fromLc.concat(fromApi).filter((s) => !(draft.dismissed || []).includes(s.key));
+    return fromLc.concat(fromApi).filter((s) => s.type === PLAN_SCOPE && !(draft.dismissed || []).includes(s.key));
   }
 
   const peCollapsed = new Set();
@@ -1790,11 +1839,10 @@
   function openAddLine() {
     openPeModal(`
       <div class="pe-modal__head"><h3 id="peModalTitle">Add a line</h3><button class="modal-close pe-modal-close" aria-label="Close">${ICON("x", 14)}</button></div>
-      <p class="pe-modal__sub">For anything the inventory doesn't know about, such as services, projects or devices the client buys themselves.</p>
+      <p class="pe-modal__sub">For hardware the inventory doesn't know about yet, such as new sites or devices the client buys themselves.</p>
       <form class="pe-form" id="peAddForm">
-        <label class="pe-field pe-field--wide"><span>Item</span><input name="item" required placeholder="e.g. Network assessment"></label>
+        <label class="pe-field pe-field--wide"><span>Item</span><input name="item" required placeholder="e.g. Meraki MS130-24 (new site)"></label>
         <label class="pe-field"><span>Category</span><select name="cat">${window.PLAN_CATEGORIES.map(([id, label]) => `<option value="${id}">${label}</option>`).join("")}</select></label>
-        <label class="pe-field"><span>Type</span><select name="type">${Object.keys(LINE_TYPES).map((t) => `<option value="${t}"${t === "service" ? " selected" : ""}>${LINE_TYPES[t]}</option>`).join("")}</select></label>
         <label class="pe-field"><span>Year</span><select name="year">${YEARS.map((yr, i) => `<option value="${i}">${yr}</option>`).join("")}</select></label>
         <label class="pe-field"><span>Price basis</span><select name="basis">${Object.keys(BASIS).map((b) => `<option value="${b}"${b === "estimate" ? " selected" : ""}>${BASIS[b][0]}</option>`).join("")}</select></label>
         <label class="pe-field"><span>Quantity</span><input name="qty" type="number" min="1" value="1" required></label>
@@ -1810,7 +1858,7 @@
     const f = e.target;
     const y = [0, 0, 0, 0, 0];
     y[+f.year.value] = [Math.max(1, +f.qty.value || 1), Math.max(0, +f.price.value || 0)];
-    draftOf(clientId).lines.push({ id: "N" + Date.now(), cat: f.cat.value, item: f.item.value.trim() || "New line", type: f.type.value, basis: f.basis.value, y, note: f.note.value.trim() });
+    draftOf(clientId).lines.push({ id: "N" + Date.now(), cat: f.cat.value, item: f.item.value.trim() || "New line", type: PLAN_SCOPE, basis: f.basis.value, y, note: f.note.value.trim() });
     peCollapsed.delete(f.cat.value);
     closePeModal();
     commitDraft(`“${f.item.value.trim()}” added to ${YEARS[+f.year.value]}`);
@@ -1929,8 +1977,8 @@
     tbody.innerHTML = al.rows.map(([sev, status, ack, site, time, problem, host, ip, inc, dur, resolved, source]) =>
       `<tr${ack ? ' class="al-acknowledged"' : ""} data-status="${status}" data-severity="${sev}" data-site="${esc(site)}" data-source="${esc(source)}">
         <td><span class="al-sev-pill ${SEV[sev][0]}">${SEV[sev][1]}</span></td><td>${esc(site)}</td><td>${time}</td><td>${esc(problem)}</td>
-        <td><a href="#" class="al-link" data-toast="Opening ${host}">${host}</a></td><td>${ip}</td><td><a href="#" class="al-link" data-toast="Opening incident ${inc}">${inc}</a></td>
-        <td>${dur}</td><td>${resolved}</td><td>${esc(source)}</td><td class="al-actions-cell"></td></tr>`).join("");
+        <td><a href="#" class="al-link" data-toast="Opening ${host}">${host}</a></td><td>${ip}</td><td class="num"><a href="#" class="al-link" data-toast="Opening incident ${inc}">${inc}</a></td>
+        <td class="num">${dur}</td><td>${resolved}</td><td>${esc(source)}</td><td class="al-actions-cell"></td></tr>`).join("");
     tbody.querySelectorAll("tr").forEach((rowEl) => {
       const hostname = rowEl.querySelector(".al-link").textContent;
       attachRowMenu(rowEl, [["ack", "Acknowledge"], ["view", "View incident"], ["copy", "Copy hostname"]], (act) => {
@@ -1974,8 +2022,8 @@
       const [rel, vul, nv, nc] = counts[cve] || [0, 0, 0, 0];
       return `<tr data-severity="${sev}" data-vendor="cisco" data-os="${os}" data-osver="${esc(osver)}" data-related="${rel}">
         <td class="adv-title-cell">${esc(title)}</td><td><a href="#" class="al-link" data-toast="Opening ${cve} detail">${cve}</a></td>
-        <td><span class="adv-sev-pill ${sev}">${sev[0].toUpperCase() + sev.slice(1)}</span></td><td>${ver}</td><td><span class="adv-vendor-pill">Cisco</span></td>
-        <td>${updated}</td><td>${rel}</td><td${vul ? ' class="adv-vuln"' : ""}>${vul}</td><td>${nv}</td><td>${nc}</td></tr>`;
+        <td><span class="adv-sev-pill ${sev}">${sev[0].toUpperCase() + sev.slice(1)}</span></td><td class="num">${ver}</td><td><span class="adv-vendor-pill">Cisco</span></td>
+        <td>${updated}</td><td class="num">${rel}</td><td class="num${vul ? " adv-vuln" : ""}">${vul}</td><td class="num">${nv}</td><td class="num">${nc}</td></tr>`;
     }).join("");
     applyCvesFilters();
   }
@@ -2227,7 +2275,6 @@
     return acc;
   }, {});
   const pageMeta = {
-    recommendations: { label: "Recommendations", sub: "Conscia's prioritised improvement plan will live here. Start with the Actions required on the Overview." },
     admin: { label: "Admin", sub: "Users, integrations (ServiceNow, Cisco PSIRT) and notification preferences." },
   };
   function replayCardAnimations(container) {
