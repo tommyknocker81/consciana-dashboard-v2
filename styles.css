@@ -2143,3 +2143,25 @@ button.topbar__client { border: none; background: transparent; font-family: inhe
 @media (prefers-reduced-motion: reduce) { .locked-teaser i { animation: none; } }
 .locked-teaser { background: var(--warning-tint); color: var(--warning-text); }
 .locked-teaser svg { flex-shrink: 0; }
+
+/* ===================== Your Conscia Team: whole row opens the contact drawer ===================== */
+.member[data-contact] { cursor: pointer; }
+.member__view { display: inline-flex; align-items: center; gap: 2px; flex-shrink: 0; font-size: 14px; font-weight: 500; color: var(--brand); opacity: 0; transform: translateX(-4px); transition: opacity var(--dur-fast), transform var(--dur) var(--ease); }
+.member:hover .member__view, .member:focus-visible .member__view { opacity: 1; transform: none; }
+@media (hover: none) { .member__view { opacity: 1; transform: none; } }
+.drawer--contact { width: 420px; }
+.contact-head { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.contact-head .member__photo { width: 56px; height: 56px; font-size: 14px; }
+.contact-head .drawer__eyebrow { margin-bottom: 4px; }
+.contact-head__name { margin: 0; font-size: 22px; font-weight: 500; letter-spacing: -0.2px; line-height: 1.2; }
+.contact-list { margin: 4px 0 0; }
+.contact-list > div { display: grid; grid-template-columns: 110px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--divider); }
+.contact-list dt { color: var(--text-muted); }
+.contact-list dd { margin: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; word-break: break-word; }
+.contact-list a { color: var(--brand); text-decoration: none; font-weight: 500; }
+.contact-list a:hover { text-decoration: underline; }
+.contact-copy { border: 1px solid var(--divider); background: #fff; border-radius: var(--radius-xs); padding: 1px 8px; font: inherit; font-size: 12px; color: var(--text-muted); cursor: pointer; transition: background var(--dur-fast), color var(--dur-fast); }
+.contact-copy:hover { background: var(--subtle-bg); color: var(--text); }
+.contact-about { margin: 16px 0 0; color: var(--text-muted); }
+.contact-actions { display: flex; gap: 8px; }
+.contact-actions .btn { flex: 1; justify-content: center; }

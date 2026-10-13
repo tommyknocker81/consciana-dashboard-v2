@@ -759,26 +759,65 @@
     $("ovRoot").querySelectorAll(".spark[data-spark-index]").forEach((el) => renderSpark(el, c.soc[+el.getAttribute("data-spark-index")].spark));
   }
 
-  function member(photo, name, role) {
-    const pic = photo.endsWith(".png") ? `<img class="member__photo" src="assets/${photo}" width="32" height="32" alt="" />` : `<span class="member__photo member__photo--initials">${photo}</span>`;
-    return `<div class="member">${pic}
-      <span class="member__main"><span class="member__name">${name}</span><span class="member__role">${role}</span></span>
-      <span class="member__actions">
-        <button class="member__btn" data-toast="New email to ${name} opened">${ICON("email", 20)}Email</button>
-        <button class="member__btn" data-toast="Calling ${name}…">${ICON("call", 20)}Call</button>
-      </span></div>`;
+  // Conscia contacts (fictional numbers and addresses)
+  const CONTACTS = {
+    daan: { photo: "team-daan.png", name: "Daan Herpers", title: "Service delivery manager", country: "Netherlands", phone: "+31 88 123 4501", email: "daan.herpers@conscia.com",
+      about: "Your day-to-day contact for service quality, SLA reports and changes to your services." },
+    roel: { photo: "team-roel.png", name: "Roel Ottenheijm", title: "Account director", country: "Netherlands", phone: "+31 88 123 4502", email: "roel.ottenheijm@conscia.com",
+      about: "Owns your contract, the 5-year budget plan and quotes for new hardware and services." },
+    michel: { photo: "team-michel.png", name: "Michel Koerting", title: "Engineering lead", country: "Netherlands", phone: "+31 88 123 4503", email: "michel.koerting@conscia.com",
+      about: "Leads the engineers who design, install and change your network." },
+    inge: { photo: "IW", name: "Inge Willems", title: "Inside sales", country: "Netherlands", phone: "+31 88 123 4504", email: "inge.willems@conscia.com",
+      about: "Prepares quotes and handles renewals of licences and support contracts." },
+    desk: { photo: "24/7", name: "Conscia Service Desk", title: "24/7 support", country: "Netherlands", phone: "+31 88 123 4500", email: "servicedesk@conscia.com",
+      about: "First point of contact for incidents and escalations, day and night." },
+  };
+  const contactPic = (p, size) => p.endsWith(".png") ? `<img class="member__photo" src="assets/${p}" width="${size}" height="${size}" alt="" />` : `<span class="member__photo member__photo--initials">${p}</span>`;
+  function member(id, role) {
+    const ct = CONTACTS[id];
+    return `<div class="member" data-contact="${id}" role="button" tabindex="0" aria-label="View contact: ${esc(ct.name)}">${contactPic(ct.photo, 32)}
+      <span class="member__main"><span class="member__name">${esc(ct.name)}</span><span class="member__role">${role || esc(ct.title)}</span></span>
+      <span class="member__view">View contact${ICON("chevron-right", 16)}</span></div>`;
   }
-  function teamCard() {
-    return `<div class="section-card" data-tabs>
-      <h2 class="section-card__title">Your Conscia Team</h2>
-      <div class="tabgroup tabgroup--team">
-        <button class="tabgroup__tab active" data-tab="primary">Primary contacts</button>
-        <button class="tabgroup__tab" data-tab="commercial">Commercial</button>
-        <button class="tabgroup__tab" data-tab="escalation">Escalation</button>
+  function openContact(id) {
+    const ct = CONTACTS[id];
+    $("contactDrawer").innerHTML = `
+      <div class="drawer__top">
+        <div class="contact-head">${contactPic(ct.photo, 56)}
+          <div><div class="drawer__eyebrow">${ICON("user", 14)}Your Conscia team</div><h3 class="contact-head__name" id="contactName">${esc(ct.name)}</h3></div></div>
+        <button class="drawer__close" data-contact-close aria-label="Close contact">${ICON("x-circle", 22)}</button>
       </div>
-      <div class="team-list" data-tab-panel="primary">${member("team-daan.png", "Daan Herpers", "Service delivery manager")}${member("team-roel.png", "Roel Ottenheijm", "Account director")}${member("team-michel.png", "Michel Koerting", "Engineering lead")}</div>
-      <div class="team-list" data-tab-panel="commercial" hidden>${member("team-roel.png", "Roel Ottenheijm", "Account director")}${member("IW", "Inge Willems", "Inside sales · quotes &amp; renewals")}</div>
-      <div class="team-list" data-tab-panel="escalation" hidden>${member("24/7", "Conscia Service Desk", "24/7 · first point of escalation")}${member("team-daan.png", "Daan Herpers", "Service delivery manager · second line")}</div>
+      <div class="drawer__body">
+        <dl class="contact-list">
+          <div><dt>Name</dt><dd>${esc(ct.name)}</dd></div>
+          <div><dt>Job title</dt><dd>${esc(ct.title)} @ Conscia (${esc(ct.country)})</dd></div>
+          <div><dt>Telephone</dt><dd><a href="#" data-toast="Calling ${esc(ct.name)} on ${ct.phone}…">${ct.phone}</a><button class="contact-copy" data-copy="${ct.phone}" aria-label="Copy phone number">Copy</button></dd></div>
+          <div><dt>Email</dt><dd><a href="#" data-toast="New email to ${esc(ct.email)} opened">${ct.email}</a><button class="contact-copy" data-copy="${ct.email}" aria-label="Copy email address">Copy</button></dd></div>
+        </dl>
+        <p class="contact-about">${esc(ct.about)}</p>
+      </div>`;
+    $("contactDrawerBackdrop").classList.add("open");
+  }
+  function closeContact() { $("contactDrawerBackdrop").classList.remove("open"); }
+  document.addEventListener("click", (e) => {
+    const m = e.target.closest(".member[data-contact]");
+    if (m) { openContact(m.getAttribute("data-contact")); return; }
+    if (e.target.closest("[data-contact-close]") || e.target.id === "contactDrawerBackdrop") { closeContact(); return; }
+    const cp = e.target.closest(".contact-copy");
+    if (cp) {
+      const val = cp.getAttribute("data-copy");
+      try { navigator.clipboard.writeText(val); } catch (err) { /* clipboard unavailable — fine */ }
+      toast(`Copied ${val}`);
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeContact();
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".member[data-contact]")) { e.preventDefault(); openContact(e.target.getAttribute("data-contact")); }
+  });
+  function teamCard() {
+    return `<div class="section-card">
+      <h2 class="section-card__title">Your Conscia Team</h2>
+      <div class="team-list">${member("daan")}${member("roel")}${member("michel")}${member("inge", "Inside sales · quotes &amp; renewals")}${member("desk", "24/7 · first point of escalation")}</div>
     </div>`;
   }
 
