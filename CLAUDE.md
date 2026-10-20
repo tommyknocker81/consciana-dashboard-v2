@@ -36,8 +36,8 @@ Figma assets (logo, nav icons, team photos) are in `assets/`; most icons are als
   The **Budget plan** (page `plan`, own sidebar item; the 5-year plan) renders `client.plan` (account-director lines: quantity × unit price per year 2026–2030); see DATA_NARRATIVE.
   The **plan editor** (page `planner`, Conscia internal, from the account menu) edits a draft and publishes it into `client.plan`; drafts and published plans persist in `localStorage` (`lz-plans-v1`).
   Zero-valued alert/bucket tiles render neutral. Alarms unlock is per client (`unlockedAlarms`), tier "Standard" = unlocked by default.
-- **SPA without a router.** `navigate(page)`. Sidebar (Figma IA + Budget plan): Overview · Lifecycle · Budget plan (`plan`) · Advisories (`cves`) · Cases · Admin · Help (Recommendations removed 9 Oct 2026).
-  Devices, Alarms, Uptime are reached from in-page links. Admin = generic placeholder.
+- **SPA without a router.** `navigate(page)`. Sidebar (Figma IA + Budget plan): Overview · Devices · Lifecycle · Budget plan (`plan`) · Advisories (`cves`, detail `#advisory/<CVE>`) · Cases · Admin · Help (Recommendations removed 9 Oct 2026).
+  Alarms and Uptime are reached from in-page links. Admin = generic placeholder.
 - **Event delegation** on `document` for `data-page`, `data-toast`, `data-scroll`, `data-open-modal`, `data-tip` (+`data-tip-follow` = tooltip follows the cursor, used by the
   donut), tab groups (`data-tabs`/`data-tab`/`data-tab-panel`), table expand/sort/checkboxes. `enhance(root)` adds `tabindex`/`role` + tab indicators after each render.
   Rule: **add behaviour via delegation or inside the render function** — never `querySelectorAll(...).forEach(addEventListener)` on rendered content at load.
@@ -45,7 +45,7 @@ Figma assets (logo, nav icons, team photos) are in `assets/`; most icons are als
   per client (seeded PRNG) for 7/30/90 days.
 
 ## Gotchas (v1 lessons still apply)
-1. **Cache busting is manual:** `styles.css?v=71`, `clients.js?v=9`, `script.js?v=68` — bump on every edit. The HTML itself can also be cached: open `/?r=N` to force it.
+1. **Cache busting is manual:** `styles.css?v=83`, `clients.js?v=10`, `script.js?v=80` — bump on every edit. The HTML itself can also be cached: open `/?r=N` to force it.
 2. Grids: always `repeat(N, minmax(0, 1fr))`. Never `overflow-x:hidden` on `body` (only `html`).
 3. Anything with an author `display` needs `[hidden]` handling — v2 has a global `[hidden]{display:none!important}`.
 4. Listeners attach at load → dynamically created elements don't get `data-tip`/`data-toast` behaviour.

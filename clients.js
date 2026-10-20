@@ -45,7 +45,7 @@ window.CLIENTS = {
         spark: { shape: "wave", tone: "danger", unit: "min average triage", top: 11, bottom: 6, decimals: 1 }, trend: { tone: "bad", icon: "up", text: "Trend is up", pill: "18.3%" } },
     ],
     lifecycle: {
-      supported: 133,
+      supported: 119, unknown: 14, // unknown = in the inventory, but no End-of-Life data from the vendor (not tracked)
       groups: [
         { bucket: "act", type: "Firewall", area: "Security", model: "ASA5506-X", os: "Cisco ASA", osver: "9.8(4)",
           rows: [[4102, "FWP1L0S01A1", "FGL2114A1BC", 0], [4103, "FWP1L0S01A2", "FGL2114A2CD", 0]],
@@ -240,7 +240,7 @@ window.CLIENTS = {
         spark: { shape: "wave", tone: "danger", unit: "min average triage", top: 26, bottom: 12, tilt: "up", decimals: 1 }, trend: { tone: "bad", icon: "up", text: "Trend is up", pill: "60%" } },
     ],
     lifecycle: {
-      supported: 320,
+      supported: 289, unknown: 31,
       groups: [
         { bucket: "act", type: "Firewall", area: "Security", model: "ASA5506-X", os: "Cisco ASA", osver: "9.8(4)",
           gen: { count: 4, idStart: 4201, host: "FWR1L0S0", hostStart: 1, digits: 2, serial: "FGL2117A" }, siteSplit: [2, 1, 1],
@@ -447,7 +447,7 @@ window.CLIENTS = {
         spark: { shape: "wave", tone: "success", unit: "min average triage", top: 9, bottom: 5, tilt: "down", decimals: 1 }, trend: { tone: "good", icon: "down", text: "Trend is down", pill: "14%" } },
     ],
     lifecycle: {
-      supported: 308,
+      supported: 299, unknown: 9,
       groups: [
         { bucket: "plan", type: "Router", area: "WAN routers", model: "ISR4331/K9", os: "Cisco IOS XE", osver: "17.9.5",
           gen: { count: 3, idStart: 5401, host: "RTT1W0M", hostStart: 1, digits: 3, serial: "FDO2402C" }, siteSplit: [1, 1, 1],

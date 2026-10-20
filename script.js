@@ -65,7 +65,7 @@
   }
   function fmtAge(months) {
     const y = Math.floor(months / 12);
-    return (y ? `${y}y ` : "") + `${months % 12}m`;
+    return y && !(months % 12) ? `${y}y` : (y ? `${y}y ` : "") + `${months % 12}m`;
   }
   // date colours follow the risk, not just "passed or not":
   // End of Support: passed = dark red · < 3 months = red (Act now) · 3–6 months = amber (Plan now)
@@ -159,7 +159,8 @@
       toQuote: sum(groups.filter((g) => g.estimate && !g.quoted), (g) => g.estimate),
     };
     m.soon = m.actCount - m.unsupported;
-    m.total = m.actCount + m.planCount + m.budgetCount + m.supported;
+    m.unknown = c.lifecycle.unknown || 0; // devices without End-of-Life data: counted, but not tracked
+    m.total = m.actCount + m.planCount + m.budgetCount + m.supported + m.unknown;
     const list = (arr) => arr.map((g) => `${g.count} × ${glabel(g)}`).join(" + ");
     const needs = groups;
     m.actions = { replace: 0, upgrade: 0, renew: 0 };
@@ -561,7 +562,7 @@
   }
   function row(o) {
     // o: { icon, iconTone, title, meta, right (html), stack, page, scroll, toast }
-    const attrs = [o.page ? `data-page="${o.page}"` : "", o.scroll ? `data-scroll="${o.scroll}"` : "", o.toast ? `data-toast="${esc(o.toast)}"` : ""].join(" ");
+    const attrs = [o.adv ? `data-adv="${o.adv}"` : "", o.page ? `data-page="${o.page}"` : "", o.scroll ? `data-scroll="${o.scroll}"` : "", o.toast ? `data-toast="${esc(o.toast)}"` : ""].join(" ");
     return `<button class="row" ${attrs}>
       <span class="row__icon${o.iconTone ? " " + o.iconTone : ""}">${ICON(o.icon, 14)}</span>
       <span class="row__main"><span class="row__title">${esc(o.title)}</span><span class="row__meta">${o.metaHtml || esc(o.meta)}</span></span>
@@ -678,7 +679,7 @@
     }
 
     const adv = c.advisories;
-    const advRows = adv.urgent.map(([t, meta, score, crit]) => row({ icon: "bug", iconTone: crit ? "danger" : "", title: t, meta, page: "cves",
+    const advRows = adv.urgent.map(([t, meta, score, crit]) => row({ icon: "bug", iconTone: crit ? "danger" : "", title: t, meta, adv: t.split(" ")[0],
       right: `<span class="score${crit ? " score--critical" : ""}">${score}</span>` })).join("") || empty("No vulnerable devices");
     const cs = c.cases;
     // Urgent cases = open P1 / P2 cases, P1 first, newest first (Figma 240:3642)
@@ -837,7 +838,7 @@
   function lcTable(id, tbodyId, dot, title, count, flag, tip, rows, emptyText) {
     const body = rows.map((r) => `
           <tr data-id="${r.id}" data-kind="${r.kind}"${r.unsupported ? ' class="lc-row-unsupported"' : ""}>
-            <td class="lc-id">${r.id}</td><td>${esc(r.model)}</td><td>${r.host}</td><td>${esc(r.os)}</td><td>${esc(r.osver)}</td><td>${r.serial}</td>
+            <td class="lc-id">${r.id}</td><td>${esc(r.model)}</td><td><a href="#" class="dev-link" data-device="${r.host}" data-device-tab="lifecycle">${r.host}</a></td><td>${esc(r.os)}</td><td>${esc(r.osver)}</td><td>${r.serial}</td>
             <td class="${dateClass(r.eosale, "sale")}">${r.eosale}</td><td class="${dateClass(r.eosw, "sw")}">${r.eosw}</td><td class="${dateClass(r.eosupport, "support")}">${r.eosupport}</td>
             <td>${r.tag}</td>
           </tr>`).join("");
@@ -865,6 +866,7 @@
       ["high", lm.planCount, ...LC.planSeg],
       [LC.laterTone, lm.budgetCount, ...LC.laterSeg],
       ["low", lm.supported, "Fully supported", "No action needed"],
+      ["unknown", lm.unknown, "No End-of-Life data", "In your inventory, but the vendor has no dates yet · not tracked"],
     ];
     let off = 0;
     const circles = segs.filter((sg) => sg[1] > 0).map(([cls, n]) => {
@@ -1478,7 +1480,7 @@
         <section><h4>Cost</h4>${cost}<div class="pp-cost pp-cost--total"><span>Total</span><span></span><b>${ind ? "~" : ""}${eurK(total)}</b></div>
           <p class="pp-basis">${BASIS_TEXT[l.basis]}${ind ? `<button class="btn btn-link btn-sm plan-quote" data-toast="Quote request for ${esc(l.item)} sent to Roel Ottenheijm">${ICON("euro", 13)}Request quote</button>` : ""}</p></section>
         ${l.note ? `<section><h4>Why</h4><p>${esc(l.note)}</p></section>` : ""}
-        ${g ? `<section><h4>Devices <span>${g.count}</span></h4><ul class="pp-devices">${g.rows.slice(0, 6).map((r) => `<li><b>${r.host}</b><span>${esc(r.site)}</span></li>`).join("")}</ul>
+        ${g ? `<section><h4>Devices <span>${g.count}</span></h4><ul class="pp-devices">${g.rows.slice(0, 6).map((r) => `<li><a href="#" class="dev-link" data-device="${r.host}" data-device-tab="lifecycle">${r.host}</a><span>${esc(r.site)}</span></li>`).join("")}</ul>
           ${g.count > 6 ? `<p class="pp-muted">and ${g.count - 6} more</p>` : ""}
           <button class="btn btn-link btn-sm" data-page="lifecycle" data-scroll="${{ act: "lcCardAct", plan: "lcCardPlan", budget: "lcCardBudget" }[g.bucket]}">Show in Lifecycle${ICON("arrow-up-right")}</button></section>` : ""}
       </div>`;
@@ -1947,44 +1949,490 @@
     toast(`Plan published to ${c.name}'s portal${notify ? ` · ${c.contact.name} notified by email` : ""}`, { life: 3600 });
   });
 
-  /* ================= Devices ================= */
-  const STATUS = {
-    unsupported: '<span class="pill pill-disaster">Unsupported · replace now</span>', act: '<span class="pill pill-critical">Replace within 3 months</span>',
-    plan: '<span class="pill pill-high">Plan replacement</span>',
-    budget: LC_CLASSIC ? '<span class="pill pill-medium">Budget &amp; schedule</span>' : '<span class="pill pill-planned">In the 5-year plan</span>', ok: '<span class="pill pill-low">Supported</span>',
-  };
-  let devicesShown = 0;
-  function renderDevices(c, lm) {
-    const rows = [];
-    const status = (g, r) => {
-      if (g.kind !== "software") return r.unsupported ? STATUS.unsupported : STATUS[g.bucket];
-      const verb = ACTIONS[g.action].label;
-      if (r.unsupported) return `<span class="pill pill-disaster">Unsupported ${g.action === "renew" ? "licence" : "OS"} · ${verb.toLowerCase()} now</span>`;
-      const tone = { act: "pill-critical", plan: "pill-high", budget: LC_CLASSIC ? "pill-medium" : "pill-planned" }[g.bucket];
-      const when = { act: "within 3 months", plan: "within 3–6 months", budget: LC_CLASSIC ? "next year" : "later · in the plan" }[g.bucket];
-      return `<span class="pill ${tone}">${verb} ${when}</span>`;
-    };
-    lm.groups.forEach((g) => g.rows.slice(0, 2).forEach((r) => rows.push([r.id, g.model, r.host, g.kind === "software" ? `${g.os} ${g.osver}` : g.os, r.site, status(g, r)])));
-    c.lifecycle.supportedSamples.forEach(([id, model, host, os, si]) => rows.push([id, model, host, os, c.sites[si], STATUS.ok]));
-    devicesShown = rows.length;
-    $("lcTableAll").innerHTML = rows.map(([id, model, host, os, site, status]) =>
-      `<tr data-id="${id}"><td class="lc-id">${id}</td><td>${esc(model)}</td><td>${host}</td><td>${esc(os)}</td><td>${esc(site)}</td><td>${status}</td></tr>`).join("");
-    $("devCount").textContent = `Showing 1–${rows.length} of ${lm.total} devices`;
+  /* ================= Device detail (About · Lifecycle · Advisories) — condensed client version of the SDP device view ================= */
+  let currentDevice = null;
+  const deviceCategory = (d) => /firewall|asa|fpr|mx\d|security/i.test(d.model + " " + (d.type || "")) ? "Security"
+    : /AP|MR\d|UAP|FortiAP|wireless|AIR-/i.test(d.model) ? "Wi-Fi" : /ISR|router|8300|8200/i.test(d.model + " " + (d.type || "")) ? "Routing"
+    : /Catalyst|switch|IE-|Aruba|C9/i.test(d.model + " " + (d.type || "")) ? "Switching" : /PowerEdge|ProLiant|server/i.test(d.model) ? "Server" : "Other";
+  function renderDevice(c, host) {
+    const d = (devCache || []).find((x) => x.host === host);
+    if (!d) return false;
+    const monitored = c.tier !== "Essential" || unlockedAlarms.has(clientId);
+    const vul = d.advs.filter((a) => a.st === "vul").length;
+    const inv = new Date(NOW.getTime() - ((d.id % 9) + (d.life === "unknown" ? 40 : 1)) * 864e5);
+    const invLate = d.life === "unknown";
+    const invStr = `${p2(inv.getDate())}.${p2(inv.getMonth() + 1)}.${inv.getFullYear()}`;
+    const row = (label, value) => `<div class="adv-dl__row"><dt>${label}</dt><dd>${value}</dd></div>`;
+    const na = `<span class="dd-na">N/A</span>`;
+    const prio = DEV_PRIO[d.prio];
+    const lines = d.group ? planLinesFor(c, d.group) : [];
+    const planYear = lines.length ? YEARS[Math.min(...lines.map((l) => l.y.findIndex((v) => v)).filter((i) => i >= 0))] : null;
+    const eox = (label, date, kind) => date && date !== "—"
+      ? `<div class="dd-eox"><span>${label}</span><b class="${dateClass(date, kind)}">${date}</b></div>` : `<div class="dd-eox"><span>${label}</span><b class="lc-date--info">—</b></div>`;
+    const hwEox = d.life === "unknown" ? `<span class="badge badge-neutral">No vendor data</span>` : d.life === "ok" ? `<span class="badge badge-success">Supported</span>`
+      : eox("End of Sale", d.eosale, "sale") + eox("End of Support", d.eos, "support");
+    const swEox = d.life === "unknown" ? `<span class="badge badge-neutral">No vendor data</span>` : d.life === "ok" ? `<span class="badge badge-success">Supported</span>` : eox("End of Software", d.eosw, "sw");
+    const advRows = d.advs.slice().sort((a, b) => ({ vul: 0, nc: 1, nv: 2 }[a.st] - { vul: 0, nc: 1, nv: 2 }[b.st]));
+    $("devDetailRoot").innerHTML = `
+      <div class="adv-head">
+        <button class="btn btn-link btn-sm adv-back" data-page="devices">${ICON("chevron-right", 16)}Devices</button>
+        <h1>${esc(d.host)}</h1>
+        <div class="adv-head__tags"><span class="prio-wrap prio-${d.prio} dd-prio">${ICON(prio[0], 18)}</span><span class="dd-prio-label">${prio[1]}</span>
+          <span class="adv-head__cve">${esc(d.model)} · ${esc(d.site)} · ${d.ip}</span></div>
+      </div>
+      <div data-tabs>
+        <div class="tabgroup adv-tabs">
+          <button class="tabgroup__tab active" data-tab="about">About</button>
+          <button class="tabgroup__tab" data-tab="lifecycle">Lifecycle</button>
+          <button class="tabgroup__tab" data-tab="advisories">Advisories${vul ? `<span class="tab-count">${vul}</span>` : ""}</button>
+        </div>
+        <div data-tab-panel="about">
+          <div class="card adv-card">
+            <div class="card__head"><div class="card__title">Basic information</div></div>
+            <div class="card__body">
+              <div class="dd-sync">
+                <span class="dd-sync__item ${invLate ? "is-late" : "is-ok"}">${ICON(invLate ? "alert" : "check-circle", 14)}Inventory ${invLate ? "overdue" : "synced"} · ${invStr}</span>
+                <span class="dd-sync__item ${monitored ? "is-ok" : "is-off"}">${ICON(monitored ? "check-circle" : "x-circle", 14)}${monitored ? "Monitored 24/7" : "Not monitored"}</span>
+              </div>
+              <dl class="adv-dl dd-grid">
+                ${row("Hostname", esc(d.host))}${row("IP address", d.ip)}${row("Model", esc(d.model))}${row("Serial number", d.serial || na)}
+                ${row("Operating system", esc(d.os))}${row("Site", esc(d.site))}${row("Category", deviceCategory(d))}${row("Device role", d.type ? esc(d.type) : na)}
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div data-tab-panel="lifecycle" hidden>${deviceLifecycle(c, d)}</div>
+        <div data-tab-panel="advisories" hidden>
+          <div class="lc-table-card">
+            ${advRows.length ? `<div class="lc-table-scroll"><table class="lc-table">
+              <thead><tr><th>Advisory title</th><th>CVE</th><th>Severity</th><th class="num">Version</th><th>Last updated</th><th>Status</th></tr></thead>
+              <tbody>${advRows.map(({ info, st }) => `<tr><td class="adv-title-cell"><a href="#" class="adv-open" data-adv="${info.cve}">${esc(info.title)}</a></td><td><a href="#" class="al-link" data-adv="${info.cve}">${info.cve}</a></td>
+                <td><span class="pill ${SEV_PILL[info.sev]}">${info.sev[0].toUpperCase() + info.sev.slice(1)}</span></td><td class="num">${info.ver}</td><td>${info.updated}</td>
+                <td><span class="pill ${ADV_STATUS[st][1]}">${ADV_STATUS[st][0]}</span></td></tr>`).join("")}</tbody>
+            </table></div><div class="lc-table-foot">${advRows.length} ${advRows.length === 1 ? "advisory" : "advisories"} · ${vul} vulnerable</div>`
+              : `<div class="lc-table-empty">${ICON("check-circle", 18)}<span>No advisories affect this device.</span></div>`}
+          </div>
+        </div>
+      </div>`;
+    enhance($("devDetailRoot"));
+    return true;
   }
-  document.querySelectorAll(".lc-page-btn[data-lc-page]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const val = btn.getAttribute("data-lc-page");
-      if (val === "prev" || val === "next") {
-        toast("This prototype only has live data for page 1");
-        return;
-      }
-      document.querySelectorAll(".lc-page-btn").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      toast(`Loading page ${val} — devices ${(val - 1) * devicesShown + 1}–${val * devicesShown}…`);
+  // Lifecycle tab of a device: the three vendor milestones on a timeline with "today", then next step, budget and advisories
+  function deviceLifecycle(c, d) {
+    const lm = lifecycleModel(c);
+    const g = d.group;
+    const badge = `<span class="badge ${DEV_LIFE[d.life][1]}">${DEV_LIFE[d.life][0]}</span>`;
+    if (d.life === "unknown") {
+      return `<div class="card adv-card dd-lc"><div class="card__head"><div class="card__title">Lifecycle</div>${badge}</div>
+        <div class="card__body"><p class="dd-lc__empty">${ICON("help-circle", 18)}<span>The vendor hasn't published End-of-Life dates for the <b>${esc(d.model)}</b>, so this device isn't tracked yet.</span></p>
+        <div class="dd-lc__actions"><button class="btn btn-secondary btn-sm" data-toast="Asked Roel Ottenheijm to look up the End-of-Life dates for ${esc(d.model)}">Help us complete the data</button></div></div></div>`;
+    }
+    // milestones (merge the same date), plus today
+    const raw = d.life === "ok" ? [] : [["End of Sale", d.eosale, "sale"], ["End of Software", d.eosw, "sw"], ["End of Support", d.eos, "support"]].filter(([, s2]) => parseDate(s2));
+    const points = [];
+    raw.forEach(([label, str, kind]) => {
+      const same = points.find((p) => p.str === str);
+      if (same) { same.label += " · " + label; same.kind = kind; } else points.push({ label, str, kind, t: parseDate(str).getTime() });
     });
+    let timeline = "";
+    if (points.length) {
+      const ts = points.map((p) => p.t).concat(TODAY.getTime());
+      const min = Math.min(...ts), max = Math.max(...ts), span = Math.max(max - min, 864e5 * 30);
+      const pos = (t) => 6 + ((t - min) / span) * 88;
+      const todayPos = pos(TODAY.getTime());
+      const fmtD = (t) => new Date(t).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+      const eosT = parseDate(d.eos) ? parseDate(d.eos).getTime() : null;
+      timeline = `<div class="dd-tl" role="img" aria-label="Lifecycle timeline">
+          <div class="dd-tl__line"></div>
+          ${eosT ? `<div class="dd-tl__span ${eosT < TODAY.getTime() ? "is-past" : ""}" style="left:${Math.min(pos(eosT), todayPos)}%;width:${Math.abs(todayPos - pos(eosT))}%"></div>` : ""}
+          ${points.map((p, i) => `<div class="dd-tl__pt ${dateClass(p.str, p.kind)}" style="left:${pos(p.t)}%"><i></i>
+            <div class="dd-tl__lbl${i % 2 && points.length > 2 && Math.abs(pos(p.t) - pos(points[i - 1].t)) < 18 ? " is-up" : ""}${pos(p.t) > 80 ? " is-end" : pos(p.t) < 20 ? " is-start" : ""}"><b>${p.label}</b><span>${fmtD(p.t)}</span></div></div>`).join("")}
+          <div class="dd-tl__today" style="left:${todayPos}%"><span>Today</span></div>
+        </div>`;
+    } else {
+      timeline = `<p class="dd-lc__ok">${ICON("check-circle", 18)}<span>Fully supported: no End-of-Life milestones announced by the vendor.</span></p>`;
+    }
+    // facts
+    const ago = (str) => fmtAge(Math.abs(monthsBetween(parseDate(str), TODAY)));
+    const status = d.life === "overdue" ? `Unsupported for ${ago(d.eos)}: no security patches or vendor support`
+      : d.life === "ok" ? "Fully supported" : `Support ends in ${ago(d.eos)} (${d.eos})`;
+    const lines = g ? planLinesFor(c, g) : [];
+    const line = lines[0];
+    const yi = line ? line.y.findIndex((v) => v) : -1;
+    const amount = line && yi >= 0 ? line.y[yi][0] * line.y[yi][1] : 0;
+    const act = g ? g.action : null;
+    const next = d.life === "ok" ? "No action needed"
+      : act === "upgrade" ? `Upgrade to ${esc(g.upgradeTo || "a supported release")}`
+      : act === "renew" ? `Renew the ${esc(g.software || "licence")}${g.upgradeTo ? ` (${esc(g.upgradeTo)})` : ""}`
+      : line ? `Replace with ${esc(line.item)}${line.y[yi] ? ` · ${line.y[yi][0]} ${line.y[yi][0] === 1 ? "device" : "devices"}, ${line.basis === "quoted" ? "" : "~"}${eurK(amount)} ${line.basis === "quoted" ? "quoted" : "not quoted yet"}` : ""}`
+      : g && g.replaceWith ? `Replace with ${esc(g.replaceWith.split(" · ")[0])}` : "Replace";
+    const chk = line ? budgetCheck(c, lm, line) : null;
+    const budget = d.life === "ok" ? `<span class="dd-muted">Nothing to budget yet</span>`
+      : line && yi >= 0 ? `<span class="budget-tag">Budget ${YEARS[yi]}</span>${chk ? `<span class="dd-check plan-check--${chk.tone}">${ICON(chk.icon, 14)}${esc(chk.text)}</span>` : ""}`
+      : g && g.kind === "software" ? `<span class="dd-muted">Software: not part of the hardware budget plan</span>`
+      : `<span class="budget-tag budget-tag--miss">Not budgeted</span><span class="dd-muted">Not in your 5-year plan yet</span>`;
+    const vul = d.advs.filter((a) => a.st === "vul");
+    const crit = vul.filter((a) => a.info.sev === "critical").length;
+    const advText = vul.length ? `${vul.length} open${crit ? ` (${crit} critical)` : ""}${d.life === "overdue" ? ": no fixes, because support has ended" : ""}` : "No open advisories";
+    const fact = (label, value) => `<div class="dd-fact"><dt>${label}</dt><dd>${value}</dd></div>`;
+    const actions = [
+      line ? `<button class="btn btn-secondary btn-sm" data-page="plan">View in Budget plan${ICON("chevron-right", 14)}</button>` : "",
+      d.life !== "ok" && act === "replace" && (!line || line.basis !== "quoted") ? `<button class="btn btn-primary btn-sm" data-toast="Quote request for ${esc(d.host)} sent to Roel Ottenheijm">${ICON("euro", 14)}Request quote</button>` : "",
+    ].join("");
+    return `<div class="card adv-card dd-lc">
+        <div class="card__head"><div class="card__title">Lifecycle</div><div class="dd-lc__tags">${badge}</div></div>
+        <div class="card__body">${timeline}
+          <dl class="dd-facts">
+            ${fact("Status", esc(status))}
+            ${fact("Next step", next)}
+            ${fact("Budget", budget)}
+            ${fact("Advisories", vul.length ? `<a href="#" class="al-link" data-dd-tab="advisories">${advText}</a>` : `<span class="dd-muted">${advText}</span>`)}
+          </dl>
+          ${actions ? `<div class="dd-lc__actions">${actions}</div>` : ""}
+        </div>
+      </div>`;
+  }
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("[data-dd-tab]");
+    if (!a) return;
+    e.preventDefault();
+    const t = document.querySelector(`#devDetailRoot .tabgroup__tab[data-tab="${a.getAttribute("data-dd-tab")}"]`);
+    if (t) t.click();
   });
-  const lcPerPage = $("lcPerPage");
-  if (lcPerPage) lcPerPage.addEventListener("change", () => toast(`Showing ${lcPerPage.value} items per page`));
+  function openDevice(host, tab) {
+    currentDevice = host;
+    if (!renderDevice(client, host)) return;
+    navigate("device");
+    if (tab) { const t = document.querySelector(`#devDetailRoot .tabgroup__tab[data-tab="${tab}"]`); if (t) t.click(); }
+  }
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("[data-device]");
+    if (!a) return;
+    e.preventDefault();
+    openDevice(a.getAttribute("data-device"), a.getAttribute("data-device-tab"));
+  });
+
+  /* ================= Advisory detail ================= */
+  // About · Related devices · ServiceNow tickets. Advisory metadata beyond the list (IDs, CWE, CVSS, summary) is generated
+  // deterministically from the advisory row for the prototype; related devices come from the client's own inventory.
+  let currentAdvisory = null;
+  const ADV_OS = {
+    "asa": ["Cisco Secure Firewall ASA Software", /ASA/i],
+    "ios xe": ["Cisco IOS XE Software", /IOS XE/i],
+    "ftd": ["Cisco Firepower Threat Defense Software", /FTD/i],
+    "meraki": ["Cisco Meraki firmware", /Meraki/i],
+    "nexus": ["Cisco NX-OS Software", /NX-OS|Nexus/i],
+    "fmc": ["Cisco Secure Firewall Management Center Software", /FMC|Management Center/i],
+    "wireless": ["Cisco IOS XE Wireless Controller Software", /AireOS|Wireless/i],
+  };
+  const ADV_KIND = [
+    [/Remote Code Execution/i, "CWE-94", "execute arbitrary code on the affected device", "insufficient validation of user-supplied input"],
+    [/Command Injection/i, "CWE-77", "execute arbitrary commands on the underlying operating system", "insufficient validation of user-controlled command arguments"],
+    [/Privilege Escalation/i, "CWE-269", "gain elevated privileges on the affected device", "improper privilege checks"],
+    [/Cross-Site Scripting/i, "CWE-79", "run scripts in the browser of a user of the management interface", "insufficient validation of user-supplied input"],
+    [/Information Disclosure/i, "CWE-200", "read sensitive information", "improper access control"],
+    [/Bypass/i, "CWE-693", "bypass a security protection of the device", "a logic error in the protection mechanism"],
+    [/Memory Exhaustion/i, "CWE-401", "cause a denial of service (DoS) by exhausting memory", "a memory leak when handling crafted traffic"],
+    [/Loop/i, "CWE-835", "cause a denial of service (DoS) condition", "improper handling of crafted frames"],
+    [/Denial of Service|DHCP/i, "CWE-400", "cause the device to reload, resulting in a denial of service (DoS)", "improper handling of crafted traffic"],
+  ];
+  const hashOf = (s) => [...s].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7);
+  // product name = the title without "Cisco", the vulnerability type and "Vulnerability"
+  const ADV_TYPES = /\s+(Web UI Privilege Escalation|Lobby Ambassador Privilege Escalation|Privilege Escalation|Command Injection|Stored Cross-Site Scripting|Cross-Site Scripting|Information Disclosure|Secure Boot Bypass|DHCP Snooping|Remote Code Execution|Layer 2 Loop Denial of Service|Border Gateway Protocol Denial of Service|CAPWAP Denial of Service|IKEv2 Denial of Service|TLS Memory Exhaustion Denial of Service|Denial of Service)\s+Vulnerability$/;
+  function advisoryInfo(row) {
+    const [title, cve, sev, ver, os, osver, updated] = row;
+    const h = hashOf(cve);
+    const code = (h.toString(36).toUpperCase() + "QX7K9").slice(0, 6);
+    const [osLabel] = ADV_OS[os] || ["Cisco Software"];
+    const kind = ADV_KIND.find(([re]) => re.test(title)) || [null, "CWE-20", "affect the integrity of the affected device", "insufficient input validation"];
+    const product = "Cisco " + title.replace(/^Cisco /, "").replace(ADV_TYPES, "").replace(/ Vulnerability$/, "");
+    const cvss = { critical: "9.1", high: "7.4", medium: "5.3", low: "3.1" }[sev];
+    const [d, m, rest] = updated.split(".");
+    const pub = ver === "1.0" ? updated : `${p2(Math.max(1, +d - 3))}.${m}.${rest}`;
+    const base = osver && osver !== "—" ? osver : null;
+    const slug = os.replace(/\s+/g, "");
+    return {
+      title, cve, sev, ver, os, osver, osLabel, cvss, cwe: kind[1], status: "Final",
+      id: `cisco-sa-${slug}-${code}`, bug: "CSCw" + "abcdefghjk"[h % 10] + String(h % 100000).padStart(5, "0"),
+      published: pub, updated,
+      summary: [
+        `A vulnerability in ${product} could allow an attacker to ${kind[2]}.`,
+        `This vulnerability is due to ${kind[3]}. An attacker could exploit it by sending crafted input to an affected device.`,
+        sev === "critical" && os === "asa" ? "Cisco has released software updates that address this vulnerability, but not for releases that have reached End of Support. There are no workarounds." : "Cisco has released software updates that address this vulnerability. There are no workarounds.",
+      ],
+      products: base ? [`${osLabel} ${base}`, `${osLabel} ${base.replace(/(\d+)(\D*)$/, (x, n, t) => +n + 1 + t)}`] : [`${osLabel} (all releases before the fixed release)`],
+      url: `https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-${slug}-${code}`,
+    };
+  }
+  // the client's devices for this advisory: matching OS from the inventory first, padded with generic hosts; status from the advisory counts
+  function advisoryDevices(c, info) {
+    const lm = lifecycleModel(c);
+    const re = (ADV_OS[info.os] || [null, /$^/])[1];
+    const pool = [];
+    lm.groups.forEach((g) => g.rows.forEach((r) => pool.push({ host: r.host, site: r.site, os: g.os, osver: g.osver, model: g.model, id: r.id })));
+    c.lifecycle.supportedSamples.forEach(([id, model, host, os, si]) => pool.push({ host, site: c.sites[si], os, osver: "", model, id }));
+    const match = pool.filter((d) => re.test(d.os) || re.test(d.model));
+    const [rel, vul, nv] = c.advisories.counts[info.cve] || [0, 0, 0, 0];
+    const octet = 20 + window.CLIENT_ORDER.indexOf(clientId) * 20;
+    const list = [];
+    for (let i = 0; i < rel; i++) {
+      const d = match[i] || { host: `${info.os.split(" ")[0].toUpperCase()}-${p2(i + 1)}`, site: c.sites[i % c.sites.length], os: info.osLabel.replace(/ Software$/, ""), osver: info.osver, model: "—", id: 9000 + i };
+      const st = i < vul ? "vul" : i < vul + nv ? "nv" : "nc";
+      list.push(Object.assign({}, d, { osver: d.osver || info.osver, ip: `10.${octet}.${(d.id >> 4) % 6}.${(d.id % 200) + 2}`, st }));
+    }
+    return list;
+  }
+  const ADV_STATUS = { vul: ["Vulnerable", "pill-critical"], nv: ["Not vulnerable", "pill-low"], nc: ["Not checked", "pill-neutral"] };
+  const SEV_PILL = { critical: "pill-critical", high: "pill-high", medium: "pill-medium", low: "pill-low" };
+
+  function renderAdvisory(c, cve) {
+    const row = window.ADVISORIES.find((a) => a[1] === cve);
+    if (!row) return false;
+    const info = advisoryInfo(row);
+    const devices = advisoryDevices(c, info);
+    const hosts = devices.map((d) => d.host);
+    const models = [...new Set(devices.map((d) => d.model).filter((mdl) => mdl && mdl !== "—"))].map(shortModel);
+    const tickets = c.cases.rows.filter((r) => r[2].includes(cve) || hosts.some((hst) => r[2].includes(hst)) || models.some((mdl) => r[2].includes(mdl)));
+    const dl = (label, value) => `<div class="adv-dl__row"><dt>${label}</dt><dd>${value}</dd></div>`;
+    $("advRoot").innerHTML = `
+      <div class="adv-head">
+        <button class="btn btn-link btn-sm adv-back" data-page="cves">${ICON("chevron-right", 16)}Advisories</button>
+        <h1>${esc(info.title)}</h1>
+        <div class="adv-head__tags"><span class="pill ${SEV_PILL[info.sev]}">${info.sev[0].toUpperCase() + info.sev.slice(1)}</span><span class="adv-vendor-pill">Cisco</span><span class="adv-head__cve">${info.cve}</span></div>
+      </div>
+      <div data-tabs>
+        <div class="tabgroup adv-tabs">
+          <button class="tabgroup__tab active" data-tab="about">About</button>
+          <button class="tabgroup__tab" data-tab="devices">Related devices (${devices.length})</button>
+          <button class="tabgroup__tab" data-tab="tickets">ServiceNow tickets (${tickets.length})</button>
+        </div>
+        <div data-tab-panel="about" class="adv-about">
+          <div class="card adv-card">
+            <div class="card__head"><div class="card__title">Basic information</div></div>
+            <div class="card__body"><dl class="adv-dl">
+              ${dl("Advisory ID", info.id)}${dl("First published", info.published)}${dl("Last updated", info.updated)}${dl("Version", info.ver)}
+              ${dl("Bug IDs", `<a href="#" class="al-link" data-toast="Opening ${info.bug} in the Cisco Bug Search Tool">${info.bug}</a>`)}
+              ${dl("CVEs", info.cve)}${dl("CWE", info.cwe)}${dl("CVSS score", info.cvss)}${dl("Status", info.status)}
+            </dl>
+            <div class="adv-downloads"><button class="btn btn-link btn-sm" data-toast="Downloading ${info.id}.json (CSAF)">${ICON("file", 16)}Download CSAF</button><button class="btn btn-link btn-sm" data-toast="Downloading ${info.id}.xml (CVRF)">${ICON("file", 16)}Download CVRF</button></div></div>
+          </div>
+          <div class="adv-about__side">
+            <div class="card adv-card">
+              <div class="card__head"><div class="card__title">Summary</div></div>
+              <div class="card__body adv-text">${info.summary.map((p) => `<p>${esc(p)}</p>`).join("")}
+                <p>Full advisory: <a href="#" class="al-link" data-toast="Opening the advisory on cisco.com">${info.url}</a></p></div>
+            </div>
+            <div class="card adv-card">
+              <div class="card__head"><div class="card__title">Affected products</div></div>
+              <div class="card__body adv-text"><ul>${info.products.map((p) => `<li>${esc(p)}</li>`).join("")}</ul></div>
+            </div>
+          </div>
+        </div>
+        <div data-tab-panel="devices" hidden>
+          <div class="adv-dev-filters">
+            <input class="adv-dev-search" id="advDevSearch" type="search" placeholder="Search hostname, site or IP…" aria-label="Search devices">
+            <label class="adv-toggle"><input type="checkbox" id="advDevVulnOnly">Show vulnerable devices only</label>
+          </div>
+          <div class="lc-table-card">
+            ${devices.length ? `<div class="lc-table-scroll"><table class="lc-table adv-dev-table">
+              <thead><tr><th>Hostname</th><th>Site</th><th>IP</th><th>OS</th><th>OS version</th><th>Status</th></tr></thead>
+              <tbody id="advDevBody">${devices.map((d) => `<tr data-st="${d.st}"><td>${(devCache || []).some((x) => x.host === d.host) ? `<a href="#" class="dev-link" data-device="${d.host}">${d.host}</a>` : `<b>${d.host}</b>`}</td><td>${esc(d.site)}</td><td>${d.ip}</td><td>${esc(d.os)}</td><td>${esc(d.osver)}</td><td><span class="pill ${ADV_STATUS[d.st][1]}">${ADV_STATUS[d.st][0]}</span></td></tr>`).join("")}</tbody>
+            </table></div>
+            <div class="lc-table-foot" id="advDevFoot">Showing ${devices.length} of ${devices.length} devices</div>`
+              : `<div class="lc-table-empty">${ICON("check-circle", 18)}<span>None of your devices run an affected release.</span></div>`}
+          </div>
+        </div>
+        <div data-tab-panel="tickets" hidden>
+          <div class="lc-table-card">
+            ${tickets.length ? `<div class="lc-table-scroll"><table class="lc-table">
+              <thead><tr><th>Number</th><th>Short description</th><th>Priority</th><th>State</th><th>Updated</th></tr></thead>
+              <tbody>${tickets.map((r) => `<tr><td><a href="#" class="al-link" data-toast="Opening ${r[1]} in ServiceNow">${r[1]}</a></td><td class="adv-title-cell">${esc(r[2])}</td><td>${PRI[r[3]]}</td><td>${esc(r[4])}</td><td>${r[10]}</td></tr>`).join("")}</tbody>
+            </table></div>`
+              : `<div class="lc-table-empty">${ICON("check-circle", 18)}<span>No ServiceNow tickets are linked to this advisory yet.</span></div>`}
+            <div class="lc-table-foot adv-ticket-foot"><button class="btn btn-secondary btn-sm" data-toast="New ServiceNow ticket created for ${info.cve}">${ICON("plus", 14)}Create ticket</button></div>
+          </div>
+        </div>
+      </div>`;
+    enhance($("advRoot"));
+    return true;
+  }
+  function openAdvisory(cve) {
+    currentAdvisory = cve;
+    if (renderAdvisory(client, cve)) navigate("advisory");
+  }
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("[data-adv]");
+    if (!a) return;
+    e.preventDefault();
+    openAdvisory(a.getAttribute("data-adv"));
+  });
+  // related devices: search + vulnerable only
+  document.addEventListener("input", (e) => { if (e.target.id === "advDevSearch") filterAdvDevices(); });
+  document.addEventListener("change", (e) => { if (e.target.id === "advDevVulnOnly") filterAdvDevices(); });
+  function filterAdvDevices() {
+    const q = $("advDevSearch").value.trim().toLowerCase();
+    const vulnOnly = $("advDevVulnOnly").checked;
+    const rows = [...$("advDevBody").querySelectorAll("tr")];
+    let n = 0;
+    rows.forEach((r) => { const show = (!q || r.textContent.toLowerCase().includes(q)) && (!vulnOnly || r.getAttribute("data-st") === "vul"); r.hidden = !show; if (show) n++; });
+    $("advDevFoot").textContent = `Showing ${n} of ${rows.length} devices`;
+  }
+
+  /* ================= Devices ================= */
+  // Full device list for the client (same pattern as the SDP portal): lifecycle groups (real rows), the supported fleet and
+  // devices without End-of-Life data (generated to the client's counts). Each device gets a priority from security, lifecycle and cases.
+  const NO_EOL_MODELS = [["Ubiquiti UAP-AC-PRO", "UniFi"], ["HPE Aruba 2530-24G", "ArubaOS-Switch"], ["Fortinet FortiAP 231F", "FortiAP"], ["APC Smart-UPS SMT3000", "NMC2"], ["Axis P3245-LV", "AXIS OS"]];
+  let devState = { q: "", site: "", os: "", life: "", tile: "", all: false, page: 1, per: 25 };
+  let devCache = null;
+  function deviceList(c, lm) {
+    const octet = 20 + window.CLIENT_ORDER.indexOf(clientId) * 20;
+    const ip = (id) => `10.${octet}.${(id >> 4) % 16}.${(id % 200) + 2}`;
+    const list = [];
+    const serialOf = (id) => "FOC" + (2300 + (id % 97)) + "X" + (id * 7919 % 46656).toString(36).toUpperCase().padStart(3, "0");
+    lm.groups.forEach((g) => g.rows.forEach((r) => list.push({ id: r.id, host: r.host, ip: ip(r.id), site: r.site, model: g.model, os: `${g.os} ${g.osver}`, serial: r.serial, type: g.type, group: g,
+      life: r.unsupported ? "overdue" : g.bucket === "act" ? "act" : g.bucket === "plan" ? "plan" : "later", eos: r.eosupport, eosale: r.eosale, eosw: r.eosw })));
+    const samples = c.lifecycle.supportedSamples;
+    for (let i = 0; i < lm.supported; i++) {
+      const [sid, model, host, os, si] = samples[i % samples.length];
+      const n = Math.floor(i / samples.length);
+      const id = sid + n * 1000;
+      list.push({ id, host: n ? host.replace(/(\d+)$/, (x) => pad(+x + n * 10, x.length)) : host, ip: ip(id), site: c.sites[(si + n) % c.sites.length], model, os, life: "ok", serial: serialOf(id) });
+    }
+    for (let i = 0; i < lm.unknown; i++) {
+      const [model, os] = NO_EOL_MODELS[i % NO_EOL_MODELS.length];
+      const id = 9500 + i;
+      list.push({ id, host: `${c.name.slice(0, 3).toUpperCase()}-X${pad(i + 1, 3)}`, ip: ip(id), site: c.sites[i % c.sites.length], model, os, life: "unknown", serial: serialOf(id) });
+    }
+    // security: vulnerable devices per advisory
+    const sec = {};
+    const advByHost = {};
+    window.ADVISORIES.forEach((row) => {
+      const info = advisoryInfo(row);
+      advisoryDevices(c, info).forEach((d) => {
+        (advByHost[d.host] || (advByHost[d.host] = [])).push({ row, info, st: d.st });
+        if (d.st !== "vul") return;
+        const s = sec[d.host] || (sec[d.host] = { critical: 0, high: 0, medium: 0 });
+        if (s[info.sev] != null) s[info.sev]++;
+      });
+    });
+    // open cases that mention a host or model
+    const open = c.cases.rows.filter((r) => r[0] === "open");
+    list.forEach((d) => {
+      d.sec = sec[d.host] || null;
+      d.advs = advByHost[d.host] || [];
+      const cs = open.filter((r) => r[2].includes(d.host) || r[2].includes(shortModel(d.model)));
+      d.cases = cs.length ? { n: cs.length, p1: cs.some((r) => r[3] === "p1"), nums: cs.map((r) => r[1]) } : null;
+      const crit = d.life === "overdue" || (d.sec && d.sec.critical) || (d.cases && d.cases.p1);
+      const warn = d.life === "act" || d.life === "plan" || (d.sec && (d.sec.high || d.sec.medium)) || d.cases;
+      d.prio = crit ? "crit" : d.life === "unknown" ? "unknown" : warn ? "warn" : "ok";
+      d.tags = [d.sec && "security", ["overdue", "act", "plan"].includes(d.life) && "lifecycle", d.cases && "cases", d.life === "unknown" && "noeol"].filter(Boolean);
+    });
+    const order = { crit: 0, unknown: 1, warn: 2, ok: 3 };
+    return list.sort((a, b) => order[a.prio] - order[b.prio] || a.id - b.id);
+  }
+  const DEV_LIFE = { overdue: ["Unsupported", "badge-critical"], act: ["Support ends < 3 months", "badge-danger"], plan: ["Support ends in 3–6 months", "badge-warning2"],
+    later: ["Later · in plan", "badge-planned"], ok: ["Supported", "badge-success"], unknown: ["No EoL data", "badge-neutral"] };
+  const DEV_PRIO = { crit: ["alert-circle", "Needs attention now"], warn: ["alert-triangle", "Needs attention"], unknown: ["help-circle", "Unknown: no End-of-Life data"], ok: ["check-circle", "No open issues"] };
+  const DEV_TILES = [["security", "Security exposure", "crit", "Devices vulnerable to at least one advisory"], ["lifecycle", "Lifecycle risk", "warn", "Unsupported, or support ends within 6 months"],
+    ["cases", "Open cases", "warn", "Devices mentioned in an open ServiceNow case"], ["noeol", "No End-of-Life data", "neutral", "In your inventory, but the vendor has no dates yet"]];
+
+  function renderDevices(c, lm) {
+    devCache = deviceList(c, lm);
+    devState = Object.assign(devState, { q: "", site: "", os: "", life: "", tile: "", page: 1 });
+    const attention = devCache.filter((d) => d.prio !== "ok").length;
+    $("devSub").innerHTML = `${lm.total} managed devices · <b>${attention} need attention</b>`;
+    const oses = [...new Set(devCache.map((d) => d.os.split(" ").slice(0, 2).join(" ")))].sort();
+    const opt = (v, l) => `<option value="${esc(v)}">${esc(l || v)}</option>`;
+    $("devRoot").innerHTML = `
+      <form class="dev-search" id="devSearchForm">
+        <label class="dev-field dev-field--search">${ICON("search", 18)}<input type="search" id="devQ" placeholder="Search hostname, IP or model…" aria-label="Search devices"></label>
+      </form>
+      <div class="dev-filters">
+        <label class="dev-filter"><span>Site</span><select id="devSite"><option value="">All sites</option>${c.sites.map((s) => opt(s)).join("")}</select></label>
+        <label class="dev-filter"><span>Operating system</span><select id="devOs"><option value="">All</option>${oses.map((o) => opt(o)).join("")}</select></label>
+        <label class="dev-filter"><span>Lifecycle</span><select id="devLife"><option value="">All</option>${Object.entries(DEV_LIFE).map(([k, [l]]) => opt(k, l)).join("")}</select></label>
+      </div>
+      <div class="dev-filter-foot">
+        <label class="adv-toggle"><input type="checkbox" id="devAll">Include devices with no open issues</label>
+        <button class="btn btn-link btn-sm dev-clear" id="devClear">${ICON("x-circle", 16)}Clear all</button>
+      </div>
+      <div class="kpi-grid kpi-grid--4 dev-tiles">${DEV_TILES.map(([k, label, tone, tip]) => {
+        const n = devCache.filter((d) => d.tags.includes(k)).length;
+        const cls = n && tone === "crit" ? " kpi-tile--alert" : n && tone === "warn" ? " kpi-tile--plan" : "";
+        return `<button class="kpi-tile dev-tile${cls}" data-dev-tile="${k}" aria-pressed="false">
+          <div class="kpi-tile__head"><span class="kpi-tile__title">${label}<span class="kpi-tile__info" data-tip="${esc(tip)}">${ICON("info")}</span></span><span class="kpi-tile__link">${ICON("arrow-up-right")}</span></div>
+          <div class="kpi-tile__value"><span>${n}</span></div><div class="kpi-tile__label">${n === 1 ? "device" : "devices"}</div></button>`;
+      }).join("")}</div>
+      <div class="dev-section-title"><h2 id="devTitle"></h2><button class="btn btn-link btn-sm" id="devClearTile" hidden>Clear filter</button>
+        <div class="dev-tools"><button class="btn btn-link btn-sm" data-toast="Device list exported (${esc(c.name)}_devices.csv)">${ICON("file", 16)}Export device list (csv)</button></div></div>
+      <div class="lc-table-card dev-card">
+        <div class="lc-table-scroll"><table class="lc-table dev-table">
+          <thead><tr><th class="dev-th-prio">Priority</th><th>Device</th><th>Model</th><th>OS</th><th>Site</th><th>Security</th><th>Lifecycle</th><th>Cases</th></tr></thead>
+          <tbody id="devBody"></tbody></table></div>
+        <div class="dev-pager" id="devPager"></div>
+      </div>`;
+    enhance($("devRoot"));
+    drawDevices();
+  }
+  function drawDevices() {
+    const s = devState;
+    const q = s.q.toLowerCase();
+    let rows = devCache.filter((d) => (s.all || s.tile || s.q || s.site || s.os || s.life ? true : d.prio !== "ok"));
+    if (s.tile) rows = rows.filter((d) => d.tags.includes(s.tile));
+    if (q) rows = rows.filter((d) => (d.host + " " + d.ip + " " + d.model).toLowerCase().includes(q));
+    if (s.site) rows = rows.filter((d) => d.site === s.site);
+    if (s.os) rows = rows.filter((d) => d.os.startsWith(s.os));
+    if (s.life) rows = rows.filter((d) => d.life === s.life);
+    const tile = DEV_TILES.find(([k]) => k === s.tile);
+    const filtered = s.q || s.site || s.os || s.life;
+    $("devTitle").textContent = `${tile ? tile[1] : filtered || s.all ? "All devices" : "Needs attention"} · ${rows.length} ${rows.length === 1 ? "device" : "devices"}`;
+    $("devClearTile").hidden = !s.tile;
+    const pages = Math.max(1, Math.ceil(rows.length / s.per));
+    s.page = Math.min(s.page, pages);
+    const slice = rows.slice((s.page - 1) * s.per, s.page * s.per);
+    const secBadge = (x) => !x ? `<span class="none-dash">–</span>` : x.critical ? `<span class="badge badge-critical">${x.critical} critical${x.high ? ` · ${x.high} high` : ""}</span>`
+      : x.high ? `<span class="badge badge-danger">${x.high} high</span>` : `<span class="badge badge-warning1">${x.medium} medium</span>`;
+    $("devBody").innerHTML = slice.length ? slice.map((d) => `<tr>
+        <td class="dev-prio"><span class="prio-wrap prio-${d.prio}" data-tip="${esc(DEV_PRIO[d.prio][1])}">${ICON(DEV_PRIO[d.prio][0], 20)}</span></td>
+        <td><div class="dev-cell"><a href="#" class="dev-link" data-device="${d.host}">${d.host}</a><span>${d.ip}</span></div></td>
+        <td>${esc(d.model)}</td><td>${esc(d.os)}</td><td>${esc(d.site)}</td>
+        <td>${secBadge(d.sec)}</td>
+        <td><span class="badge ${DEV_LIFE[d.life][1]}"${d.eos ? ` data-tip="End of Support ${d.eos}"` : ""}>${DEV_LIFE[d.life][0]}</span></td>
+        <td>${d.cases ? `<span class="badge ${d.cases.p1 ? "badge-critical" : "badge-danger"}" data-tip="${d.cases.nums.join(", ")}">${d.cases.n} open</span>` : `<span class="none-dash">–</span>`}</td></tr>`).join("")
+      : `<tr><td colspan="8" class="dev-empty">No devices match these filters.</td></tr>`;
+    const btn = (p, label, cur) => `<button class="dev-page${cur ? " is-current" : ""}" data-dev-page="${p}">${label}</button>`;
+    const nums = [];
+    for (let p = 1; p <= pages; p++) if (p === 1 || p === pages || Math.abs(p - s.page) <= 1) nums.push(p); else if (nums[nums.length - 1] !== "…") nums.push("…");
+    $("devPager").innerHTML = `<div class="dev-pager__nav">
+        <button class="btn btn-secondary btn-sm" data-dev-page="${s.page - 1}"${s.page === 1 ? " disabled" : ""}>Previous</button>
+        ${nums.map((p) => (p === "…" ? `<span class="dev-page-gap">…</span>` : btn(p, p, p === s.page))).join("")}
+        <button class="btn btn-secondary btn-sm" data-dev-page="${s.page + 1}"${s.page === pages ? " disabled" : ""}>Next</button></div>
+      <span class="dev-pager__count">${rows.length ? `${(s.page - 1) * s.per + 1}–${Math.min(s.page * s.per, rows.length)} of ${rows.length}` : "0 devices"}</span>
+      <label class="dev-pager__per">Items per page<select id="devPer">${[25, 50, 100].map((n) => `<option${n === s.per ? " selected" : ""}>${n}</option>`).join("")}</select></label>`;
+    document.querySelectorAll(".dev-tile").forEach((t) => t.setAttribute("aria-pressed", String(t.getAttribute("data-dev-tile") === s.tile)));
+  }
+  document.addEventListener("input", (e) => { if (e.target.id === "devQ") { devState.q = e.target.value.trim(); devState.page = 1; drawDevices(); } });
+  document.addEventListener("change", (e) => {
+    const map = { devSite: "site", devOs: "os", devLife: "life" };
+    if (map[e.target.id]) { devState[map[e.target.id]] = e.target.value; devState.page = 1; drawDevices(); }
+    if (e.target.id === "devAll") { devState.all = e.target.checked; devState.tile = ""; devState.page = 1; drawDevices(); }
+    if (e.target.id === "devPer") { devState.per = +e.target.value; devState.page = 1; drawDevices(); }
+  });
+  document.addEventListener("submit", (e) => { if (e.target.id === "devSearchForm") e.preventDefault(); });
+  document.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-dev-tile]");
+    if (t && !e.target.closest(".kpi-tile__info")) { const k = t.getAttribute("data-dev-tile"); devState.tile = devState.tile === k ? "" : k; devState.page = 1; drawDevices(); return; }
+    const p = e.target.closest("[data-dev-page]");
+    if (p && !p.disabled) { devState.page = +p.getAttribute("data-dev-page"); drawDevices(); $("devTitle").scrollIntoView({ block: "start", behavior: reduceMotion ? "auto" : "smooth" }); return; }
+    if (e.target.closest("#devClearTile")) { devState.tile = ""; devState.page = 1; drawDevices(); return; }
+    if (e.target.closest("#devClear")) {
+      Object.assign(devState, { q: "", site: "", os: "", life: "", tile: "", all: false, page: 1 });
+      ["devQ", "devSite", "devOs", "devLife"].forEach((id) => ($(id).value = ""));
+      $("devAll").checked = false;
+      drawDevices();
+    }
+  });
+
 
   /* ================= Row action menus (Alarms, Cases) ================= */
   function attachRowMenu(rowEl, items, onPick) {
@@ -2072,7 +2520,7 @@
     $("cvesTableBody").innerHTML = window.ADVISORIES.map(([title, cve, sev, ver, os, osver, updated]) => {
       const [rel, vul, nv, nc] = counts[cve] || [0, 0, 0, 0];
       return `<tr data-severity="${sev}" data-vendor="cisco" data-os="${os}" data-osver="${esc(osver)}" data-related="${rel}">
-        <td class="adv-title-cell">${esc(title)}</td><td><a href="#" class="al-link" data-toast="Opening ${cve} detail">${cve}</a></td>
+        <td class="adv-title-cell"><a href="#" class="adv-open" data-adv="${cve}">${esc(title)}</a></td><td><a href="#" class="al-link" data-adv="${cve}">${cve}</a></td>
         <td><span class="adv-sev-pill ${sev}">${sev[0].toUpperCase() + sev.slice(1)}</span></td><td class="num">${ver}</td><td><span class="adv-vendor-pill">Cisco</span></td>
         <td>${updated}</td><td class="num">${rel}</td><td class="num${vul ? " adv-vuln" : ""}">${vul}</td><td class="num">${nv}</td><td class="num">${nc}</td></tr>`;
     }).join("");
@@ -2313,6 +2761,8 @@
     renderDevices(client, lm);
     renderAlarms(client);
     renderCves(client);
+    if (currentPage === "advisory" && !(currentAdvisory && renderAdvisory(client, currentAdvisory))) currentPage = "cves";
+    if (currentPage === "device" && !(currentDevice && renderDevice(client, currentDevice))) currentPage = "devices";
     renderCases(client);
     renderUptime(client);
     applyAlarmLock(false);
@@ -2321,7 +2771,7 @@
   }
 
   /* ================= Routing ================= */
-  const pages = ["overview", "lifecycle", "plan", "planner", "devices", "alarms", "cves", "cases", "uptime"].reduce((acc, p) => {
+  const pages = ["overview", "lifecycle", "plan", "planner", "advisory", "device", "devices", "alarms", "cves", "cases", "uptime"].reduce((acc, p) => {
     acc[p] = $("page-" + p);
     return acc;
   }, {});
@@ -2336,7 +2786,7 @@
       el.style.animationDelay = reduceMotion ? "0ms" : Math.min(i, 8) * 50 + "ms";
     });
   }
-  const PARENT_PAGE = { planner: "plan" }; // sub-pages keep their sidebar item highlighted
+  const PARENT_PAGE = { planner: "plan", advisory: "cves", device: "devices" }; // sub-pages keep their sidebar item highlighted
   function navigate(page, keepScroll) {
     currentPage = page;
     document.querySelectorAll(".sidebar__item[data-page]").forEach((b) => b.classList.toggle("active", b.dataset.page === (PARENT_PAGE[page] || page)));
@@ -2352,6 +2802,7 @@
         refreshIndicators();
       }
       if (page === "lifecycle") animateDonut(target);
+      if (page === "advisory" || page === "device") refreshIndicators();
       if (page !== "planner") closePePop();
       if (page !== "plan") closePlanPanel();
       if (page === "plan") {
@@ -2381,14 +2832,17 @@
     const u = new URL(location.href);
     u.searchParams.delete("r");
     u.searchParams.set("client", clientId);
-    u.hash = currentPage === "overview" ? "" : currentPage;
+    u.hash = currentPage === "overview" ? "" : currentPage === "advisory" && currentAdvisory ? `advisory/${currentAdvisory}`
+      : currentPage === "device" && currentDevice ? `device/${encodeURIComponent(currentDevice)}` : currentPage;
     const next = u.pathname + u.search + u.hash;
     if (next === location.pathname + location.search + location.hash) return;
     history[urlMode === "push" ? "pushState" : "replaceState"](null, "", next);
   }
   window.addEventListener("popstate", () => {
     const id = new URLSearchParams(location.search).get("client");
-    const page = location.hash.slice(1);
+    let page = location.hash.slice(1);
+    if (page.startsWith("advisory/")) { currentAdvisory = page.slice(9); page = "advisory"; renderAdvisory(client, currentAdvisory); }
+    if (page.startsWith("device/")) { currentDevice = decodeURIComponent(page.slice(7)); page = "device"; renderDevice(client, currentDevice); }
     urlMode = "none";
     if (validPage(page) || !page) currentPage = page || "overview";
     if (id && CLIENTS[id] && id !== clientId) setClient(id);
@@ -2442,7 +2896,9 @@
   if (!initial) {
     try { initial = localStorage.getItem("lz-client"); } catch (err) { initial = null; }
   }
-  const startPage = location.hash.slice(1);
+  let startPage = location.hash.slice(1);
+  if (startPage.startsWith("advisory/")) { currentAdvisory = startPage.slice(9); startPage = "advisory"; }
+  if (startPage.startsWith("device/")) { currentDevice = decodeURIComponent(startPage.slice(7)); startPage = "device"; }
   if (validPage(startPage)) currentPage = startPage;
   setClient(initial && CLIENTS[initial] ? initial : "bernhoven");
   urlMode = "push";
