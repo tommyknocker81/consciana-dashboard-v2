@@ -297,3 +297,8 @@ Contradictions inside the Figma that I propose to resolve like this (all pages u
   - **Actions:** "View in Budget plan" and "Request quote" (when not quoted).
   - **Other states:** devices without vendor dates show a short explanation with "Help us complete the data"; supported devices show "Fully supported".
   - **Fixes:** the "Unsupported" tag colour was overridden by the helper-text style. An old `.badge { width: 90px }` rule clipped longer tags; it's now limited to the Actions list. Durations drop a "0m" ("2y").
+
+### Overview rows open the device (20 Oct 2026)
+- **Lifecycle → Most urgent devices:** each row opens the group's most urgent device (earliest End of Support) on its **Lifecycle** tab, instead of scrolling the Lifecycle page.
+- **Security advisories → Most urgent devices:** each row opens the first vulnerable device of the model it names on its **Advisories** tab. If no such device is in the inventory, the row opens the advisory.
+- **Data fix:** an advisory's vulnerable devices now come first from the product family its title names. Rivierland's CVE-2025-20084 ("Catalyst 9000 Series") now marks the Catalyst 9300 as vulnerable, not an ISR4331, so it matches the Overview text.

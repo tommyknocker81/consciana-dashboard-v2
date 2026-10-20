@@ -561,8 +561,8 @@
     </div>`;
   }
   function row(o) {
-    // o: { icon, iconTone, title, meta, right (html), stack, page, scroll, toast }
-    const attrs = [o.adv ? `data-adv="${o.adv}"` : "", o.page ? `data-page="${o.page}"` : "", o.scroll ? `data-scroll="${o.scroll}"` : "", o.toast ? `data-toast="${esc(o.toast)}"` : ""].join(" ");
+    // o: { icon, iconTone, title, meta, right (html), stack, page, scroll, toast, device + deviceTab (opens the device page) }
+    const attrs = [o.device ? `data-device="${o.device}" data-device-tab="${o.deviceTab}"` : "", o.adv ? `data-adv="${o.adv}"` : "", o.page ? `data-page="${o.page}"` : "", o.scroll ? `data-scroll="${o.scroll}"` : "", o.toast ? `data-toast="${esc(o.toast)}"` : ""].join(" ");
     return `<button class="row" ${attrs}>
       <span class="row__icon${o.iconTone ? " " + o.iconTone : ""}">${ICON(o.icon, 14)}</span>
       <span class="row__main"><span class="row__title">${esc(o.title)}</span><span class="row__meta">${o.metaHtml || esc(o.meta)}</span></span>
@@ -661,10 +661,13 @@
       const d = supportDate(g);
       // "unsupported for at least …": count from the group's most recent End-of-Support date
       const latest = g.rows.map((r) => parseDate(r.eosupport)).sort((x, y) => y - x)[0];
+      // open the group's most urgent device (earliest End of Support) on its Lifecycle tab
+      const first = g.rows.slice().sort((x, y) => parseDate(x.eosupport) - parseDate(y.eosupport))[0];
+      const link = { device: first.host, deviceTab: "lifecycle" };
       return g.unsupported
-        ? row({ icon: "chip", iconTone: "disaster", title: `${glabel(g)} × ${g.count}`, meta: g.area, metaHtml: budgetMeta(g), page: "lifecycle", scroll: "lcCardAct",
+        ? row({ icon: "chip", iconTone: "disaster", title: `${glabel(g)} × ${g.count}`, meta: g.area, metaHtml: budgetMeta(g), ...link,
             right: `${actionTag(g)}<span class="pill pill-disaster">Unsupported ${fmtAge(monthsBetween(latest, TODAY))}</span>` })
-        : row({ icon: "chip", iconTone: "danger", title: `${glabel(g)} × ${g.count}`, meta: g.area, metaHtml: budgetMeta(g), page: "lifecycle", scroll: "lcCardAct",
+        : row({ icon: "chip", iconTone: "danger", title: `${glabel(g)} × ${g.count}`, meta: g.area, metaHtml: budgetMeta(g), ...link,
             right: `${actionTag(g)}<span class="pill pill-critical">${g.action === "renew" ? "Expires" : "Support ends"} in ${whenLabel(d)}</span>` });
     }).join("");
     if (!urgent) {
@@ -679,7 +682,18 @@
     }
 
     const adv = c.advisories;
-    const advRows = adv.urgent.map(([t, meta, score, crit]) => row({ icon: "bug", iconTone: crit ? "danger" : "", title: t, meta, adv: t.split(" ")[0],
+    // open the first vulnerable device on its Advisories tab (falls back to the advisory when the device isn't in the inventory)
+    const hosts = new Set(deviceList(c, lm).map((d) => d.host));
+    const advLink = (t) => {
+      const [cve, model] = t.split(" · ");
+      const want = (model || "").replace(/ × \d+$/, "").toLowerCase();
+      const r = window.ADVISORIES.find((a) => a[1] === cve);
+      const vul = r ? advisoryDevices(c, advisoryInfo(r)).filter((x) => x.st === "vul" && hosts.has(x.host)) : [];
+      // prefer a device of the model named in the row
+      const d = vul.find((x) => want && x.model.toLowerCase().includes(want)) || vul[0];
+      return d ? { device: d.host, deviceTab: "advisories" } : { adv: cve };
+    };
+    const advRows = adv.urgent.map(([t, meta, score, crit]) => row({ icon: "bug", iconTone: crit ? "danger" : "", title: t, meta, ...advLink(t),
       right: `<span class="score${crit ? " score--critical" : ""}">${score}</span>` })).join("") || empty("No vulnerable devices");
     const cs = c.cases;
     // Urgent cases = open P1 / P2 cases, P1 first, newest first (Figma 240:3642)
@@ -2171,7 +2185,9 @@
     const pool = [];
     lm.groups.forEach((g) => g.rows.forEach((r) => pool.push({ host: r.host, site: r.site, os: g.os, osver: g.osver, model: g.model, id: r.id })));
     c.lifecycle.supportedSamples.forEach(([id, model, host, os, si]) => pool.push({ host, site: c.sites[si], os, osver: "", model, id }));
-    const match = pool.filter((d) => re.test(d.os) || re.test(d.model));
+    // devices of the product family the title names (e.g. "Catalyst 9000 Series") come first, so they are the vulnerable ones
+    const named = (d) => info.title.toLowerCase().includes(d.model.split(/[\s-]/)[0].toLowerCase());
+    const match = pool.filter((d) => re.test(d.os) || re.test(d.model)).sort((a, b) => named(b) - named(a));
     const [rel, vul, nv] = c.advisories.counts[info.cve] || [0, 0, 0, 0];
     const octet = 20 + window.CLIENT_ORDER.indexOf(clientId) * 20;
     const list = [];
