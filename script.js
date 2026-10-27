@@ -334,8 +334,25 @@
     toast("Docs and the Conscia knowledge base would open here");
     closeMobileSidebar();
   });
-  $("btnIncident").addEventListener("click", () => toast("Incident report started — the Conscia SOC has been notified"));
-  $("btnRequest").addEventListener("click", () => toast("Service request form opened in ServiceNow"));
+  // Header CTAs open the Emergency / Request a service dialogs (Figma 616:5473)
+  let svcOpener = null;
+  function openSvc(id, opener) {
+    svcOpener = opener;
+    const b = $(id); b.classList.add("open");
+    b.querySelector(".svc-modal__close").focus();
+  }
+  function closeSvc() {
+    const open = document.querySelector(".svc-backdrop.open"); if (!open) return;
+    open.classList.remove("open");
+    if (svcOpener) svcOpener.focus();
+  }
+  $("btnIncident").addEventListener("click", (e) => openSvc("incidentModalBackdrop", e.currentTarget));
+  $("btnRequest").addEventListener("click", (e) => openSvc("requestModalBackdrop", e.currentTarget));
+  document.querySelectorAll(".svc-backdrop").forEach((b) => b.addEventListener("click", (e) => {
+    if (e.target === b || e.target.closest("[data-svc-close]")) { closeSvc(); return; }
+    const t = e.target.closest("[data-svc-ticket]");
+    if (t) { closeSvc(); toast(`${t.getAttribute("data-svc-ticket")} ticket opened in ServiceNow — follow it under Cases`); }
+  }));
 
   /* ================= Summary drawer ================= */
   const reportDrawerBackdrop = $("reportDrawerBackdrop");
@@ -400,6 +417,7 @@
     if (e.key !== "Escape") return;
     if (reportDrawerBackdrop.classList.contains("open")) closeReportDrawer();
     if (upgradeModalBackdrop.classList.contains("open")) closeUpgradeModal();
+    closeSvc();
     closeAllDropdowns();
     closeMobileSidebar();
   });

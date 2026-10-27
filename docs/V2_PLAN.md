@@ -302,3 +302,9 @@ Contradictions inside the Figma that I propose to resolve like this (all pages u
 - **Lifecycle → Most urgent devices:** each row opens the group's most urgent device (earliest End of Support) on its **Lifecycle** tab, instead of scrolling the Lifecycle page.
 - **Security advisories → Most urgent devices:** each row opens the first vulnerable device of the model it names on its **Advisories** tab. If no such device is in the inventory, the row opens the advisory.
 - **Data fix:** an advisory's vulnerable devices now come first from the product family its title names. Rivierland's CVE-2025-20084 ("Catalyst 9000 Series") now marks the Catalyst 9300 as vulnerable, not an ISR4331, so it matches the Overview text.
+
+### Header CTA dialogs (27 Oct 2026)
+- **Emergency** (header button, formerly "Report incident") opens the **Emergency** dialog and **Request service** opens **Request a service** (Figma 616:5473): a title, a description, two cards and Cancel.
+  - Emergency: "Security incident" (call) and "Network outage" (call, or Submit a ticket when only a few users are affected).
+  - Request a service: "Security change" and "Network change", each with Submit a ticket.
+- The phone number is the one in the Figma design (+386 1 474 65 55) as a `tel:` link. Submit a ticket closes the dialog and shows a toast pointing to Cases. Close with ×, Cancel, the backdrop or Escape; focus returns to the header button.

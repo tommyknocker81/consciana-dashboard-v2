@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Conscia Landing Zone — Overview</title>
-<link rel="stylesheet" href="styles.css?v=83" />
+<link rel="stylesheet" href="styles.css?v=84" />
 </head>
 <body>
 
@@ -49,6 +49,7 @@
 <symbol id="i-alert-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7.5v5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.3" r="1" fill="currentColor"/></symbol>
 <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l5 5L20 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 12.5l2.6 2.6L16 9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-phone-call" viewBox="0 0 24 24" fill="none"><path d="M13 2a9 9 0 0 1 9 9M13 6a5 5 0 0 1 5 5M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
 <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
 <symbol id="i-log-out" viewBox="0 0 24 24"><path d="M15 17l5-5-5-5M20 12H9M13 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -91,8 +92,8 @@
     </div>
     <div class="topbar__right">
       <div class="topbar__actions">
-        <button class="btn btn-danger" id="btnIncident" aria-label="Report incident"><svg width="18" height="18"><use href="#i-report"/></svg><span>Report incident</span></button>
-        <button class="btn btn-primary" id="btnRequest" aria-label="Request service"><svg width="18" height="18"><use href="#i-request"/></svg><span>Request service</span></button>
+        <button class="btn btn-danger" id="btnIncident" aria-label="Emergency" aria-haspopup="dialog"><svg width="18" height="18"><use href="#i-report"/></svg><span>Emergency</span></button>
+        <button class="btn btn-primary" id="btnRequest" aria-label="Request service" aria-haspopup="dialog"><svg width="18" height="18"><use href="#i-request"/></svg><span>Request service</span></button>
       </div>
 
       <div class="rel">
@@ -595,6 +596,60 @@
 <!-- Generic tooltip -->
 <div class="tooltip" id="tooltip"></div>
 
+<!-- Header CTAs: Emergency and Request service — Figma 616:5473 -->
+<div class="modal-backdrop svc-backdrop" id="incidentModalBackdrop">
+  <div class="modal svc-modal" role="dialog" aria-modal="true" aria-labelledby="incidentTitle" aria-describedby="incidentDesc">
+    <div class="svc-modal__head">
+      <h3 id="incidentTitle">Emergency</h3>
+      <p id="incidentDesc">Is something down or under attack right now? Call us — our engineers answer 24/7. Tell them your company name and what you're seeing.</p>
+      <button class="svc-modal__close" data-svc-close aria-label="Close"><svg width="18" height="18"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="svc-grid">
+      <section class="svc-card">
+        <h4>Security incident</h4>
+        <p>A suspected breach, ransomware, a phishing link someone clicked, or unusual activity on your devices. Call the Security Operations Centre straight away; every minute counts.</p>
+        <div class="svc-card__actions">
+          <a class="btn btn-danger" href="tel:+38614746555"><svg width="18" height="18"><use href="#i-phone-call"/></svg><span>+386 1 474 65 55</span></a>
+        </div>
+      </section>
+      <section class="svc-card">
+        <h4>Network outage</h4>
+        <p>A site, internet link or Wi-Fi is down, or people can't reach business-critical systems. Call us for a full outage; submit a ticket if only a few users are affected.</p>
+        <div class="svc-card__actions">
+          <a class="btn btn-danger" href="tel:+38614746555"><svg width="18" height="18"><use href="#i-phone-call"/></svg><span>+386 1 474 65 55</span></a>
+          <button class="btn btn-primary" data-svc-ticket="Network incident"><svg width="18" height="18"><use href="#i-request"/></svg><span>Submit a ticket</span></button>
+        </div>
+      </section>
+    </div>
+    <div class="svc-modal__foot"><button class="btn btn-secondary btn-lg" data-svc-close>Cancel</button></div>
+  </div>
+</div>
+<div class="modal-backdrop svc-backdrop" id="requestModalBackdrop">
+  <div class="modal svc-modal" role="dialog" aria-modal="true" aria-labelledby="requestTitle" aria-describedby="requestDesc">
+    <div class="svc-modal__head">
+      <h3 id="requestTitle">Request a service</h3>
+      <p id="requestDesc">Need a change or something new? Send a request to the Conscia service desk. You can follow its progress under Cases.</p>
+      <button class="svc-modal__close" data-svc-close aria-label="Close"><svg width="18" height="18"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="svc-grid">
+      <section class="svc-card">
+        <h4>Security change</h4>
+        <p>Firewall rules, VPN or remote access, admin accounts, or a policy change on your firewalls and security services.</p>
+        <div class="svc-card__actions">
+          <button class="btn btn-primary" data-svc-ticket="Security change"><svg width="18" height="18"><use href="#i-request"/></svg><span>Submit a ticket</span></button>
+        </div>
+      </section>
+      <section class="svc-card">
+        <h4>Network change</h4>
+        <p>Switch ports and VLANs, a new Wi-Fi network, connecting a new device or site, or a move between locations.</p>
+        <div class="svc-card__actions">
+          <button class="btn btn-primary" data-svc-ticket="Network change"><svg width="18" height="18"><use href="#i-request"/></svg><span>Submit a ticket</span></button>
+        </div>
+      </section>
+    </div>
+    <div class="svc-modal__foot"><button class="btn btn-secondary btn-lg" data-svc-close>Cancel</button></div>
+  </div>
+</div>
 <!-- Upgrade SLA tier modal -->
 <!-- 5-year plan: item details (non-modal side panel) -->
 <aside class="plan-panel" id="planPanel" role="dialog" aria-labelledby="planPanelTitle" hidden><div class="plan-panel__inner" id="planPanelBody"></div></aside>
@@ -707,6 +762,6 @@
 </div>
 
 <script src="clients.js?v=10"></script>
-<script src="script.js?v=83"></script>
+<script src="script.js?v=84"></script>
 </body>
 </html>
